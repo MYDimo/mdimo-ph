@@ -1,0 +1,159 @@
+---
+/*
+ * Hero carousel: a row of tall rounded frames that glides one frame at a time.
+ * Swiping uses native CSS scroll-snap; autoplay and the controls drive the same
+ * scroller (see src/scripts/hero-carousel.js). Slides are rendered twice; the
+ * second set is decorative (aria-hidden, inert) and exists only for a seamless loop.
+ */
+import { Image } from 'astro:assets';
+import { useT } from '../i18n/index.js';
+
+const { locale, slides, interval = 6000 } = Astro.props;
+const tr = useT(locale);
+const total = slides.length;
+const sizes = '(min-width: 768px) min(30vw, 22rem), 82vw';
+const widths = [320, 480, 640, 800, 1000, 1200];
+---
+
+<div
+  class="hero-carousel"
+  role="region"
+  aria-roledescription="carousel"
+  aria-label={tr('home.carousel.label')}
+  style={`--hero-interval: ${interval}ms`}
+  data-hero-carousel
+  data-playing="false"
+  data-label-pause={tr('home.carousel.pause')}
+  data-label-play={tr('home.carousel.play')}
+  data-label-slide={tr('home.carousel.slide')}
+>
+  <div class="hero-track" tabindex="0" data-hero-track>
+    {
+      [0, 1].map((copy) =>
+        slides.map((slide, i) => (
+          <div
+            class="hero-slide"
+            role={copy === 0 ? 'group' : undefined}
+            aria-roledescription={copy === 0 ? 'slide' : undefined}
+            aria-label={copy === 0 ? tr('home.carousel.slide', { n: i + 1, total }) : undefined}
+            aria-hidden={copy === 1 ? 'true' : undefined}
+            inert={copy === 1}
+          >
+            <Image
+              src={slide.src}
+              alt={copy === 0 ? tr(`home.alt.${slide.alt}`) : ''}
+              widths={widths}
+              sizes={sizes}
+              loading={copy === 0 && i < 2 ? 'eager' : 'lazy'}
+              fetchpriority={copy === 0 && i === 0 ? 'high' : undefined}
+              decoding={copy === 0 && i === 0 ? 'sync' : 'async'}
+              class="size-full object-cover"
+              draggable="false"
+            />
+          </div>
+        )),
+      )
+    }
+  </div>
+
+  <div class="mt-5 flex items-center gap-4">
+    <ol class="flex flex-1 gap-1.5" aria-hidden="true">
+      {slides.map((_, i) => <li class:list={['hero-seg', i === 0 && 'is-active']} />)}
+    </ol>
+    <div class="flex items-center gap-1">
+      <button type="button" class="hero-btn" aria-label={tr('home.carousel.prev')} data-hero-prev>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 6 8.5 12l6 6" /></svg>
+      </button>
+      <button type="button" class="hero-btn" aria-label={tr('home.carousel.pause')} data-hero-toggle>
+        <svg class="icon-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6.5v11M15 6.5v11" /></svg>
+        <svg class="icon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 6.2v11.6L18 12Z" /></svg>
+      </button>
+      <button type="button" class="hero-btn" aria-label={tr('home.carousel.next')} data-hero-next>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9.5 6 6 6-6 6" /></svg>
+      </button>
+    </div>
+  </div>
+  <p class="sr-only" aria-live="off" data-hero-status></p>
+</div>
+
+<style>
+  .hero-track {
+    --gap: 0.75rem;
+    display: flex;
+    gap: var(--gap);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    border-radius: var(--radius-xl);
+  }
+  .hero-track::-webkit-scrollbar { display: none; }
+  .hero-track:focus-visible { outline-offset: 4px; }
+
+  .hero-slide {
+    /* Mobile: one frame plus a peek of the next. Desktop: three plus a peek. */
+    flex: 0 0 82%;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    border-radius: var(--radius-xl);
+    background: var(--color-base-300);
+    scroll-snap-align: start;
+  }
+  @media (min-width: 48rem) {
+    .hero-track { --gap: 1rem; }
+    .hero-slide { flex-basis: calc((100% - 3 * var(--gap)) / 3.25); }
+  }
+
+  /* Progress: the active segment fills over one interval; its animationend advances the slide. */
+  .hero-seg {
+    position: relative;
+    flex: 1;
+    height: 3px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--color-base-content) 15%, transparent);
+  }
+  .hero-seg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--color-base-content);
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  .hero-seg.is-active::after { transform: scaleX(1); }
+  [data-autoplay] .hero-seg.is-active::after {
+    animation: hero-fill var(--hero-interval) linear both;
+  }
+  [data-playing='false'] .hero-seg.is-active::after { animation-play-state: paused; }
+  @keyframes hero-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+  .hero-btn {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 999px;
+    color: var(--color-base-content);
+    transition: background-color 0.2s;
+  }
+  .hero-btn:hover { background: color-mix(in oklab, var(--color-base-300) 70%, transparent); }
+  .hero-btn svg {
+    grid-area: 1 / 1;
+    width: 1.375rem;
+    height: 1.375rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .hero-btn .icon-play { fill: currentColor; stroke-width: 1.2; }
+  [data-playing='true'] .icon-play,
+  [data-playing='false'] .icon-pause { visibility: hidden; }
+</style>
+
+<script>
+  import { initHeroCarousel } from '../scripts/hero-carousel.js';
+  document.querySelectorAll('[data-hero-carousel]').forEach(initHeroCarousel);
+</script>
