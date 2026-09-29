@@ -187,8 +187,11 @@ public/           # static assets only
 - [x] Home hero line: "The moments you'll want to live again."
 - [x] Contact CTA block ("Planning something? Let's talk.") appears on About only, not on every page
 - [x] Footer: copyright line only, no repeated logo
+- [x] Hero: row of tall 4:5 rounded frames built for the vertical photos (3 + peek on desktop, 1 + peek on mobile), 6 s autoplay, native scroll-snap swipe. Images: `src/data/home.js`
+- [x] Only images the site uses are committed (copied into `src/assets/`); `/images` stays git-ignored
+- [x] GSAP + ScrollTrigger load lazily on the home page only, never under reduced motion
+- [x] Stylesheets are inlined (`build.inlineStylesheets: 'always'`) for LCP; revisit if CSS grows past ~15 KB gzipped
 
 ### Still open
 - [ ] Exact grey scales for light/dark palettes (propose options)
-- [ ] Which 4 to 6 images go in the hero carousel
 - [ ] Domain name and email address for form notifications
