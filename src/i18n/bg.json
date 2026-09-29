@@ -201,12 +201,26 @@
   "moments": {
     "title": "Моменти",
     "heading": "Моменти",
-    "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Истории и галерии от скорошни сватби, фотосесии, концерти и състезания.",
+    "text": "Истории и галерии от скорошни сватби, кръщенета, фотосесии, концерти и състезания. Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    "filterLabel": "Филтър по категория",
     "filters": {
       "all": "Всички",
       "weddings": "Сватби",
+      "christenings": "Кръщенета",
       "photoshoots": "Фотосесии",
-      "concerts-sports": "Концерти и спорт"
+      "concerts": "Концерти",
+      "sports": "Спорт"
+    },
+    "photoAlt": "{title}, снимка {n} от {total}",
+    "photos": "{n} снимки",
+    "more": "Още моменти",
+    "back": "Всички моменти",
+    "lightbox": {
+      "close": "Затвори",
+      "zoom": "Увеличи",
+      "prev": "Предишна снимка",
+      "next": "Следваща снимка",
+      "error": "Снимката не може да бъде заредена."
     }
   },
   "contact": {

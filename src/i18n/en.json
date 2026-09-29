@@ -201,12 +201,26 @@
   "moments": {
     "title": "Moments",
     "heading": "Moments",
-    "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Stories and galleries from recent weddings, photoshoots, concerts and races.",
+    "text": "Stories and galleries from recent weddings, christenings, photoshoots, concerts and races. Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    "filterLabel": "Filter by category",
     "filters": {
       "all": "All",
       "weddings": "Weddings",
+      "christenings": "Christenings",
       "photoshoots": "Photoshoots",
-      "concerts-sports": "Concerts & Sports"
+      "concerts": "Concerts",
+      "sports": "Sports"
+    },
+    "photoAlt": "{title}, photo {n} of {total}",
+    "photos": "{n} photos",
+    "more": "More moments",
+    "back": "All moments",
+    "lightbox": {
+      "close": "Close",
+      "zoom": "Zoom",
+      "prev": "Previous photo",
+      "next": "Next photo",
+      "error": "The photo could not be loaded."
     }
   },
   "contact": {
