@@ -1,0 +1,140 @@
+---
+import Logo from '../assets/logo.svg';
+import ThemeToggle from './ThemeToggle.astro';
+import LanguageSwitcher from './LanguageSwitcher.astro';
+import { useT, localizedPath, routes } from '../i18n/index.js';
+
+const { locale } = Astro.props;
+const tr = useT(locale);
+const path = Astro.url.pathname;
+const links = ['moments', 'services', 'about', 'contact'].map((id) => ({
+  id,
+  href: localizedPath(locale, routes[id]),
+  label: tr(`nav.${id}`),
+}));
+const isCurrent = (href) => path.startsWith(href);
+---
+
+<header class="sticky top-0 z-40 bg-base-200/80 backdrop-blur-xl backdrop-saturate-150">
+  <div class="shell flex h-16 items-center justify-between gap-6 md:h-18">
+    <a href={localizedPath(locale)} class="-m-2 rounded-full p-2 text-base-content" aria-label={tr('site.name')}>
+      <Logo class="h-7 w-auto md:h-8" aria-hidden="true" />
+    </a>
+
+    <nav aria-label={tr('nav.label')} class="hidden md:block">
+      <ul class="flex items-center gap-1">
+        {
+          links.map((l) => (
+            <li>
+              <a
+                href={l.href}
+                aria-current={isCurrent(l.href) ? 'page' : undefined}
+                class:list={[
+                  'rounded-full px-3.5 py-2 text-[0.9375rem] transition-colors',
+                  isCurrent(l.href) ? 'text-base-content font-medium' : 'text-muted hover:text-base-content',
+                ]}
+              >
+                {l.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <div class="hidden md:block"><LanguageSwitcher locale={locale} /></div>
+      <ThemeToggle locale={locale} />
+      <button
+        type="button"
+        class="grid size-10 place-items-center rounded-full transition-colors hover:bg-base-300/70 md:hidden"
+        aria-label={tr('nav.openMenu')}
+        aria-haspopup="dialog"
+        aria-controls="mobile-menu"
+        data-menu-open
+      >
+        <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+          <path d="M4 8h16M4 16h16"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile menu: native <dialog> gives focus trapping and Esc-to-close for free. -->
+  <dialog id="mobile-menu" class="menu-panel" aria-label={tr('nav.label')}>
+    <div class="flex h-full flex-col rounded-2xl bg-base-100 p-6">
+      <div class="flex items-center justify-between">
+        <LanguageSwitcher locale={locale} />
+        <button
+          type="button"
+          class="grid size-10 place-items-center rounded-full hover:bg-base-300/70"
+          aria-label={tr('nav.closeMenu')}
+          autofocus
+          data-menu-close
+        >
+          <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <path d="M6 6l12 12M18 6 6 18"></path>
+          </svg>
+        </button>
+      </div>
+      <nav class="mt-10">
+        <ul class="flex flex-col gap-1">
+          {
+            links.map((l) => (
+              <li>
+                <a
+                  href={l.href}
+                  aria-current={isCurrent(l.href) ? 'page' : undefined}
+                  class:list={[
+                    'block rounded-lg py-2 text-headline font-semibold',
+                    isCurrent(l.href) ? 'text-base-content' : 'text-muted',
+                  ]}
+                >
+                  {l.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </div>
+  </dialog>
+</header>
+
+<style>
+  /* Rounded panel that slides in from the right, inset from the screen edges. */
+  .menu-panel {
+    position: fixed;
+    inset: 0.5rem 0.5rem 0.5rem auto;
+    width: min(24rem, calc(100% - 1rem));
+    height: auto;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    transform: translateX(calc(100% + 1rem));
+    transition: transform 0.45s var(--ease-soft), overlay 0.45s allow-discrete, display 0.45s allow-discrete;
+  }
+  .menu-panel[open] { transform: none; }
+  @starting-style { .menu-panel[open] { transform: translateX(calc(100% + 1rem)); } }
+
+  .menu-panel::backdrop {
+    background: rgb(0 0 0 / 0);
+    backdrop-filter: blur(0);
+    transition: background 0.45s, backdrop-filter 0.45s, overlay 0.45s allow-discrete, display 0.45s allow-discrete;
+  }
+  .menu-panel[open]::backdrop { background: rgb(0 0 0 / 0.25); backdrop-filter: blur(4px); }
+  @starting-style { .menu-panel[open]::backdrop { background: rgb(0 0 0 / 0); backdrop-filter: blur(0); } }
+</style>
+
+<script>
+  const menu = document.getElementById('mobile-menu');
+  document.querySelector('[data-menu-open]')?.addEventListener('click', () => menu.showModal());
+  document.querySelector('[data-menu-close]')?.addEventListener('click', () => menu.close());
+  // Close when tapping the backdrop (a click whose target is the dialog itself).
+  menu.addEventListener('click', (e) => { if (e.target === menu) menu.close(); });
+  // Close if the viewport grows past the mobile breakpoint.
+  window.matchMedia('(min-width: 48rem)').addEventListener('change', (e) => e.matches && menu.close());
+</script>

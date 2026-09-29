@@ -1,0 +1,25 @@
+---
+import Logo from '../assets/logo.svg';
+import { useT, localizedPath, routes } from '../i18n/index.js';
+
+const { locale } = Astro.props;
+const tr = useT(locale);
+const year = new Date().getFullYear();
+---
+
+<footer class="shell pb-8 pt-section">
+  <div class="rounded-2xl bg-base-100 px-6 py-12 text-center md:px-12 md:py-16">
+    <p class="text-title font-semibold">{tr('footer.cta')}</p>
+    <a
+      href={localizedPath(locale, routes.contact)}
+      class="mt-6 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-[0.9375rem] font-medium text-primary-content transition-opacity hover:opacity-85"
+    >
+      {tr('footer.ctaLink')}
+      <span aria-hidden="true">→</span>
+    </a>
+  </div>
+  <div class="mt-8 flex items-center justify-between gap-4 text-sm text-muted">
+    <Logo class="h-5 w-auto" aria-hidden="true" />
+    <p>© {year} {tr('site.name')}. {tr('footer.rights')}</p>
+  </div>
+</footer>

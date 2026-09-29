@@ -1,0 +1,26 @@
+---
+import { locales, useT, switchLocalePath } from '../i18n/index.js';
+const { locale } = Astro.props;
+const tr = useT(locale);
+const path = Astro.url.pathname;
+---
+
+<nav aria-label={tr('lang.switch')} class="flex items-center rounded-full bg-base-300/60 p-0.5 text-label font-semibold tracking-[0.06em]">
+  {
+    locales.map((l) => (
+      <a
+        href={switchLocalePath(path, l)}
+        hreflang={l}
+        lang={l}
+        aria-label={tr(`lang.${l}`)}
+        aria-current={l === locale ? 'true' : undefined}
+        class:list={[
+          'rounded-full px-2.5 py-1.5 uppercase transition-colors',
+          l === locale ? 'bg-base-100 text-base-content' : 'text-muted hover:text-base-content',
+        ]}
+      >
+        {l}
+      </a>
+    ))
+  }
+</nav>

@@ -1,0 +1,10 @@
+---
+const { eyebrow, heading, text, as: Tag = 'h1' } = Astro.props;
+---
+
+<div class="max-w-3xl">
+  {eyebrow && <p class="eyebrow mb-4">{eyebrow}</p>}
+  <Tag class="text-headline">{heading}</Tag>
+  {text && <p class="mt-5 max-w-xl text-muted">{text}</p>}
+  <slot />
+</div>
