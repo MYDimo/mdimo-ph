@@ -4,24 +4,32 @@
  *   [ big 2x2 ][ tall ][ sq ]
  *   [        ][      ][ sq ]
  *   [   wide    ][   wide   ]
- * Tiles are placeholders until images are chosen in Phase 2.
  */
-const { tiles } = Astro.props; // [{ label, href }]
-const shapes = ['col-span-2 row-span-2', 'row-span-2', '', '', 'col-span-2', 'col-span-2'];
+import { Image } from 'astro:assets';
+
+const { tiles } = Astro.props; // [{ src, alt, href }]
+const shapes = [
+  { cls: 'col-span-2 row-span-2', sizes: '(min-width: 768px) 38rem, 92vw' },
+  { cls: 'row-span-2', sizes: '(min-width: 768px) 19rem, 46vw' },
+  { cls: '', sizes: '(min-width: 768px) 19rem, 46vw' },
+  { cls: '', sizes: '(min-width: 768px) 19rem, 46vw' },
+  { cls: 'col-span-2', sizes: '(min-width: 768px) 38rem, 92vw' },
+  { cls: 'col-span-2', sizes: '(min-width: 768px) 38rem, 92vw' },
+];
 ---
 
 <ul class="grid auto-rows-[10.5rem] grid-cols-2 gap-3 md:auto-rows-[15rem] md:grid-cols-4 md:gap-4">
   {
     tiles.slice(0, shapes.length).map((tile, i) => (
-      <li class:list={[shapes[i]]}>
-        <a
-          href={tile.href}
-          class="group relative block h-full overflow-hidden rounded-xl bg-base-300 transition-transform duration-500 ease-soft hover:scale-[0.985]"
-        >
-          <slot name={`tile-${i}`} />
-          <span class="absolute bottom-3 left-3 rounded-full bg-base-100/85 px-3 py-1.5 text-xs font-medium backdrop-blur">
-            {tile.label}
-          </span>
+      <li class:list={[shapes[i].cls]} data-bento-tile>
+        <a href={tile.href} class="group block h-full overflow-hidden rounded-xl bg-base-300">
+          <Image
+            src={tile.src}
+            alt={tile.alt}
+            widths={[320, 480, 640, 800, 1000, 1200]}
+            sizes={shapes[i].sizes}
+            class="size-full object-cover transition-transform duration-700 ease-soft group-hover:scale-[1.03]"
+          />
         </a>
       </li>
     ))

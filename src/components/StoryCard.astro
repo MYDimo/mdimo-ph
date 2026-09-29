@@ -1,11 +1,22 @@
 ---
-// Rounded card: image on one side, text on the other. `reverse` puts the image first on desktop.
-const { heading, text, link, reverse = false } = Astro.props;
+// Rounded card: photo on one side, text on the other. `reverse` puts the photo first on desktop.
+import { Image } from 'astro:assets';
+
+const { heading, text, link, image, alt, reverse = false } = Astro.props;
 ---
 
 <article class="grid items-center gap-8 rounded-2xl bg-base-100 p-4 md:grid-cols-2 md:gap-12 md:p-5">
-  <div class:list={['aspect-[4/5] rounded-xl bg-base-300', reverse ? 'md:order-first' : 'md:order-last']}>
-    <slot name="image" />
+  <div
+    class:list={['aspect-[4/5] overflow-hidden rounded-xl bg-base-300', reverse ? 'md:order-first' : 'md:order-last']}
+  >
+    <Image
+      src={image}
+      alt={alt}
+      widths={[320, 480, 640, 800, 1000, 1200]}
+      sizes="(min-width: 768px) min(45vw, 36rem), 92vw"
+      class="size-full scale-[1.12] object-cover"
+      data-parallax
+    />
   </div>
   <div class="px-3 pb-6 md:px-8 md:py-10">
     <h2 class="text-headline">{heading}</h2>

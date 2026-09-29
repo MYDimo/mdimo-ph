@@ -1,42 +1,53 @@
 ---
+import { getImage } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageIntro from '../../components/PageIntro.astro';
 import StoryCard from '../../components/StoryCard.astro';
 import BentoGrid from '../../components/BentoGrid.astro';
+import HeroCarousel from '../../components/HeroCarousel.astro';
 import { useT, localizedPath, routes } from '../../i18n/index.js';
+import { heroSlides, storyImages, bentoTiles } from '../../data/home.js';
 export { localeStaticPaths as getStaticPaths } from '../../i18n/paths.js';
 
 const { locale } = Astro.params;
 const tr = useT(locale);
 const momentsHref = localizedPath(locale, routes.moments);
-const f = tr('moments.filters');
-// Placeholder tiles; real images + links to individual Moments come in Phase 2/3.
-const tiles = [f.weddings, f['concerts-sports'], f.photoshoots, f.weddings, f['concerts-sports'], f.weddings].map(
-  (label) => ({ label, href: momentsHref }),
-);
+const tiles = bentoTiles.map((t) => ({ src: t.src, alt: tr(`home.alt.${t.alt}`), href: momentsHref }));
+
+// Preload the first hero frame (the LCP image) with the same srcset the carousel uses.
+const lcp = await getImage({ src: heroSlides[0].src, widths: [320, 480, 640, 800, 1000, 1200] });
 ---
 
 <BaseLayout locale={locale} title={tr('home.title')}>
-  <section class="shell pt-16 text-center md:pt-24">
-    <h1 class="mx-auto max-w-4xl text-display">{tr('home.hero')}</h1>
-    <a
-      href="#intro"
-      class="mt-8 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-[0.9375rem] font-medium text-primary-content transition-opacity hover:opacity-85"
-    >
-      {tr('home.explore')} <span aria-hidden="true">↓</span>
-    </a>
-  </section>
+  <link
+    slot="head"
+    rel="preload"
+    as="image"
+    imagesrcset={lcp.srcSet.attribute}
+    imagesizes="(min-width: 768px) min(30vw, 22rem), 82vw"
+    fetchpriority="high"
+  />
 
-  <!-- Placeholder for the hero carousel (Phase 2). -->
-  <div class="shell mt-14">
-    <div class="aspect-[3/2] rounded-2xl bg-base-300 md:aspect-[21/9]"></div>
-  </div>
+  <section class="pt-14 md:pt-20" data-hero>
+    <div class="shell text-center" data-hero-heading>
+      <h1 class="mx-auto max-w-4xl text-display">{tr('home.hero')}</h1>
+      <a
+        href="#intro"
+        class="mt-8 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-[0.9375rem] font-medium text-primary-content transition-opacity hover:opacity-85"
+      >
+        {tr('home.explore')} <span aria-hidden="true">↓</span>
+      </a>
+    </div>
+    <div class="shell mt-12 md:mt-16" data-hero-frames>
+      <HeroCarousel locale={locale} slides={heroSlides} />
+    </div>
+  </section>
 
   <section id="intro" class="shell py-section text-center">
     <p class="mx-auto max-w-5xl text-headline font-semibold">
       {
         tr('home.statement').map((line) => (
-          <span class="block">
+          <span class="block" data-statement-line>
             <em class="text-muted">{line.lead}</em> {line.text}
           </span>
         ))
@@ -45,7 +56,12 @@ const tiles = [f.weddings, f['concerts-sports'], f.photoshoots, f.weddings, f['c
   </section>
 
   <section class="shell">
-    <StoryCard heading={tr('home.story.heading')} text={tr('home.story.text')} />
+    <StoryCard
+      heading={tr('home.story.heading')}
+      text={tr('home.story.text')}
+      image={storyImages.story.src}
+      alt={tr(`home.alt.${storyImages.story.alt}`)}
+    />
   </section>
 
   <section class="shell pt-section">
@@ -64,6 +80,17 @@ const tiles = [f.weddings, f['concerts-sports'], f.photoshoots, f.weddings, f['c
       heading={tr('home.meet.heading')}
       text={tr('home.meet.text')}
       link={{ href: localizedPath(locale, routes.about), label: tr('home.meet.link') }}
+      image={storyImages.meet.src}
+      alt={tr(`home.alt.${storyImages.meet.alt}`)}
     />
   </section>
 </BaseLayout>
+
+<script>
+  // Scroll animations are an enhancement: load GSAP only after the page is idle,
+  // and not at all when the visitor prefers reduced motion.
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const load = () => import('../../scripts/home-scroll.js').then((m) => m.initHomeScroll());
+    'requestIdleCallback' in window ? requestIdleCallback(load, { timeout: 1500 }) : setTimeout(load, 300);
+  }
+</script>
