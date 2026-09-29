@@ -23,7 +23,7 @@ This is a collaboration. We design and build this together from scratch. Do not 
 - **Scroll and page animation:** GSAP + ScrollTrigger (free, lightweight) for scroll-linked hero and section transitions.
 - **UI micro-interactions:** Motion (motion.dev) only where GSAP would be overkill (hover, menu open/close, lightbox transitions).
 - **Smooth scroll:** Lenis, only if it demonstrably improves feel and doesn't hurt mobile performance. Ask before adding.
-- **Lightbox:** PhotoSwipe (touch gestures, zoom, keyboard, accessible).
+- **Lightbox:** PhotoSwipe v5 (touch gestures, zoom, keyboard, accessible). Core loads on Moment pages; the viewer is fetched on first open.
 - **Carousels:** prefer a tiny dependency or native CSS scroll-snap. Ask before adding a library.
 - **Moments (blog + galleries):** Astro Content Collections with MDX, one file per event per language in `src/content/moments/{en,bg}/`, sharing a `translationKey`. Each entry is a short story plus its gallery; filterable by category (Weddings / Photoshoots / Concerts & Sports).
 - **i18n:** Astro's built-in i18n routing. Locales: `en` (default) and `bg`, routes `/en/...` and `/bg/...` (same slugs in both). All strings in `src/i18n/en.json` and `src/i18n/bg.json`, read via `t()` / `useT()` from `src/i18n/index.js`; the build fails if a key is missing or the two files differ. Shared numbers (prices, hours) live in `src/data/`. Include `hreflang` tags and a language switcher that keeps the user on the equivalent page.
@@ -191,6 +191,10 @@ public/           # static assets only
 - [x] Only images the site uses are committed (copied into `src/assets/`); `/images` stays git-ignored
 - [x] GSAP + ScrollTrigger load lazily on the home page only, never under reduced motion
 - [x] Stylesheets are inlined (`build.inlineStylesheets: 'always'`) for LCP; revisit if CSS grows past ~15 KB gzipped
+- [x] Moments categories: Weddings · Christenings · Photoshoots · Concerts · Sports; a Moment can have several (`categories:` list in frontmatter, schema in `src/content.config.js`)
+- [x] Moments photos are curated (~15–20 per event) in `scripts/moments.manifest.json` and imported with `node scripts/import-moments.mjs` (2048px, JPEG q82) into `src/assets/moments/<slug>/`. To swap photos: edit the manifest, re-run the script
+- [x] Moment pages: masonry (CSS columns), PhotoSwipe lightbox themed to the page greys, "More moments" scroll-snap row
+- [x] Page transitions: native cross-document View Transitions (`@view-transition` in global.css), no ClientRouter; a Moment's cover and title morph via `view-transition-name`. Names must stay unique per page
 
 ### Still open
 - [ ] Exact grey scales for light/dark palettes (propose options)

@@ -12,7 +12,9 @@ export { localeStaticPaths as getStaticPaths } from '../../i18n/paths.js';
 const { locale } = Astro.params;
 const tr = useT(locale);
 const momentsHref = localizedPath(locale, routes.moments);
-const tiles = bentoTiles.map((t) => ({ src: t.src, alt: tr(`home.alt.${t.alt}`), href: momentsHref }));
+// The bento photos come from Elena Madlena & Asen's wedding, so the tiles open that Moment.
+const bentoHref = `${momentsHref}elena-madlena-and-asen/`;
+const tiles = bentoTiles.map((t) => ({ src: t.src, alt: tr(`home.alt.${t.alt}`), href: bentoHref }));
 
 // Preload the first hero frame (the LCP image) with the same srcset the carousel uses.
 const lcp = await getImage({ src: heroSlides[0].src, widths: [320, 480, 640, 800, 1000, 1200] });

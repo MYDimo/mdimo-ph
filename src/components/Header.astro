@@ -15,7 +15,7 @@ const links = ['moments', 'services', 'about', 'contact'].map((id) => ({
 const isCurrent = (href) => path.startsWith(href);
 ---
 
-<header class="sticky top-0 z-40 bg-base-200/80 backdrop-blur-xl backdrop-saturate-150">
+<header data-site-header class="sticky top-0 z-40 bg-base-200/80 backdrop-blur-xl backdrop-saturate-150">
   <div class="shell flex h-16 items-center justify-between gap-6 md:h-18">
     <a href={localizedPath(locale)} class="-m-2 rounded-full p-2 text-base-content" aria-label={tr('site.name')}>
       <Logo class="h-[1.925rem] w-auto md:h-[2.2rem]" aria-hidden="true" />
