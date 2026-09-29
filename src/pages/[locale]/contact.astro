@@ -1,0 +1,15 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageIntro from '../../components/PageIntro.astro';
+import { useT } from '../../i18n/index.js';
+export { localeStaticPaths as getStaticPaths } from '../../i18n/paths.js';
+
+const { locale } = Astro.params;
+const tr = useT(locale);
+---
+
+<BaseLayout locale={locale} title={tr('contact.title')}>
+  <section class="shell pt-16 md:pt-24">
+    <PageIntro heading={tr('contact.heading')} text={tr('contact.text')} />
+  </section>
+</BaseLayout>

@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PageIntro from '../../../components/PageIntro.astro';
+import { useT } from '../../../i18n/index.js';
+export { localeStaticPaths as getStaticPaths } from '../../../i18n/paths.js';
+
+const { locale } = Astro.params;
+const tr = useT(locale);
+const filters = Object.values(tr('moments.filters'));
+---
+
+<BaseLayout locale={locale} title={tr('moments.title')}>
+  <section class="shell pt-16 md:pt-24">
+    <PageIntro heading={tr('moments.heading')} text={tr('moments.text')} />
+    <!-- Filters and entries arrive in Phase 3. -->
+    <ul class="mt-10 flex flex-wrap gap-2" aria-hidden="true">
+      {filters.map((f, i) => (
+        <li class:list={['rounded-full px-4 py-2 text-sm', i === 0 ? 'bg-primary text-primary-content' : 'bg-base-100 text-muted']}>{f}</li>
+      ))}
+    </ul>
+    <div class="mt-8 grid gap-4 md:grid-cols-3">
+      {[1, 2, 3].map(() => <div class="aspect-[4/5] rounded-xl bg-base-300"></div>)}
+    </div>
+  </section>
+</BaseLayout>

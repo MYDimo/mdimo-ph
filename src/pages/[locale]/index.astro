@@ -1,0 +1,37 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { useT, localizedPath, routes } from '../../i18n/index.js';
+export { localeStaticPaths as getStaticPaths } from '../../i18n/paths.js';
+
+const { locale } = Astro.params;
+const tr = useT(locale);
+---
+
+<BaseLayout locale={locale} title={tr('home.title')}>
+  <section class="shell pt-16 text-center md:pt-24">
+    <h1 class="mx-auto max-w-4xl text-display">{tr('home.hero')}</h1>
+    <a
+      href={localizedPath(locale, routes.moments)}
+      class="mt-8 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-[0.9375rem] font-medium text-primary-content transition-opacity hover:opacity-85"
+    >
+      {tr('home.explore')} <span aria-hidden="true">↓</span>
+    </a>
+  </section>
+
+  <!-- Placeholder for the hero carousel (Phase 2). -->
+  <div class="shell mt-14">
+    <div class="aspect-[3/2] rounded-2xl bg-base-300 md:aspect-[21/9]"></div>
+  </div>
+
+  <section class="shell py-section text-center">
+    <p class="mx-auto max-w-3xl text-headline font-semibold">
+      {
+        tr('home.statement').map((line) => (
+          <span class="block">
+            <em class="text-muted">{line.lead}</em> {line.text}
+          </span>
+        ))
+      }
+    </p>
+  </section>
+</BaseLayout>
