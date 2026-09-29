@@ -12,7 +12,9 @@ const { title, date, categories } = entry.data;
 
 <article class="group" data-categories={categories.join(' ')}>
   <a href={`${localizedPath(locale, routes.moments)}${slug}/`} class="block">
-    <div class="aspect-[4/5] overflow-hidden rounded-xl bg-base-300">
+    <!-- The transition name sits on the rounded, clipping box (not the <img>) so the
+         snapshot that morphs between pages keeps its rounded corners. -->
+    <div class="aspect-[4/5] overflow-hidden rounded-xl bg-base-300" style={`view-transition-name: moment-cover-${slug}`}>
       <Image
         src={cover}
         alt=""
@@ -21,7 +23,6 @@ const { title, date, categories } = entry.data;
         loading={eager ? 'eager' : 'lazy'}
         fetchpriority={priority ? 'high' : undefined}
         class="size-full object-cover object-top transition-transform duration-700 ease-soft group-hover:scale-[1.03]"
-        style={`view-transition-name: moment-cover-${slug}`}
       />
     </div>
     <h2 class="mt-4 text-title font-semibold" style={`view-transition-name: moment-title-${slug}`}>{title}</h2>

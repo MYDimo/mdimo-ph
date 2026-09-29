@@ -4,14 +4,14 @@ import { render } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import MomentCard from '../../../components/MomentCard.astro';
 import { locales, useT, localizedPath, formatDate, routes } from '../../../i18n/index.js';
-import { getMoments } from '../../../data/moments.js';
+import { getMoments, similarMoments } from '../../../data/moments.js';
 
 export async function getStaticPaths() {
   const paths = [];
   for (const locale of locales) {
     const moments = await getMoments(locale);
     for (const moment of moments) {
-      const more = moments.filter((m) => m !== moment).slice(0, 4);
+      const more = similarMoments(moment, moments);
       paths.push({ params: { locale, slug: moment.slug }, props: { moment, more } });
     }
   }
@@ -61,6 +61,7 @@ const coverIndex = images.indexOf(cover);
         data-pswp-height={full[coverIndex].attributes.height}
         data-cropped="true"
         class="block aspect-[4/5] overflow-hidden rounded-2xl bg-base-300"
+        style={`view-transition-name: moment-cover-${slug}`}
       >
         <Image
           src={cover}
@@ -70,7 +71,6 @@ const coverIndex = images.indexOf(cover);
           loading="eager"
           fetchpriority="high"
           class="size-full object-cover object-top"
-          style={`view-transition-name: moment-cover-${slug}`}
         />
       </a>
     </header>

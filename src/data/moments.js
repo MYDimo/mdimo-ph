@@ -21,3 +21,14 @@ export async function getMoments(locale) {
     })
     .sort((a, b) => b.entry.data.date - a.entry.data.date);
 }
+
+/** Up to 4 other Moments: most shared categories first, then closest in date. */
+export function similarMoments(moment, all) {
+  const cats = moment.entry.data.categories;
+  const shared = (m) => m.entry.data.categories.filter((c) => cats.includes(c)).length;
+  const distance = (m) => Math.abs(m.entry.data.date - moment.entry.data.date);
+  return all
+    .filter((m) => m !== moment)
+    .sort((a, b) => shared(b) - shared(a) || distance(a) - distance(b))
+    .slice(0, 4);
+}
