@@ -1,0 +1,143 @@
+---
+import { Image, getImage } from 'astro:assets';
+import { render } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import MomentCard from '../../../components/MomentCard.astro';
+import { locales, useT, localizedPath, formatDate, routes } from '../../../i18n/index.js';
+import { getMoments } from '../../../data/moments.js';
+
+export async function getStaticPaths() {
+  const paths = [];
+  for (const locale of locales) {
+    const moments = await getMoments(locale);
+    for (const moment of moments) {
+      const more = moments.filter((m) => m !== moment).slice(0, 4);
+      paths.push({ params: { locale, slug: moment.slug }, props: { moment, more } });
+    }
+  }
+  return paths;
+}
+
+const { locale } = Astro.params;
+const { moment, more } = Astro.props;
+const tr = useT(locale);
+const { entry, slug, images, cover } = moment;
+const { title, date, categories, location } = entry.data;
+const { Content } = await render(entry);
+
+const total = images.length;
+const alt = (i) => tr('moments.photoAlt', { title, n: i + 1, total });
+// Full-size versions for the lightbox (the imported files are already ≤2048px).
+const full = await Promise.all(images.map((src) => getImage({ src, width: src.width, format: 'webp', quality: 82 })));
+const coverIndex = images.indexOf(cover);
+---
+
+<BaseLayout locale={locale} title={title}>
+  <article
+    data-gallery
+    data-lb-close={tr('moments.lightbox.close')}
+    data-lb-zoom={tr('moments.lightbox.zoom')}
+    data-lb-prev={tr('moments.lightbox.prev')}
+    data-lb-next={tr('moments.lightbox.next')}
+    data-lb-error={tr('moments.lightbox.error')}
+  >
+    <header class="shell grid items-end gap-8 pt-10 md:grid-cols-2 md:gap-12 md:pt-16">
+      <div class="md:pb-4">
+        <a href={localizedPath(locale, routes.moments)} class="text-sm text-muted underline-offset-4 hover:text-base-content hover:underline">
+          <span aria-hidden="true">←</span> {tr('moments.back')}
+        </a>
+        <p class="eyebrow mt-8">
+          {categories.map((c) => tr(`moments.filters.${c}`)).join(' · ')} · {formatDate(locale, date, { month: 'long', year: 'numeric' })}
+          {location && ` · ${location}`}
+        </p>
+        <h1 class="mt-3 text-display" style={`view-transition-name: moment-title-${slug}`}>{title}</h1>
+        <div class="prose-moment mt-6 max-w-lg text-muted"><Content /></div>
+        <p class="mt-6 text-sm text-muted">{tr('moments.photos', { n: total })}</p>
+      </div>
+      <a
+        href={full[coverIndex].src}
+        data-pswp
+        data-pswp-width={full[coverIndex].attributes.width}
+        data-pswp-height={full[coverIndex].attributes.height}
+        data-cropped="true"
+        class="block aspect-[4/5] overflow-hidden rounded-2xl bg-base-300"
+      >
+        <Image
+          src={cover}
+          alt={alt(coverIndex)}
+          widths={[480, 640, 800, 1000, 1200]}
+          sizes="(min-width: 768px) 36rem, 92vw"
+          loading="eager"
+          fetchpriority="high"
+          class="size-full object-cover object-top"
+          style={`view-transition-name: moment-cover-${slug}`}
+        />
+      </a>
+    </header>
+
+    <!-- Masonry: CSS columns keep every photo uncropped at its natural shape. -->
+    <div class="shell pt-section">
+      <div class="columns-2 gap-3 md:columns-3 md:gap-4">
+        {
+          images.map((src, i) =>
+            i === coverIndex ? null : (
+              <a
+                href={full[i].src}
+                data-pswp
+                data-pswp-width={full[i].attributes.width}
+                data-pswp-height={full[i].attributes.height}
+                class="mb-3 block break-inside-avoid overflow-hidden rounded-lg bg-base-300 md:mb-4"
+              >
+                <Image
+                  src={src}
+                  alt={alt(i)}
+                  widths={[320, 480, 640, 800, 1000]}
+                  sizes="(min-width: 768px) min(31vw, 24rem), 46vw"
+                  class="w-full transition-transform duration-700 ease-soft hover:scale-[1.02]"
+                />
+              </a>
+            ),
+          )
+        }
+      </div>
+    </div>
+  </article>
+
+  {
+    more.length > 0 && (
+      <section class="shell pt-section">
+        <h2 class="text-headline">{tr('moments.more')}</h2>
+        {/* Native scroll-snap row: swipe on touch, scroll with trackpad; no library. */}
+        <div class="more-row mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2">
+          {more.map((m) => (
+            <div class="w-[72%] shrink-0 snap-start sm:w-[40%] lg:w-[calc((100%-3rem)/4)]">
+              <MomentCard locale={locale} moment={m} sizes="(min-width: 1024px) 18rem, 72vw" />
+            </div>
+          ))}
+        </div>
+      </section>
+    )
+  }
+</BaseLayout>
+
+<style>
+  .prose-moment :global(p + p) { margin-top: 1em; }
+  .more-row { scrollbar-width: none; }
+  .more-row::-webkit-scrollbar { display: none; }
+
+  /* Lightbox: same tonal world as the page instead of a black void. */
+  :global(:root .pswp) {
+    --pswp-bg: var(--color-base-200);
+    --pswp-icon-color: var(--color-base-content);
+    --pswp-icon-color-secondary: var(--color-base-200);
+    --pswp-icon-stroke-color: var(--color-base-200);
+    --pswp-placeholder-bg: var(--color-base-300);
+  }
+  :global(.pswp__img) { border-radius: var(--radius-lg); }
+  :global(.pswp__counter) { color: var(--muted); text-shadow: none; }
+</style>
+
+<script>
+  import { initLightbox } from '../../../scripts/lightbox.js';
+  document.querySelectorAll('[data-gallery]').forEach(initLightbox);
+</script>

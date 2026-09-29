@@ -1,25 +1,68 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import PageIntro from '../../../components/PageIntro.astro';
+import MomentCard from '../../../components/MomentCard.astro';
 import { useT } from '../../../i18n/index.js';
+import { getMoments } from '../../../data/moments.js';
+import { categories } from '../../../content.config.js';
 export { localeStaticPaths as getStaticPaths } from '../../../i18n/paths.js';
 
 const { locale } = Astro.params;
 const tr = useT(locale);
-const filters = Object.values(tr('moments.filters'));
+const moments = await getMoments(locale);
+// Only offer filters for categories that actually have Moments.
+const used = categories.filter((c) => moments.some((m) => m.entry.data.categories.includes(c)));
 ---
 
 <BaseLayout locale={locale} title={tr('moments.title')}>
   <section class="shell pt-16 md:pt-24">
     <PageIntro heading={tr('moments.heading')} text={tr('moments.text')} />
-    <!-- Filters and entries arrive in Phase 3. -->
-    <ul class="mt-10 flex flex-wrap gap-2" aria-hidden="true">
-      {filters.map((f, i) => (
-        <li class:list={['rounded-full px-4 py-2 text-sm', i === 0 ? 'bg-primary text-primary-content' : 'bg-base-100 text-muted']}>{f}</li>
-      ))}
-    </ul>
-    <div class="mt-8 grid gap-4 md:grid-cols-3">
-      {[1, 2, 3].map(() => <div class="aspect-[4/5] rounded-xl bg-base-300"></div>)}
+
+    <!-- Filter chips: invisible (but taking their space, so nothing shifts) until the script
+         runs; without JS every Moment simply shows. -->
+    <div class="invisible mt-10 flex flex-wrap gap-2" role="group" aria-label={tr('moments.filterLabel')} data-filters>
+      {
+        ['all', ...used].map((c) => (
+          <button
+            type="button"
+            class="filter-chip rounded-full px-4 py-2 text-sm font-medium transition-colors"
+            data-filter={c}
+            aria-pressed={c === 'all' ? 'true' : 'false'}
+          >
+            {tr(`moments.filters.${c}`)}
+          </button>
+        ))
+      }
+    </div>
+
+    <div class="mt-8 grid gap-x-4 gap-y-10 sm:grid-cols-2 lg:grid-cols-3" data-moments>
+      {moments.map((m, i) => <MomentCard locale={locale} moment={m} eager={i === 0} priority={i === 0} />)}
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  .filter-chip { background: var(--color-base-100); color: var(--muted); }
+  .filter-chip:hover { color: var(--color-base-content); }
+  .filter-chip[aria-pressed='true'] { background: var(--color-primary); color: var(--color-primary-content); }
+</style>
+
+<script>
+  const bar = document.querySelector('[data-filters]');
+  const cards = document.querySelectorAll('[data-moments] > [data-categories]');
+  const chips = bar.querySelectorAll('[data-filter]');
+
+  function apply(filter) {
+    chips.forEach((chip) => chip.setAttribute('aria-pressed', String(chip.dataset.filter === filter)));
+    cards.forEach((card) => {
+      card.hidden = filter !== 'all' && !card.dataset.categories.split(' ').includes(filter);
+    });
+    // Keep the choice in the URL (e.g. #weddings) so it survives back/forward and can be shared.
+    history.replaceState(null, '', filter === 'all' ? location.pathname : `#${filter}`);
+  }
+
+  chips.forEach((chip) => chip.addEventListener('click', () => apply(chip.dataset.filter)));
+  const initial = location.hash.slice(1);
+  apply([...chips].some((c) => c.dataset.filter === initial) ? initial : 'all');
+  bar.classList.remove('invisible');
+</script>

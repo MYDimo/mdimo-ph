@@ -1,0 +1,32 @@
+---
+// Cover card for a Moment. The cover and title carry view-transition names so
+// they morph into the Moment page header when the card is opened.
+import { Image } from 'astro:assets';
+import { useT, localizedPath, formatDate, routes } from '../i18n/index.js';
+
+const { locale, moment, sizes = '(min-width: 1024px) 24rem, (min-width: 640px) 46vw, 92vw', eager = false, priority = false } = Astro.props;
+const tr = useT(locale);
+const { entry, slug, cover } = moment;
+const { title, date, categories } = entry.data;
+---
+
+<article class="group" data-categories={categories.join(' ')}>
+  <a href={`${localizedPath(locale, routes.moments)}${slug}/`} class="block">
+    <div class="aspect-[4/5] overflow-hidden rounded-xl bg-base-300">
+      <Image
+        src={cover}
+        alt=""
+        widths={[320, 480, 640, 800, 1000]}
+        sizes={sizes}
+        loading={eager ? 'eager' : 'lazy'}
+        fetchpriority={priority ? 'high' : undefined}
+        class="size-full object-cover object-top transition-transform duration-700 ease-soft group-hover:scale-[1.03]"
+        style={`view-transition-name: moment-cover-${slug}`}
+      />
+    </div>
+    <h2 class="mt-4 text-title font-semibold" style={`view-transition-name: moment-title-${slug}`}>{title}</h2>
+    <p class="mt-1 text-sm text-muted">
+      {categories.map((c) => tr(`moments.filters.${c}`)).join(' · ')} · {formatDate(locale, date, { month: 'long', year: 'numeric' })}
+    </p>
+  </a>
+</article>
