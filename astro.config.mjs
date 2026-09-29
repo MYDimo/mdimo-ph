@@ -15,5 +15,9 @@ export default defineConfig({
     routing: { prefixDefaultLocale: true },
   },
   integrations: [mdx()],
-  vite: { plugins: [tailwindcss()] },
+  vite: {
+    plugins: [tailwindcss()],
+    // GSAP is imported lazily; pre-bundle it so the dev server never serves a stale copy.
+    optimizeDeps: { include: ['gsap', 'gsap/ScrollTrigger'] },
+  },
 });

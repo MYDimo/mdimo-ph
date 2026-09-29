@@ -44,11 +44,17 @@ const lcp = await getImage({ src: heroSlides[0].src, widths: [320, 480, 640, 800
   </section>
 
   <section id="intro" class="shell py-section text-center">
-    <p class="mx-auto max-w-5xl text-headline font-semibold">
+    <p class="mx-auto max-w-5xl text-headline font-semibold" data-statement>
       {
         tr('home.statement').map((line) => (
-          <span class="block" data-statement-line>
-            <em class="text-muted">{line.lead}</em> {line.text}
+          <span class="block">
+            {/* Each word sits in its own clipping mask so it can rise into view (see home-scroll.js). */}
+            <span class="stmt-word"><em class="text-muted" data-word data-lead>{line.lead}</em></span>{' '}
+            {line.text.split(' ').map((word) => (
+              <>
+                <span class="stmt-word"><span data-word>{word}</span></span>{' '}
+              </>
+            ))}
           </span>
         ))
       }
@@ -85,6 +91,18 @@ const lcp = await getImage({ src: heroSlides[0].src, widths: [320, 480, 640, 800
     />
   </section>
 </BaseLayout>
+
+<style>
+  /* Word mask for the statement reveal; the padding keeps descenders and italics unclipped. */
+  .stmt-word {
+    display: inline-block;
+    overflow: clip;
+    padding: 0 0.08em 0.14em;
+    margin: 0 -0.08em -0.14em;
+    vertical-align: bottom;
+  }
+  .stmt-word > * { display: inline-block; }
+</style>
 
 <script>
   // Scroll animations are an enhancement: load GSAP only after the page is idle,

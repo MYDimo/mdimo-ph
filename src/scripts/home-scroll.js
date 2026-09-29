@@ -17,18 +17,24 @@ export function initHomeScroll() {
     gsap.to('[data-hero-frames]', { scale: 0.94, opacity: 0.6, ease: 'none', scrollTrigger: out });
   }
 
-  //    The "from / through / to" lines appear one after another, tied to
-  //    scroll position, so the sentence is read at the pace of the scroll.
-  //    (They start fully transparent rather than dimmed, so a half-revealed line
-  //    is never read as low-contrast text.)
-  const lines = gsap.utils.toArray('[data-statement-line]');
-  if (lines.length) {
-    gsap.from(lines, {
-      opacity: 0,
-      y: 24,
-      stagger: 0.35,
-      ease: 'power1.out',
-      scrollTrigger: { trigger: lines[0].parentElement, start: 'top 85%', end: 'bottom 55%', scrub: 0.6 },
+  //    Statement: "from / through / to …" plays once as it comes into view.
+  //    Every word rises out of its own mask in reading order with a slight tilt
+  //    settling flat; the grey italic lead words also slide in from the left, so
+  //    each line visibly starts with its from / through / to.
+  const statement = document.querySelector('[data-statement]');
+  if (statement) {
+    const words = statement.querySelectorAll('[data-word]');
+    gsap.set(words, { yPercent: 115, rotate: 4, opacity: 0, transformOrigin: '0% 100%' });
+    gsap.set(statement.querySelectorAll('[data-lead]'), { x: -24 });
+    gsap.to(words, {
+      yPercent: 0,
+      rotate: 0,
+      x: 0,
+      opacity: 1,
+      duration: 1.1,
+      ease: 'power4.out',
+      stagger: 0.055,
+      scrollTrigger: { trigger: statement, start: 'top 78%', once: true },
     });
   }
 
