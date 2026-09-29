@@ -4,3 +4,6 @@ dist/
 .netlify/
 .env
 .DS_Store
+images/
+*.pdf
+some content from framer/
