@@ -17,6 +17,10 @@
     "astro": "^7.3.5",
     "daisyui": "^5.7.46",
     "gsap": "^3.15.0",
+    "photoswipe": "^5.4.4",
     "tailwindcss": "^4.3.3"
+  },
+  "devDependencies": {
+    "sharp": "^0.35.5"
   }
 }
