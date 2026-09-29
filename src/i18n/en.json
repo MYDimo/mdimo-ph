@@ -1,0 +1,164 @@
+{
+  "site": {
+    "name": "Mihaylo Dimo",
+    "description": "Wedding, portrait, event and sports photography in Sofia, across Bulgaria and worldwide."
+  },
+  "nav": {
+    "label": "Main",
+    "home": "Home",
+    "moments": "Moments",
+    "services": "Services",
+    "about": "About",
+    "contact": "Contact",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "skip": "Skip to content"
+  },
+  "theme": {
+    "toggle": "Dark theme"
+  },
+  "lang": {
+    "switch": "Language",
+    "en": "English",
+    "bg": "Български"
+  },
+  "footer": {
+    "cta": "Planning something? Let's talk.",
+    "ctaLink": "Get in touch",
+    "rights": "All rights reserved."
+  },
+  "units": {
+    "perHour": "/ hour",
+    "hours": "{n} hours",
+    "upToHours": "up to {n} hours",
+    "minHours": "min. {n} hours"
+  },
+  "home": {
+    "title": "Wedding, portrait & event photographer",
+    "hero": "The moments you'll want to live again.",
+    "explore": "Explore",
+    "statement": [
+      { "lead": "from", "text": "the smallest details," },
+      { "lead": "through", "text": "the smiles and emotions," },
+      { "lead": "to", "text": "the memories that stay." }
+    ]
+  },
+  "services": {
+    "title": "Services & pricing",
+    "intro": {
+      "eyebrow": "01 / Weddings · Portraits · Events",
+      "heading": "Capturing Timeless Stories",
+      "text": "Professional wedding, portrait & event photography in Bulgaria & worldwide.",
+      "cta": "View packages & pricing"
+    },
+    "weddings": {
+      "eyebrow": "02 / Wedding collections",
+      "heading": "Transparent pricing, tailored to your day.",
+      "text": "Two considered ways to document the people, atmosphere, and small in-between moments that make your celebration yours.",
+      "includes": "Includes",
+      "overtime": "Overtime",
+      "recommended": "Recommended",
+      "packages": {
+        "essential": {
+          "name": "Essential / Intimate",
+          "summary": "Ideal for small weddings, civil ceremonies, or short receptions.",
+          "items": [
+            "Pre-wedding consultation & schedule planning",
+            "350+ hand-edited, high-resolution colour-graded photos",
+            "Sneak-peek gallery within 48 hours",
+            "Private password-protected gallery for 6 months"
+          ]
+        },
+        "signature": {
+          "name": "Full Day / Signature",
+          "summary": "From getting ready through the main party & cake cutting.",
+          "items": [
+            "Pre-wedding consultation & venue walkthrough",
+            "800+ hand-edited, high-resolution colour-graded photos",
+            "Express sneak-peek gallery within 48 hours",
+            "Private Pic-Time gallery for 1 year + mobile app",
+            "15% off custom luxury photobooks"
+          ]
+        }
+      }
+    },
+    "more": {
+      "eyebrow": "03 / More ways to remember",
+      "heading": "For every chapter around the celebration.",
+      "items": {
+        "christening": {
+          "name": "Christening",
+          "text": "Church ceremony, immediate family portraits, and first reception moments. 100+ fully processed high-resolution images in a private gallery within 2 weeks."
+        },
+        "couple": {
+          "name": "Couple & Love Story Sessions",
+          "text": "Outdoor or location-based portrait shoot for couples and engagements. 40+ retouched high-resolution photos, help choosing a location, delivered within 10 days."
+        },
+        "events": {
+          "name": "Events, Concerts & Sports",
+          "text": "High-energy coverage for concerts, sports, corporate events and live performances. Fast turnaround in 48–72 hours with full-resolution web and press-ready files."
+        }
+      }
+    },
+    "practical": {
+      "heading": "A few practical details.",
+      "items": [
+        { "term": "Travel", "text": "Free within Sofia; {rate}/km for the rest of Bulgaria." },
+        { "term": "Booking", "text": "A 30% deposit is required to secure the date." },
+        { "term": "Delivery", "text": "Your finished gallery arrives through a private online link, with timing depending on the selected collection." }
+      ]
+    }
+  },
+  "inquiry": {
+    "eyebrow": "04 / Start a conversation",
+    "heading": "Tell me what you're planning.",
+    "text": "Share a few details and I'll come back with availability, an honest recommendation, and the next steps.",
+    "fields": {
+      "name": "Your name(s)",
+      "email": "Email",
+      "phone": "Phone (optional)",
+      "date": "Date",
+      "service": "Service",
+      "location": "Location / venue",
+      "message": "Tell me a little about your plans…"
+    },
+    "serviceOptions": {
+      "wedding": "Wedding collections",
+      "christening": "Christening",
+      "couple": "Couple & Love Story session",
+      "events": "Events, concerts & sports",
+      "other": "Something else"
+    },
+    "note": "A 30% deposit secures your date. I'll reply within 2 business days.",
+    "submit": "Send inquiry",
+    "sending": "Sending…",
+    "success": "Thank you! Your inquiry is on its way. I'll reply within 2 business days.",
+    "error": "Something went wrong. Please try again, or write to me directly."
+  },
+  "about": {
+    "title": "About",
+    "heading": "Lorem ipsum dolor sit amet.",
+    "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Donec ullamcorper nulla non metus auctor fringilla."
+  },
+  "moments": {
+    "title": "Moments",
+    "heading": "Moments",
+    "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Stories and galleries from recent weddings, photoshoots, concerts and races.",
+    "filters": {
+      "all": "All",
+      "weddings": "Weddings",
+      "photoshoots": "Photoshoots",
+      "concerts-sports": "Concerts & Sports"
+    }
+  },
+  "contact": {
+    "title": "Contact",
+    "heading": "Tell me what you're planning.",
+    "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras mattis consectetur purus sit amet fermentum."
+  },
+  "notFound": {
+    "title": "Page not found",
+    "text": "This page doesn't exist. Let's get you back.",
+    "home": "Back to home"
+  }
+}
