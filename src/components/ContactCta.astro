@@ -1,0 +1,19 @@
+---
+import { useT, localizedPath, routes } from '../i18n/index.js';
+
+const { locale } = Astro.props;
+const tr = useT(locale);
+---
+
+<section class="shell pt-section">
+  <div class="rounded-2xl bg-base-100 px-6 py-12 text-center md:px-12 md:py-16">
+    <p class="text-title font-semibold">{tr('contactCta.text')}</p>
+    <a
+      href={localizedPath(locale, routes.contact)}
+      class="mt-6 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-[0.9375rem] font-medium text-primary-content transition-opacity hover:opacity-85"
+    >
+      {tr('contactCta.link')}
+      <span aria-hidden="true">→</span>
+    </a>
+  </div>
+</section>

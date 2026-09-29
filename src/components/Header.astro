@@ -18,7 +18,7 @@ const isCurrent = (href) => path.startsWith(href);
 <header class="sticky top-0 z-40 bg-base-200/80 backdrop-blur-xl backdrop-saturate-150">
   <div class="shell flex h-16 items-center justify-between gap-6 md:h-18">
     <a href={localizedPath(locale)} class="-m-2 rounded-full p-2 text-base-content" aria-label={tr('site.name')}>
-      <Logo class="h-7 w-auto md:h-8" aria-hidden="true" />
+      <Logo class="h-[1.925rem] w-auto md:h-[2.2rem]" aria-hidden="true" />
     </a>
 
     <nav aria-label={tr('nav.label')} class="hidden md:block">
@@ -47,13 +47,13 @@ const isCurrent = (href) => path.startsWith(href);
       <ThemeToggle locale={locale} />
       <button
         type="button"
-        class="grid size-10 place-items-center rounded-full transition-colors hover:bg-base-300/70 md:hidden"
+        class="grid size-11 place-items-center rounded-full transition-colors hover:bg-base-300/70 md:hidden"
         aria-label={tr('nav.openMenu')}
         aria-haspopup="dialog"
         aria-controls="mobile-menu"
         data-menu-open
       >
-        <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+        <svg class="size-[1.375rem]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
           <path d="M4 8h16M4 16h16"></path>
         </svg>
       </button>
@@ -67,12 +67,12 @@ const isCurrent = (href) => path.startsWith(href);
         <LanguageSwitcher locale={locale} />
         <button
           type="button"
-          class="grid size-10 place-items-center rounded-full hover:bg-base-300/70"
+          class="grid size-11 place-items-center rounded-full hover:bg-base-300/70"
           aria-label={tr('nav.closeMenu')}
           autofocus
           data-menu-close
         >
-          <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+          <svg class="size-[1.375rem]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
             <path d="M6 6l12 12M18 6 6 18"></path>
           </svg>
         </button>

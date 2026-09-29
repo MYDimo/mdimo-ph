@@ -1,17 +1,26 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageIntro from '../../components/PageIntro.astro';
+import StoryCard from '../../components/StoryCard.astro';
+import BentoGrid from '../../components/BentoGrid.astro';
 import { useT, localizedPath, routes } from '../../i18n/index.js';
 export { localeStaticPaths as getStaticPaths } from '../../i18n/paths.js';
 
 const { locale } = Astro.params;
 const tr = useT(locale);
+const momentsHref = localizedPath(locale, routes.moments);
+const f = tr('moments.filters');
+// Placeholder tiles; real images + links to individual Moments come in Phase 2/3.
+const tiles = [f.weddings, f['concerts-sports'], f.photoshoots, f.weddings, f['concerts-sports'], f.weddings].map(
+  (label) => ({ label, href: momentsHref }),
+);
 ---
 
 <BaseLayout locale={locale} title={tr('home.title')}>
   <section class="shell pt-16 text-center md:pt-24">
     <h1 class="mx-auto max-w-4xl text-display">{tr('home.hero')}</h1>
     <a
-      href={localizedPath(locale, routes.moments)}
+      href="#intro"
       class="mt-8 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-[0.9375rem] font-medium text-primary-content transition-opacity hover:opacity-85"
     >
       {tr('home.explore')} <span aria-hidden="true">↓</span>
@@ -23,8 +32,8 @@ const tr = useT(locale);
     <div class="aspect-[3/2] rounded-2xl bg-base-300 md:aspect-[21/9]"></div>
   </div>
 
-  <section class="shell py-section text-center">
-    <p class="mx-auto max-w-3xl text-headline font-semibold">
+  <section id="intro" class="shell py-section text-center">
+    <p class="mx-auto max-w-5xl text-headline font-semibold">
       {
         tr('home.statement').map((line) => (
           <span class="block">
@@ -33,5 +42,28 @@ const tr = useT(locale);
         ))
       }
     </p>
+  </section>
+
+  <section class="shell">
+    <StoryCard heading={tr('home.story.heading')} text={tr('home.story.text')} />
+  </section>
+
+  <section class="shell pt-section">
+    <div class="mb-10 flex flex-wrap items-end justify-between gap-6">
+      <PageIntro as="h2" eyebrow={tr('home.selected.eyebrow')} heading={tr('home.selected.heading')} />
+      <a href={momentsHref} class="inline-flex items-center gap-2 font-medium underline-offset-4 hover:underline">
+        {tr('home.selected.link')} <span aria-hidden="true">→</span>
+      </a>
+    </div>
+    <BentoGrid tiles={tiles} />
+  </section>
+
+  <section class="shell pt-section">
+    <StoryCard
+      reverse
+      heading={tr('home.meet.heading')}
+      text={tr('home.meet.text')}
+      link={{ href: localizedPath(locale, routes.about), label: tr('home.meet.link') }}
+    />
   </section>
 </BaseLayout>

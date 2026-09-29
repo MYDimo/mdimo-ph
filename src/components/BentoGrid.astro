@@ -1,0 +1,29 @@
+---
+/*
+ * Selected-work bento. Six tiles on a 2-col (mobile) / 4-col (desktop) grid:
+ *   [ big 2x2 ][ tall ][ sq ]
+ *   [        ][      ][ sq ]
+ *   [   wide    ][   wide   ]
+ * Tiles are placeholders until images are chosen in Phase 2.
+ */
+const { tiles } = Astro.props; // [{ label, href }]
+const shapes = ['col-span-2 row-span-2', 'row-span-2', '', '', 'col-span-2', 'col-span-2'];
+---
+
+<ul class="grid auto-rows-[10.5rem] grid-cols-2 gap-3 md:auto-rows-[15rem] md:grid-cols-4 md:gap-4">
+  {
+    tiles.slice(0, shapes.length).map((tile, i) => (
+      <li class:list={[shapes[i]]}>
+        <a
+          href={tile.href}
+          class="group relative block h-full overflow-hidden rounded-xl bg-base-300 transition-transform duration-500 ease-soft hover:scale-[0.985]"
+        >
+          <slot name={`tile-${i}`} />
+          <span class="absolute bottom-3 left-3 rounded-full bg-base-100/85 px-3 py-1.5 text-xs font-medium backdrop-blur">
+            {tile.label}
+          </span>
+        </a>
+      </li>
+    ))
+  }
+</ul>

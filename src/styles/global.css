@@ -12,6 +12,9 @@
     @apply bg-base-200 text-base-content font-sans antialiased;
     -webkit-text-size-adjust: 100%;
     text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+    /* Anchor targets clear the sticky header. */
+    scroll-padding-top: 5rem;
   }
   body {
     @apply text-body min-h-dvh flex flex-col;
