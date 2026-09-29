@@ -59,6 +59,7 @@ Do not add a dependency without stating what it is, why it's needed, and its siz
 - Use something like: `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif` (and the equivalent `system-ui` fallbacks). These cover Cyrillic on all major platforms.
 - Create hierarchy with size, weight, and tracking, not with novelty fonts: very large, tight-tracked headlines; comfortable body size and line height; medium-weight small labels.
 - Verify Bulgarian text renders well (long words, wrapping, headline line breaks) in both languages.
+- Keep the Bulgarian-style Cyrillic letterforms ("т" like *m*, "д" like *g*) that Apple's system font applies under `lang="bg"`; the user likes them. Don't override `locl`.
 
 ### Hero and motion
 - **Hero carousel:** a full-bleed, rounded hero carousel with one short powerful message that stays fixed over/beside the images, followed by a deliberate scroll transition into the next section (in the spirit of adovasio.it).
@@ -184,6 +185,8 @@ public/           # static assets only
 - [x] Base city Sofia; client galleries delivered via Pic-Time
 - [x] Copy source: `homepage-copy.pdf` and `services-copy.pdf` (edited together, stored in `src/i18n/`); About/Moments/Contact text is lorem ipsum until provided
 - [x] Home hero line: "The moments you'll want to live again."
+- [x] Contact CTA block ("Planning something? Let's talk.") appears on About only, not on every page
+- [x] Footer: copyright line only, no repeated logo
 
 ### Still open
 - [ ] Exact grey scales for light/dark palettes (propose options)
