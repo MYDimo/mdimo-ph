@@ -24,7 +24,7 @@ const lcp = await getImage({ src: heroSlides[0].src, widths: [320, 480, 640, 800
     rel="preload"
     as="image"
     imagesrcset={lcp.srcSet.attribute}
-    imagesizes="(min-width: 768px) min(30vw, 22rem), 82vw"
+    imagesizes="(min-width: 768px) 25vw, 82vw"
     fetchpriority="high"
   />
 
@@ -38,7 +38,7 @@ const lcp = await getImage({ src: heroSlides[0].src, widths: [320, 480, 640, 800
         {tr('home.explore')} <span aria-hidden="true">↓</span>
       </a>
     </div>
-    <div class="shell mt-12 md:mt-16" data-hero-frames>
+    <div class="shell mt-12 md:mt-16 md:w-[80vw] md:max-w-none md:px-0" data-hero-frames>
       <HeroCarousel locale={locale} slides={heroSlides} />
     </div>
   </section>

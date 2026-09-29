@@ -11,7 +11,8 @@ import { useT } from '../i18n/index.js';
 const { locale, slides, interval = 6000 } = Astro.props;
 const tr = useT(locale);
 const total = slides.length;
-const sizes = '(min-width: 768px) min(30vw, 22rem), 82vw';
+// Desktop: the row spans 80vw and shows ~3.25 frames, so each frame is ~25vw.
+const sizes = '(min-width: 768px) 25vw, 82vw';
 const widths = [320, 480, 640, 800, 1000, 1200];
 ---
 
