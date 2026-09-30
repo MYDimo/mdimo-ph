@@ -1,18 +1,27 @@
 ---
+import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageIntro from '../../components/PageIntro.astro';
+import InquiryForm from '../../components/InquiryForm.astro';
 import { useT, formatPrice, formatRange, localizedPath, routes } from '../../i18n/index.js';
 import { weddingPackages, moreServices, travelRatePerKm } from '../../data/services.js';
+import { getMoments } from '../../data/moments.js';
 export { localeStaticPaths as getStaticPaths } from '../../i18n/paths.js';
 
 const { locale } = Astro.params;
 const tr = useT(locale);
 const price = (n) => formatPrice(locale, n);
+const moments = await getMoments(locale);
+const momentOf = (slug) => moments.find((m) => m.slug === slug);
+const momentsPath = localizedPath(locale, routes.moments);
 
 const moreMeta = (s) =>
   s.pricePerHour
     ? `${price(s.pricePerHour)} ${tr('units.perHour')} · ${tr('units.minHours', { n: s.minHours })}`
     : `${price(s.price)} · ${tr('units.hours', { n: formatRange(locale, ...s.hours) })}`;
+
+// Links that jump to the form below with the service preselected.
+const bookHref = (service) => `?service=${service}#inquiry`;
 ---
 
 <BaseLayout locale={locale} title={tr('services.title')}>
@@ -30,7 +39,8 @@ const moreMeta = (s) =>
     </PageIntro>
   </section>
 
-  <section id="weddings" class="shell scroll-mt-24 pt-section">
+  <!-- 02 Wedding collections -->
+  <section id="weddings" class="shell pt-section">
     <PageIntro
       as="h2"
       eyebrow={tr('services.weddings.eyebrow')}
@@ -40,7 +50,12 @@ const moreMeta = (s) =>
     <div class="mt-10 grid gap-4 md:grid-cols-2">
       {
         weddingPackages.map((p) => (
-          <article class="flex flex-col rounded-2xl bg-base-100 p-7 md:p-9">
+          <article
+            class:list={[
+              'flex flex-col rounded-2xl bg-base-100 p-7 md:p-9',
+              p.recommended && 'ring-1 ring-base-content/15',
+            ]}
+          >
             <div class="flex min-h-7 items-center justify-between gap-4">
               <h3 class="eyebrow">{tr(`services.weddings.packages.${p.id}.name`)}</h3>
               {p.recommended && (
@@ -61,46 +76,85 @@ const moreMeta = (s) =>
                 </li>
               ))}
             </ul>
-            <p class="mt-auto pt-8 text-sm text-muted">
+            <p class="mt-8 text-sm text-muted">
               {tr('services.weddings.overtime')}: {price(p.overtimePerHour)} {tr('units.perHour')}
             </p>
+            <div class="mt-auto pt-8">
+              <a
+                href={bookHref('wedding')}
+                class:list={[
+                  'inline-flex rounded-full px-5 py-2.5 text-[0.9375rem] font-medium transition-opacity hover:opacity-85',
+                  p.recommended ? 'bg-primary text-primary-content' : 'bg-base-200 text-base-content',
+                ]}
+              >
+                {tr('services.weddings.book')}
+              </a>
+            </div>
           </article>
         ))
       }
     </div>
   </section>
 
-  <section class="shell pt-section">
+  <!-- 03 More ways to remember -->
+  <section id="more" class="shell pt-section">
     <PageIntro as="h2" eyebrow={tr('services.more.eyebrow')} heading={tr('services.more.heading')} />
     <div class="mt-10 grid gap-4 md:grid-cols-3">
       {
-        moreServices.map((s) => (
-          <article class="rounded-2xl bg-base-100 p-7">
-            <h3 class="text-title font-semibold">{tr(`services.more.items.${s.id}.name`)}</h3>
-            <p class="mt-2 text-sm text-muted">{moreMeta(s)}</p>
-            <p class="mt-5 text-[0.9375rem]">{tr(`services.more.items.${s.id}.text`)}</p>
-          </article>
-        ))
+        moreServices.map((s) => {
+          const m = momentOf(s.moment);
+          return (
+            <article class="flex flex-col rounded-2xl bg-base-100 p-3">
+              {m && (
+                <a href={`${momentsPath}${m.slug}/`} class="block aspect-[4/3] overflow-hidden rounded-xl bg-base-300">
+                  <Image
+                    src={m.cover}
+                    alt={m.entry.data.title}
+                    widths={[320, 480, 640, 800]}
+                    sizes="(min-width: 768px) 24rem, 92vw"
+                    class="size-full object-cover object-top"
+                  />
+                </a>
+              )}
+              <div class="flex flex-1 flex-col p-4 pt-5">
+                <h3 class="text-title font-semibold">{tr(`services.more.items.${s.id}.name`)}</h3>
+                <p class="mt-2 text-sm text-muted">{moreMeta(s)}</p>
+                <p class="mt-5 text-[0.9375rem]">{tr(`services.more.items.${s.id}.text`)}</p>
+                <div class="mt-auto flex flex-wrap items-center gap-x-5 gap-y-2 pt-6 text-sm font-medium">
+                  <a href={bookHref(s.id)} class="rounded-full bg-base-200 px-4 py-2 transition-opacity hover:opacity-85">
+                    {tr('services.more.book')}
+                  </a>
+                  {m && (
+                    <a href={`${momentsPath}${m.slug}/`} class="text-muted underline-offset-4 hover:text-base-content hover:underline">
+                      {tr('services.more.seeMoment')} →
+                    </a>
+                  )}
+                </div>
+              </div>
+            </article>
+          );
+        })
       }
     </div>
   </section>
 
+  <!-- 04 How it works -->
   <section class="shell pt-section">
-    <PageIntro
-      as="h2"
-      eyebrow={tr('inquiry.eyebrow')}
-      heading={tr('inquiry.heading')}
-      text={tr('inquiry.text')}
-    >
-      <!-- The inquiry form (Netlify Forms) arrives in Phase 4. -->
-      <a
-        href={localizedPath(locale, routes.contact)}
-        class="mt-8 inline-flex rounded-full bg-primary px-6 py-3 text-[0.9375rem] font-medium text-primary-content transition-opacity hover:opacity-85"
-        >{tr('inquiry.submit')}</a
-      >
-    </PageIntro>
+    <PageIntro as="h2" eyebrow={tr('services.process.eyebrow')} heading={tr('services.process.heading')} />
+    <ol class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        tr('services.process.steps').map((step, i) => (
+          <li class="rounded-2xl bg-base-100 p-7">
+            <span class="text-sm font-semibold text-muted tabular-nums">{String(i + 1).padStart(2, '0')}</span>
+            <h3 class="mt-6 text-title font-semibold">{step.title}</h3>
+            <p class="mt-2 text-[0.9375rem] text-muted">{step.text}</p>
+          </li>
+        ))
+      }
+    </ol>
   </section>
 
+  <!-- Practical details -->
   <section class="shell pt-section">
     <h2 class="text-title font-semibold">{tr('services.practical.heading')}</h2>
     <dl class="mt-6 grid gap-6 md:grid-cols-3">
@@ -115,5 +169,11 @@ const moreMeta = (s) =>
         ))
       }
     </dl>
+  </section>
+
+  <!-- 05 Start a conversation -->
+  <section id="inquiry" class="shell grid scroll-mt-24 gap-10 pt-section md:grid-cols-[2fr_3fr] md:gap-12">
+    <PageIntro as="h2" eyebrow={tr('inquiry.eyebrow')} heading={tr('inquiry.heading')} text={tr('inquiry.text')} />
+    <InquiryForm locale={locale} />
   </section>
 </BaseLayout>
