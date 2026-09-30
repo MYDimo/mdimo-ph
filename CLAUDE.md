@@ -199,6 +199,9 @@ public/           # static assets only
 - [x] Public contact details live in `src/data/contact.js`
 - [x] Home has a Services block (no prices) leading to the Services page; Services page has a "How it works" process built from existing copy
 - [x] About: no portrait yet (intentionally blank until the user provides one)
+- [x] SEO: per-page descriptions (`seo.*` in i18n), Open Graph/Twitter tags, JSON-LD (ProfessionalService) on home, sitemap.xml + robots.txt endpoints (no plugin), bilingual 404 (`/bg/*` → `/bg/404/` via `_redirects`), `_headers` for caching/security
+- [x] Link-preview images: the page's own photo cropped to 1200×630 (`image`/`imagePosition` props on BaseLayout; Moments can set `previewCrop` in frontmatter when the default crop misses faces)
+- [ ] **Before deploy:** set the real domain as `site` in `astro.config.mjs` (currently `https://example.com`; canonical URLs, hreflang, sitemap and preview images depend on it)
 
 ### Still open
 - [ ] Exact grey scales for light/dark palettes (propose options)
