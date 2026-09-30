@@ -1,0 +1,8 @@
+---
+import NotFound from '../../components/NotFound.astro';
+export { localeStaticPaths as getStaticPaths } from '../../i18n/paths.js';
+
+const { locale } = Astro.params;
+---
+
+<NotFound locale={locale} />

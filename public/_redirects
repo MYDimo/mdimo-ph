@@ -1,3 +1,6 @@
 # Netlify: send the bare domain to the visitor's language (Bulgarian browsers → /bg/).
 /  /bg/  302  Language=bg
 /  /en/  302
+
+# Missing pages under /bg/ get the Bulgarian 404 (everything else uses /404.html).
+/bg/*  /bg/404/  404

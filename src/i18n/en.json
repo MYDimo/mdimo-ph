@@ -300,5 +300,12 @@
     "title": "Page not found",
     "text": "This page doesn't exist. Let's get you back.",
     "home": "Back to home"
+  },
+  "seo": {
+    "services": "Wedding packages from €850, christenings, couple sessions, and event, concert and sports photography in Sofia and across Bulgaria. Clear prices and what's included.",
+    "moments": "Recent weddings, christenings, photoshoots, concerts and races photographed by Mihaylo Dimo.",
+    "about": "Mihaylo Dimo is a Sofia-based wedding, portrait and event photographer with a documentary, story-first approach.",
+    "contact": "Tell me about your wedding, christening or event. I reply within 2 business days.",
+    "locale": "en_GB"
   }
 }

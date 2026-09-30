@@ -24,7 +24,7 @@ const moreMeta = (s) =>
 const bookHref = (service) => `?service=${service}#inquiry`;
 ---
 
-<BaseLayout locale={locale} title={tr('services.title')}>
+<BaseLayout locale={locale} title={tr('services.title')} description={tr('seo.services')} image={momentOf('silvana-and-ivan')?.cover}>
   <section class="shell pt-16 md:pt-24">
     <PageIntro
       eyebrow={tr('services.intro.eyebrow')}

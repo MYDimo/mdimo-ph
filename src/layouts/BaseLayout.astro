@@ -1,16 +1,39 @@
 ---
+import { getImage } from 'astro:assets';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { locales, useT, switchLocalePath } from '../i18n/index.js';
+import { bentoTiles } from '../data/home.js';
 
-const { locale, title, description } = Astro.props;
+/**
+ * Props:
+ *   title, description  page-specific SEO text (description falls back to the site's)
+ *   image               ImageMetadata for link previews (falls back to the seaside-bride photo)
+ *   imagePosition       crop anchor for that preview ('attention' by default; 'top' for faces near the top)
+ *   noindex             keep the page out of search results (404s)
+ *   jsonLd              structured data object, rendered as application/ld+json
+ */
+const { locale, title, description, image, imagePosition, noindex = false, jsonLd } = Astro.props;
 const tr = useT(locale);
 const siteName = tr('site.name');
 const pageTitle = title ? `${title} · ${siteName}` : siteName;
 const pageDescription = description ?? tr('site.description');
 const path = Astro.url.pathname;
-const alternate = (l) => new URL(switchLocalePath(path, l), Astro.site).href;
+const abs = (p) => new URL(p, Astro.site).href;
+const alternate = (l) => abs(switchLocalePath(path, l));
+
+// Link-preview image: the page's own photo, cropped to 1200×630 around its most
+// interesting area (sharp's "attention" strategy tends to keep faces in frame).
+const og = await getImage({
+  src: image ?? bentoTiles[0].src,
+  width: 1200,
+  height: 630,
+  fit: 'cover',
+  position: imagePosition ?? (image ? 'attention' : 'top'),
+  format: 'jpg',
+  quality: 80,
+});
 ---
 
 <!doctype html>
@@ -20,13 +43,31 @@ const alternate = (l) => new URL(switchLocalePath(path, l), Astro.site).href;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{pageTitle}</title>
     <meta name="description" content={pageDescription} />
-    <link rel="canonical" href={new URL(path, Astro.site).href} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="canonical" href={abs(path)} />
     {locales.map((l) => <link rel="alternate" hreflang={l} href={alternate(l)} />)}
     <link rel="alternate" hreflang="x-default" href={alternate('en')} />
+
+    <!-- Link previews (Facebook, Viber, Messenger, LinkedIn, X…) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:title" content={title ?? siteName} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:url" content={abs(path)} />
+    <meta property="og:image" content={abs(og.src)} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content={tr('seo.locale')} />
+    {locales.filter((l) => l !== locale).map((l) => <meta property="og:locale:alternate" content={useT(l)('seo.locale')} />)}
+    <meta name="twitter:card" content="summary_large_image" />
+
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap.xml" />
     <meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#111113" media="(prefers-color-scheme: dark)" />
     <meta name="color-scheme" content="light dark" />
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
     <!--
       Apply the theme before first paint (no flash): a saved manual choice wins,
       otherwise follow the system setting, with light as the fallback.

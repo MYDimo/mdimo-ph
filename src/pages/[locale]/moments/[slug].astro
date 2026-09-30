@@ -24,6 +24,9 @@ const tr = useT(locale);
 const { entry, slug, images, cover } = moment;
 const { title, date, categories, location } = entry.data;
 const { Content } = await render(entry);
+// Meta description: the story's first paragraph as plain text (markdown links unwrapped), ~160 chars.
+const firstParagraph = entry.body.trim().split(/\n\s*\n/)[0].replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
+const description = firstParagraph.length > 160 ? `${firstParagraph.slice(0, 157).replace(/\s+\S*$/, '')}…` : firstParagraph;
 
 const total = images.length;
 const alt = (i) => tr('moments.photoAlt', { title, n: i + 1, total });
@@ -32,7 +35,7 @@ const full = await Promise.all(images.map((src) => getImage({ src, width: src.wi
 const coverIndex = images.indexOf(cover);
 ---
 
-<BaseLayout locale={locale} title={title}>
+<BaseLayout locale={locale} title={title} description={description} image={cover} imagePosition={entry.data.previewCrop}>
   <article
     data-gallery
     data-lb-close={tr('moments.lightbox.close')}

@@ -1,16 +1,5 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import PageIntro from '../components/PageIntro.astro';
-import { useT, localizedPath } from '../i18n/index.js';
-
-const locale = 'en';
-const tr = useT(locale);
+import NotFound from '../components/NotFound.astro';
 ---
 
-<BaseLayout locale={locale} title={tr('notFound.title')}>
-  <section class="shell pt-16 md:pt-24">
-    <PageIntro heading={tr('notFound.title')} text={tr('notFound.text')}>
-      <a href={localizedPath(locale)} class="mt-8 inline-flex rounded-full bg-primary px-6 py-3 font-medium text-primary-content">{tr('notFound.home')}</a>
-    </PageIntro>
-  </section>
-</BaseLayout>
+<NotFound locale="en" />

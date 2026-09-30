@@ -14,7 +14,7 @@ const moments = await getMoments(locale);
 const used = categories.filter((c) => moments.some((m) => m.entry.data.categories.includes(c)));
 ---
 
-<BaseLayout locale={locale} title={tr('moments.title')}>
+<BaseLayout locale={locale} title={tr('moments.title')} description={tr('seo.moments')} image={moments[0]?.cover}>
   <section class="shell pt-16 md:pt-24">
     <PageIntro heading={tr('moments.heading')} text={tr('moments.text')} />
 

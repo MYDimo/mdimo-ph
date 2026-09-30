@@ -12,7 +12,7 @@ const tr = useT(locale);
 const favourites = [heroSlides[1], heroSlides[3], heroSlides[5]];
 ---
 
-<BaseLayout locale={locale} title={tr('about.title')}>
+<BaseLayout locale={locale} title={tr('about.title')} description={tr('seo.about')} image={favourites[0].src}>
   <section class="shell pt-16 md:pt-24">
     <div class="max-w-3xl">
       <h1 class="text-display">{tr('about.heading')}</h1>
