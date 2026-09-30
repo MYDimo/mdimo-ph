@@ -17,7 +17,8 @@ export default defineConfig({
   integrations: [mdx()],
   vite: {
     plugins: [tailwindcss()],
-    // GSAP is imported lazily; pre-bundle it so the dev server never serves a stale copy.
-    optimizeDeps: { include: ['gsap', 'gsap/ScrollTrigger'] },
+    // These are only imported by some pages (and partly lazily). Pre-bundling them up front
+    // stops the dev server from re-optimizing mid-session and serving stale copies (504s).
+    optimizeDeps: { include: ['gsap', 'gsap/ScrollTrigger', 'photoswipe', 'photoswipe/lightbox'] },
   },
 });
