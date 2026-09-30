@@ -1,5 +1,5 @@
 ---
-import { getImage } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageIntro from '../../components/PageIntro.astro';
 import StoryCard from '../../components/StoryCard.astro';
@@ -7,6 +7,7 @@ import BentoGrid from '../../components/BentoGrid.astro';
 import HeroCarousel from '../../components/HeroCarousel.astro';
 import { useT, localizedPath, routes } from '../../i18n/index.js';
 import { heroSlides, storyImages, bentoTiles } from '../../data/home.js';
+import { getMoments } from '../../data/moments.js';
 export { localeStaticPaths as getStaticPaths } from '../../i18n/paths.js';
 
 const { locale } = Astro.params;
@@ -15,6 +16,17 @@ const momentsHref = localizedPath(locale, routes.moments);
 // The bento photos come from Elena Madlena & Asen's wedding, so the tiles open that Moment.
 const bentoHref = `${momentsHref}elena-madlena-and-asen/`;
 const tiles = bentoTiles.map((t) => ({ src: t.src, alt: tr(`home.alt.${t.alt}`), href: bentoHref }));
+
+// Services block: each card shows the cover of a Moment of that kind and opens the Services page.
+const moments = await getMoments(locale);
+const coverOf = (slug) => moments.find((m) => m.slug === slug)?.cover;
+const servicesPath = localizedPath(locale, routes.services);
+const serviceCards = [
+  { id: 'weddings', moment: 'silvana-and-ivan', href: `${servicesPath}#weddings` },
+  { id: 'christening', moment: 'viki-christening', href: `${servicesPath}#more` },
+  { id: 'couple', moment: 'radina-and-martin', href: `${servicesPath}#more` },
+  { id: 'events', moment: 'probiv', href: `${servicesPath}#more` },
+].map((c) => ({ ...c, cover: coverOf(c.moment) }));
 
 // Preload the first hero frame (the LCP image) with the same srcset the carousel uses.
 const lcp = await getImage({ src: heroSlides[0].src, widths: [320, 480, 640, 800, 1000, 1200] });
@@ -80,6 +92,40 @@ const lcp = await getImage({ src: heroSlides[0].src, widths: [320, 480, 640, 800
       </a>
     </div>
     <BentoGrid tiles={tiles} />
+  </section>
+
+  <section class="shell pt-section">
+    <div class="mb-10 flex flex-wrap items-end justify-between gap-6">
+      <PageIntro as="h2" eyebrow={tr('home.services.eyebrow')} heading={tr('home.services.heading')} />
+      <a href={servicesPath} class="inline-flex items-center gap-2 font-medium underline-offset-4 hover:underline">
+        {tr('home.services.link')} <span aria-hidden="true">→</span>
+      </a>
+    </div>
+    <ul class="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
+      {
+        serviceCards.map((c) => (
+          <li>
+            <a href={c.href} class="group block h-full rounded-2xl bg-base-100 p-2.5 md:p-3">
+              <div class="aspect-[4/5] overflow-hidden rounded-xl bg-base-300">
+                {c.cover && (
+                  <Image
+                    src={c.cover}
+                    alt=""
+                    widths={[320, 480, 640]}
+                    sizes="(min-width: 768px) 17rem, 44vw"
+                    class="size-full object-cover object-top transition-transform duration-700 ease-soft group-hover:scale-[1.03]"
+                  />
+                )}
+              </div>
+              <div class="px-1.5 pb-2 pt-4">
+                <h3 class="font-semibold leading-snug">{tr(`home.services.items.${c.id}.name`)}</h3>
+                <p class="mt-1 text-sm text-muted">{tr(`home.services.items.${c.id}.text`)}</p>
+              </div>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
   </section>
 
   <section class="shell pt-section">

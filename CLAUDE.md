@@ -195,7 +195,11 @@ public/           # static assets only
 - [x] Moments photos are curated (~15–20 per event) in `scripts/moments.manifest.json` and imported with `node scripts/import-moments.mjs` (2048px, JPEG q82) into `src/assets/moments/<slug>/`. To swap photos: edit the manifest, re-run the script
 - [x] Moment pages: masonry (CSS columns), PhotoSwipe lightbox themed to the page greys, "More moments" scroll-snap row
 - [x] Page transitions: native cross-document View Transitions (`@view-transition` in global.css), no ClientRouter; a Moment's cover and title morph via `view-transition-name`. Names must stay unique per page
+- [x] Inquiry form: `src/components/InquiryForm.astro` (Netlify Forms, form name `inquiry`, honeypot `bot-field`, hidden `language` field). Field names must stay identical in both locales. Local dev simulates a successful submit. `?service=<value>#inquiry` preselects the service
+- [x] Public contact details live in `src/data/contact.js`
+- [x] Home has a Services block (no prices) leading to the Services page; Services page has a "How it works" process built from existing copy
+- [x] About: no portrait yet (intentionally blank until the user provides one)
 
 ### Still open
 - [ ] Exact grey scales for light/dark palettes (propose options)
-- [ ] Domain name and email address for form notifications
+- [ ] Domain name; form notifications go to mihaylo.dimo@gmail.com (set in Netlify at deploy)
