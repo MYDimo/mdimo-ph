@@ -201,8 +201,8 @@ public/           # static assets only
 - [x] About: no portrait yet (intentionally blank until the user provides one)
 - [x] SEO: per-page descriptions (`seo.*` in i18n), Open Graph/Twitter tags, JSON-LD (ProfessionalService) on home, sitemap.xml + robots.txt endpoints (no plugin), bilingual 404 (`/bg/*` → `/bg/404/` via `_redirects`), `_headers` for caching/security
 - [x] Link-preview images: the page's own photo cropped to 1200×630 (`image`/`imagePosition` props on BaseLayout; Moments can set `previewCrop` in frontmatter when the default crop misses faces)
-- [ ] **Before deploy:** set the real domain as `site` in `astro.config.mjs` (currently `https://example.com`; canonical URLs, hreflang, sitemap and preview images depend on it)
+- [x] Domain: https://www.mdimophotography.bg is primary (Netlify's recommendation with external DNS); the bare domain redirects to it. Set as `site` in astro.config.mjs
 
 ### Still open
 - [ ] Exact grey scales for light/dark palettes (propose options)
-- [ ] Domain name; form notifications go to mihaylo.dimo@gmail.com (set in Netlify at deploy)
+- [ ] Form notifications go to mihaylo.dimo@gmail.com (set in Netlify at deploy)
