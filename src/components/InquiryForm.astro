@@ -1,0 +1,160 @@
+---
+/*
+ * Inquiry form (Netlify Forms). The static markup below is what Netlify detects
+ * at deploy time: the form name, `data-netlify`, and every field name must stay
+ * identical in both languages. The script submits in the background and shows
+ * the result in place; without JS the browser posts normally to Netlify.
+ */
+import { useT } from '../i18n/index.js';
+import { inquiryServices } from '../data/services.js';
+import { contact } from '../data/contact.js';
+
+const { locale } = Astro.props;
+const tr = useT(locale);
+const field = 'input w-full';
+---
+
+<form
+  name="inquiry"
+  method="POST"
+  data-netlify="true"
+  netlify-honeypot="bot-field"
+  class="rounded-2xl bg-base-100 p-5 md:p-8"
+  data-inquiry-form
+  data-sending={tr('inquiry.sending')}
+>
+  <input type="hidden" name="form-name" value="inquiry" />
+  <input type="hidden" name="language" value={locale} />
+  <p class="hidden">
+    <label>{tr('inquiry.honeypot')} <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
+  </p>
+
+  <div class="grid gap-4 sm:grid-cols-2" data-form-fields>
+    <label class="form-field">
+      <span>{tr('inquiry.fields.name')}</span>
+      <input class={field} type="text" name="name" autocomplete="name" required />
+    </label>
+    <label class="form-field">
+      <span>{tr('inquiry.fields.email')}</span>
+      <input class={field} type="email" name="email" autocomplete="email" required />
+    </label>
+    <label class="form-field">
+      <span>{tr('inquiry.fields.phone')} <small>({tr('inquiry.optional')})</small></span>
+      <input class={field} type="tel" name="phone" autocomplete="tel" />
+    </label>
+    <label class="form-field">
+      <span>{tr('inquiry.fields.date')}</span>
+      <input class={field} type="date" name="date" />
+    </label>
+    <label class="form-field">
+      <span>{tr('inquiry.fields.service')}</span>
+      <select class="select w-full" name="service" data-service-select>
+        {inquiryServices.map((s) => <option value={s}>{tr(`inquiry.serviceOptions.${s}`)}</option>)}
+      </select>
+    </label>
+    <label class="form-field">
+      <span>{tr('inquiry.fields.location')}</span>
+      <input class={field} type="text" name="location" />
+    </label>
+    <label class="form-field sm:col-span-2">
+      <span>{tr('inquiry.fields.message')}</span>
+      <textarea class="textarea min-h-32 w-full" name="message" rows="5" required></textarea>
+    </label>
+
+    <p class="text-sm text-muted sm:col-span-2">{tr('inquiry.note')}</p>
+    <button
+      type="submit"
+      class="rounded-full bg-primary px-6 py-3.5 font-medium text-primary-content transition-opacity hover:opacity-85 disabled:opacity-60 sm:col-span-2"
+    >
+      {tr('inquiry.submit')}
+    </button>
+  </div>
+
+  <!-- Result panels, shown by the script. -->
+  <div class="py-6 text-center" role="status" aria-live="polite" tabindex="-1" data-form-success hidden>
+    <p class="text-title font-semibold">{tr('inquiry.successTitle')}</p>
+    <p class="mt-2 text-muted">{tr('inquiry.success')}</p>
+    <button type="button" class="mt-6 text-sm font-medium underline underline-offset-4" data-form-again>
+      {tr('inquiry.sendAnother')}
+    </button>
+  </div>
+  <p class="mt-4 text-sm" role="alert" data-form-error hidden>
+    {tr('inquiry.error')}
+    {tr('inquiry.errorDirect')} <a class="underline underline-offset-4" href={`mailto:${contact.email}`}>{contact.email}</a>.
+  </p>
+</form>
+
+<style>
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .form-field > span {
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+  .form-field small {
+    font-weight: 400;
+    color: var(--muted);
+  }
+  /* Calm, borderless fields on a subtle fill; the ring appears only on focus. */
+  .form-field :is(.input, .select, .textarea) {
+    background: var(--color-base-200);
+    border-color: transparent;
+    box-shadow: none;
+    font-size: 1rem; /* 16px+ prevents iOS zoom on focus */
+  }
+  .form-field :is(.input, .select, .textarea):focus,
+  .form-field :is(.input, .select, .textarea):focus-within {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 1px;
+    border-color: transparent;
+  }
+</style>
+
+<script>
+  document.querySelectorAll('[data-inquiry-form]').forEach((form) => {
+    const fields = form.querySelector('[data-form-fields]');
+    const success = form.querySelector('[data-form-success]');
+    const error = form.querySelector('[data-form-error]');
+    const button = fields.querySelector('button[type="submit"]');
+    const label = button.textContent;
+
+    // Preselect the service from a link like ?service=wedding#inquiry.
+    const wanted = new URLSearchParams(location.search).get('service');
+    const select = form.querySelector('[data-service-select]');
+    if (wanted && [...select.options].some((o) => o.value === wanted)) select.value = wanted;
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!form.reportValidity()) return;
+      error.hidden = true;
+      button.disabled = true;
+      button.textContent = form.dataset.sending;
+      try {
+        const body = new URLSearchParams(new FormData(form)).toString();
+        // Netlify Forms only exist on the deployed site; in local dev we simulate success.
+        const res = import.meta.env.DEV
+          ? await new Promise((r) => setTimeout(() => r({ ok: true }), 600))
+          : await fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body });
+        if (!res.ok) throw new Error(String(res.status));
+        form.reset();
+        fields.hidden = true;
+        success.hidden = false;
+        success.focus();
+      } catch {
+        error.hidden = false;
+      } finally {
+        button.disabled = false;
+        button.textContent = label;
+      }
+    });
+
+    form.querySelector('[data-form-again]').addEventListener('click', () => {
+      success.hidden = true;
+      fields.hidden = false;
+      fields.querySelector('input:not([type="hidden"])').focus();
+    });
+  });
+</script>
