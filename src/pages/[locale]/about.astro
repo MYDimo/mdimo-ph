@@ -1,17 +1,44 @@
 ---
+import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import PageIntro from '../../components/PageIntro.astro';
 import ContactCta from '../../components/ContactCta.astro';
 import { useT } from '../../i18n/index.js';
+import { heroSlides } from '../../data/home.js';
 export { localeStaticPaths as getStaticPaths } from '../../i18n/paths.js';
 
 const { locale } = Astro.params;
 const tr = useT(locale);
+// Three favourites from the home carousel (a portrait of Mihaylo will join the page later).
+const favourites = [heroSlides[1], heroSlides[3], heroSlides[5]];
 ---
 
 <BaseLayout locale={locale} title={tr('about.title')}>
   <section class="shell pt-16 md:pt-24">
-    <PageIntro heading={tr('about.heading')} text={tr('about.text')} />
+    <div class="max-w-3xl">
+      <h1 class="text-display">{tr('about.heading')}</h1>
+      <p class="mt-8 text-title font-normal leading-snug text-base-content/85">{tr('about.text')}</p>
+      <p class="mt-6 max-w-2xl text-muted">{tr('about.more')}</p>
+    </div>
   </section>
+
+  <section class="shell pt-section">
+    <h2 class="eyebrow">{tr('about.favourites')}</h2>
+    <div class="mt-6 grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
+      {
+        favourites.map((photo, i) => (
+          <div class:list={['aspect-[4/5] overflow-hidden rounded-xl bg-base-300', i === 2 && 'hidden md:block']}>
+            <Image
+              src={photo.src}
+              alt={tr(`home.alt.${photo.alt}`)}
+              widths={[320, 480, 640, 800]}
+              sizes="(min-width: 768px) 24rem, 46vw"
+              class="size-full object-cover"
+            />
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
   <ContactCta locale={locale} />
 </BaseLayout>

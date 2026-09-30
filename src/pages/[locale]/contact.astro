@@ -1,15 +1,47 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageIntro from '../../components/PageIntro.astro';
+import InquiryForm from '../../components/InquiryForm.astro';
 import { useT } from '../../i18n/index.js';
+import { contact } from '../../data/contact.js';
 export { localeStaticPaths as getStaticPaths } from '../../i18n/paths.js';
 
 const { locale } = Astro.params;
 const tr = useT(locale);
+const direct = [
+  { label: tr('contact.email'), value: contact.email, href: `mailto:${contact.email}` },
+  { label: tr('contact.phone'), value: contact.phoneDisplay, href: `tel:${contact.phone}` },
+  { label: tr('contact.instagram'), value: contact.instagram, href: contact.instagramUrl, external: true },
+];
 ---
 
 <BaseLayout locale={locale} title={tr('contact.title')}>
-  <section class="shell pt-16 md:pt-24">
-    <PageIntro heading={tr('contact.heading')} text={tr('contact.text')} />
+  <section id="inquiry" class="shell grid gap-10 pt-16 md:grid-cols-[2fr_3fr] md:gap-12 md:pt-24">
+    <div>
+      <PageIntro heading={tr('contact.heading')} text={tr('contact.text')} />
+      <div class="mt-12">
+        <h2 class="eyebrow">{tr('contact.direct')}</h2>
+        <dl class="mt-5 space-y-4">
+          {
+            direct.map((d) => (
+              <div>
+                <dt class="text-sm text-muted">{d.label}</dt>
+                <dd>
+                  <a
+                    href={d.href}
+                    class="text-lg font-medium underline-offset-4 hover:underline"
+                    {...(d.external ? { target: '_blank', rel: 'noopener' } : {})}
+                  >
+                    {d.value}
+                  </a>
+                </dd>
+              </div>
+            ))
+          }
+        </dl>
+        <p class="mt-8 text-sm text-muted">{tr('contact.based')}</p>
+      </div>
+    </div>
+    <InquiryForm locale={locale} />
   </section>
 </BaseLayout>
