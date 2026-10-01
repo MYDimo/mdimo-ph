@@ -225,6 +225,10 @@ public/           # static assets only
 - [x] Motion pacing: slower, softer reveals (words 1.4 s, images 1.3 s, blocks 1.2 s); GSAP scrubs smoothed (`scrub: 1`)
 - [x] Character pass: warm paper/ink neutrals; OS serif accents; accent-coloured link underlines; headings settle from the accent colour into the text colour; each Moment page washes its header (and lightbox) with its cover's average colour; self-drawing logo (once per visit + on hover); a near-full-bleed feature photo on home (Valentina & Danail sparklers); "Recent moments" row on home
 
+- [x] Services page: approach quote → services bento (photo tiles with frosted caption, doodle, "from" price; differs from the home bento) → wedding collections with photo strips and doodle ticks → other services (anchors `#christening`, `#couple`, `#events`) → swipeable "How it works" timeline → FAQ (`services.faq`, live numbers filled in) → inquiry form. Practical details folded into the FAQ
+- [x] Doodles: `src/components/Doodle.astro`, single-line icons in the logo's pen style that draw themselves in view (`data-reveal="doodle"`); add new ones there
+- [x] Text CTAs use `.cta-link` + `.cta-text`: accent underline draws in under the words only (arrows excluded)
+
 ### Still open
 - [ ] Exact grey scales for light/dark palettes (propose options)
 - [ ] Form notifications go to mihaylo.dimo@gmail.com (set in Netlify at deploy)

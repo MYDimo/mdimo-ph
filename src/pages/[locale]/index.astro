@@ -145,7 +145,7 @@ const jsonLd = {
             >
               <Image
                 src={f.src}
-                alt={title ?? tr('site.name')}
+                alt={title ? '' : tr('site.name')} /* the caption already names the Moment */
                 widths={[640, 1000, 1400, 1800, 2048]}
                 sizes="100vw"
                 class="fade-img size-full scale-[1.12] object-cover"
