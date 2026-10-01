@@ -121,6 +121,16 @@ Suggested flow (to be refined together): hero, short personal positioning statem
 - **Prices are shown publicly** on the Services page (and summarized on the homepage where it fits). Present them clearly, in a consistent currency format for each locale.
 - Summarize what you found (services list, prices, copy) for the user to confirm before it goes into the site.
 
+## 6b. Adding a new Moment (repeatable recipe)
+
+1. Export the event's photos (2048px long edge is plenty) into `images/categories/<Category>/<Event name>/`.
+2. In `scripts/moments.manifest.json`, add an entry: `slug`, `source` (the folder above), `categories`, `date`, and `photos` (the chosen file names, in display order; ~15–20).
+3. Run `npm run moments`. It copies and resizes the photos into `src/assets/moments/<slug>/01.jpg…` and refreshes the average colours that drive the photo fade-ins and the page's colour wash.
+4. Create `src/content/moments/en/<slug>.mdx` and `src/content/moments/bg/<slug>.mdx` (copy an existing pair): `title`, `date`, `categories`, `location`, `cover` (photo number), `translationKey: <slug>`, optional `previewCrop: top|center` if the link preview cuts faces; then the story text.
+5. `npm run build`, check `/en/moments/<slug>/` and `/bg/moments/<slug>/`, commit, push. Netlify deploys.
+
+The colour feel is automatic: the page wash and lightbox tint come from the **cover photo's average colour**, so pick a cover whose tones represent the day.
+
 ## 7. Project structure (target)
 
 ```
@@ -207,6 +217,10 @@ public/           # static assets only
 - [x] Motion: every reveal replays each time it enters view (or is scroll-driven); site-wide engine `src/scripts/motion.js` + `src/styles/motion.css` (no dependency). Hooks: `data-reveal="image|rise"`, `data-reveal-group`, `data-lift` + `data-dim-group`, `data-view` (cursor pill); big headings (`h1`, `.text-headline`) split into rising words automatically. Gated by `html.motion` (unset under reduced motion)
 - [x] Micro-interactions: theme toggle (sun pop / moon roll, colour bloom, circular theme reveal), sliding language and filter pills, pill-button press, arrow nudges, nav underline + accent dot, condensing header (hides on mobile scroll-down), send button spinner → check, copy-email, reading-progress hairline, photos fade in over their average colour (`scripts/image-colors.mjs` → `src/data/image-colors.json`)
 
+- [x] Logo sits at a -8° tilt; on the first page of a visit the name writes itself (OS serif italic, pen-stroke outline) and folds into the mark, which then draws (2.4 s); hover redraws
+- [x] Home feature photo rotates per visit between 3 options (`featureOptions` in `src/pages/[locale]/index.astro`); home "Meet the eye" card uses the self-portrait
+- [x] Lightbox corners: rounded and clipped on `.pswp__zoom-wrap`, radius compensated for the zoom scale in `src/scripts/lightbox.js`
+- [x] Motion pacing: slower, softer reveals (words 1.4 s, images 1.3 s, blocks 1.2 s); GSAP scrubs smoothed (`scrub: 1`)
 - [x] Character pass: warm paper/ink neutrals; OS serif accents; accent-coloured link underlines; headings settle from the accent colour into the text colour; each Moment page washes its header (and lightbox) with its cover's average colour; self-drawing logo (once per visit + on hover); a near-full-bleed feature photo on home (Valentina & Danail sparklers); "Recent moments" row on home
 
 ### Still open

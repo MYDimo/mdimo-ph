@@ -9,7 +9,9 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "moments": "node scripts/import-moments.mjs",
+    "colors": "node scripts/image-colors.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^8.0.2",
