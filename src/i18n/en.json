@@ -128,7 +128,11 @@
       "heading": "Capturing Timeless Stories",
       "text": "Professional wedding, portrait & event photography in Bulgaria & worldwide.",
       "cta": "View packages & pricing",
-      "approach": "Documentary at heart, with gentle direction when it helps. You live the day; I make sure nothing slips by."
+      "approach": {
+        "lead": "Documentary at heart, with gentle direction when it helps.",
+        "main": "You live the day; I make sure",
+        "mark": "nothing slips by."
+      }
     },
     "weddings": {
       "eyebrow": "02 / Wedding collections",
@@ -241,7 +245,7 @@
         },
         {
           "q": "What if the day runs longer?",
-          "a": "No problem. Extra time is charged per hour: {essential}/hour on the Essential collection and {signature}/hour on Full Day."
+          "a": "No problem. Extra time is {overtime}/hour on either collection."
         }
       ]
     }

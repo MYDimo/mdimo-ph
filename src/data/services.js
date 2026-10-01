@@ -3,7 +3,7 @@
 
 export const weddingPackages = [
   { id: 'essential', price: 850, upToHours: 6, overtimePerHour: 100 },
-  { id: 'signature', price: 1450, upToHours: 10, overtimePerHour: 120, recommended: true },
+  { id: 'signature', price: 1450, upToHours: 10, overtimePerHour: 100, recommended: true },
 ];
 
 // `moment` is a Moments slug whose cover illustrates the service.
