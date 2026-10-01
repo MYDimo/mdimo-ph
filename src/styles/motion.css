@@ -137,8 +137,8 @@ html.motion [data-reveal-words].is-in .rw > span {
 
 /* ── Photos: a rounded mask opens up as they enter view ───────────────── */
 html.motion [data-reveal='image'] {
-  clip-path: inset(7% 7% 7% 7% round var(--reveal-radius, 1.75rem));
-  transition: clip-path 1.2s var(--ease-soft);
+  clip-path: inset(2.5% 2.5% 2.5% 2.5% round var(--reveal-radius, 1.75rem));
+  transition: clip-path 0.9s var(--ease-soft);
 }
 html.motion [data-reveal='image'].is-in {
   clip-path: inset(0 0 0 0 round var(--reveal-radius, 1.75rem));
@@ -156,7 +156,7 @@ html.motion img.fade-img.is-loaded {
 /* ── Blocks (cards, steps) rise in with a stagger ─────────────────────── */
 html.motion [data-reveal='rise'] {
   opacity: 0;
-  transform: translateY(28px);
+  transform: translateY(16px);
   transition:
     opacity 0.9s var(--ease-soft),
     transform 0.9s var(--ease-soft);
@@ -175,10 +175,10 @@ html.motion [data-reveal='rise'].is-in {
       opacity 0.45s var(--ease-soft);
   }
   [data-lift]:hover {
-    transform: translateY(-4px);
+    transform: translateY(-2px);
   }
   [data-dim-group]:has([data-lift]:hover) [data-lift]:not(:hover) {
-    opacity: 0.7;
+    opacity: 0.86;
   }
 }
 

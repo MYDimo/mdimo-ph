@@ -23,7 +23,7 @@ const { title, date, categories } = entry.data;
         sizes={sizes}
         loading={eager ? 'eager' : 'lazy'}
         fetchpriority={priority ? 'high' : undefined}
-        class:list={['size-full object-cover object-top transition-transform duration-700 ease-soft group-hover:scale-[1.03]', !priority && 'fade-img']}
+        class:list={['size-full object-cover object-top transition-transform duration-700 ease-soft group-hover:scale-[1.012]', !priority && 'fade-img']}
       />
     </div>
     <h2 class="mt-4 text-title font-semibold" style={`view-transition-name: moment-title-${slug}`}>{title}</h2>
