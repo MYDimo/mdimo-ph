@@ -5,20 +5,32 @@ import ContactCta from '../../components/ContactCta.astro';
 import { useT } from '../../i18n/index.js';
 import { heroSlides } from '../../data/home.js';
 import { bg } from '../../data/colors.js';
+import portrait from '../../assets/about/self-portrait.jpg';
 export { localeStaticPaths as getStaticPaths } from '../../i18n/paths.js';
 
 const { locale } = Astro.params;
 const tr = useT(locale);
-// Three favourites from the home carousel (a portrait of Mihaylo will join the page later).
+// Three favourites from the home carousel.
 const favourites = [heroSlides[1], heroSlides[3], heroSlides[5]];
 ---
 
-<BaseLayout locale={locale} title={tr('about.title')} description={tr('seo.about')} image={favourites[0].src}>
-  <section class="shell pt-16 md:pt-24">
-    <div class="max-w-3xl">
+<BaseLayout locale={locale} title={tr('about.title')} description={tr('seo.about')} image={portrait}>
+  <section class="shell grid items-center gap-10 pt-16 md:grid-cols-[3fr_2fr] md:gap-14 md:pt-24">
+    <div>
       <h1 class="text-display">{tr('about.heading')}</h1>
       <p class="mt-8 text-title font-normal leading-snug text-base-content/85">{tr('about.text')}</p>
       <p class="mt-6 max-w-2xl text-muted">{tr('about.more')}</p>
+    </div>
+    <div class="aspect-[4/5] overflow-hidden rounded-2xl bg-base-300" style={bg(portrait)} data-reveal="image">
+      <Image
+        src={portrait}
+        alt={tr('about.portraitAlt')}
+        widths={[480, 640, 800, 1000, 1200]}
+        sizes="(min-width: 768px) 30rem, 92vw"
+        loading="eager"
+        fetchpriority="high"
+        class="size-full object-cover object-[60%_35%]"
+      />
     </div>
   </section>
 

@@ -198,7 +198,7 @@ public/           # static assets only
 - [x] Inquiry form: `src/components/InquiryForm.astro` (Netlify Forms, form name `inquiry`, honeypot `bot-field`, hidden `language` field). Field names must stay identical in both locales. Local dev simulates a successful submit. `?service=<value>#inquiry` preselects the service
 - [x] Public contact details live in `src/data/contact.js`
 - [x] Home has a Services block (no prices) leading to the Services page; Services page has a "How it works" process built from existing copy
-- [x] About: no portrait yet (intentionally blank until the user provides one)
+- [x] About: self-portrait (`src/assets/about/self-portrait.jpg`, from `images/self-portrait.jpg`) beside the intro text
 - [x] SEO: per-page descriptions (`seo.*` in i18n), Open Graph/Twitter tags, JSON-LD (ProfessionalService) on home, sitemap.xml + robots.txt endpoints (no plugin), bilingual 404 (`/bg/*` → `/bg/404/` via `_redirects`), `_headers` for caching/security
 - [x] Link-preview images: the page's own photo cropped to 1200×630 (`image`/`imagePosition` props on BaseLayout; Moments can set `previewCrop` in frontmatter when the default crop misses faces)
 - [x] Domain: https://www.mdimophotography.bg is primary (Netlify's recommendation with external DNS); the bare domain redirects to it. Set as `site` in astro.config.mjs
