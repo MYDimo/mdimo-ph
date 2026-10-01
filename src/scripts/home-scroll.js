@@ -12,7 +12,8 @@ export function initHomeScroll() {
   //    fades and the frames settle back slightly, handing focus to the next section.
   const hero = document.querySelector('[data-hero]');
   if (hero) {
-    const out = { trigger: hero, start: 'top top', end: 'bottom top', scrub: true };
+    // scrub: 1 lets the effect trail the scroll by ~1s instead of tracking it rigidly.
+    const out = { trigger: hero, start: 'top top', end: 'bottom top', scrub: 1 };
     gsap.to('[data-hero-heading]', { opacity: 0, y: -48, ease: 'none', scrollTrigger: out });
     gsap.to('[data-hero-frames]', { scale: 0.94, opacity: 0.6, ease: 'none', scrollTrigger: out });
   }
@@ -36,9 +37,9 @@ export function initHomeScroll() {
       rotate: 0,
       x: 0,
       opacity: 1,
-      duration: 1.1,
-      ease: 'power4.out',
-      stagger: 0.055,
+      duration: 1.6,
+      ease: 'power3.out',
+      stagger: 0.09,
     });
     // Play when it is well inside the viewport…
     ScrollTrigger.create({
@@ -64,7 +65,7 @@ export function initHomeScroll() {
     gsap.fromTo(
       img,
       { yPercent: -5 },
-      { yPercent: 5, ease: 'none', scrollTrigger: { trigger: img.parentElement, start: 'top bottom', end: 'bottom top', scrub: true } },
+      { yPercent: 5, ease: 'none', scrollTrigger: { trigger: img.parentElement, start: 'top bottom', end: 'bottom top', scrub: 1.2 } },
     );
   });
   // 3. Bento tiles, cards and headings use the site-wide reveals in src/scripts/motion.js.
