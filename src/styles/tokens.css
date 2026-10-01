@@ -1,8 +1,10 @@
 /*
  * Design tokens.
  * Two DaisyUI themes (light / night) carry the grey scale and corner radii.
- * The UI is fully neutral: "primary" is a near-black grey in light and a
- * soft light grey in night, so photographs provide all the colour.
+ * The UI is neutral: "primary" is a near-black grey in light and a soft light
+ * grey in night. The only colour is a tiny accent that follows the theme:
+ * golden-hour amber by day, blue-hour violet by night (focus rings, selection,
+ * active indicators, progress). Buttons and text never use it.
  */
 
 @plugin "daisyui/theme" {
@@ -19,7 +21,7 @@
   --color-primary-content: #ffffff;
   --color-secondary: #3a3a3c;
   --color-secondary-content: #ffffff;
-  --color-accent: #1d1d1f;
+  --color-accent: #b06a2a; /* golden hour: used sparingly (focus, selection, indicators) */
   --color-accent-content: #ffffff;
   --color-neutral: #2c2c2e;
   --color-neutral-content: #f5f5f7;
@@ -57,8 +59,8 @@
   --color-primary-content: #1d1d1f;
   --color-secondary: #d1d1d6;
   --color-secondary-content: #1d1d1f;
-  --color-accent: #f5f5f7;
-  --color-accent-content: #1d1d1f;
+  --color-accent: #9d8cff; /* blue hour: the night counterpart of the amber */
+  --color-accent-content: #111113;
   --color-neutral: #e5e5ea;
   --color-neutral-content: #1d1d1f;
 
@@ -129,4 +131,5 @@
   --text-label--letter-spacing: 0.08em;
 
   --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 }

@@ -34,3 +34,6 @@ for (const moment of manifest) {
   }
   console.log(`${moment.slug}: ${moment.photos.length} photos (${written} written)`);
 }
+
+// Refresh the average-colour placeholders for the new set of photos.
+await import('./image-colors.mjs');

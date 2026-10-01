@@ -1,0 +1,208 @@
+/*
+ * Micro-interactions and reveals (paired with src/scripts/motion.js).
+ *
+ * Everything that hides content before animating it is gated behind
+ * `html.motion`, which the inline <head> script sets only when motion is allowed.
+ * Without JS, or with reduced motion, content is simply visible.
+ * Only transform, opacity and clip-path animate.
+ */
+
+/* ── Accent touches: focus, selection ─────────────────────────────────── */
+:focus-visible {
+  outline-color: var(--color-accent) !important;
+}
+::selection {
+  background: var(--color-accent);
+  color: var(--color-accent-content);
+}
+
+/* ── Press: every pill button sinks slightly and springs back ─────────── */
+:is(a, button).rounded-full {
+  transition:
+    transform 0.4s var(--ease-spring),
+    opacity 0.2s,
+    background-color 0.25s,
+    color 0.25s;
+}
+:is(a, button).rounded-full:active {
+  transform: scale(0.96);
+  transition-duration: 0.1s;
+}
+
+/* ── Arrows nudge in their direction on hover ─────────────────────────── */
+.arrow {
+  display: inline-block;
+  transition: transform 0.4s var(--ease-spring);
+}
+a:hover .arrow,
+button:hover .arrow {
+  transform: translateX(3px);
+}
+a:hover .arrow-down {
+  transform: translateY(3px);
+}
+a:hover .arrow-back {
+  transform: translateX(-3px);
+}
+
+/* ── Header: transparent at the top, frosted once scrolled; hides on mobile
+      while scrolling down and returns on scroll up ───────────────────────── */
+[data-site-header] {
+  transition:
+    background-color 0.35s,
+    box-shadow 0.35s,
+    transform 0.5s var(--ease-soft);
+}
+[data-site-header][data-scrolled] {
+  background: color-mix(in oklab, var(--color-base-200) 78%, transparent);
+  -webkit-backdrop-filter: blur(20px) saturate(1.6);
+  backdrop-filter: blur(20px) saturate(1.6);
+  box-shadow: 0 1px 0 color-mix(in oklab, var(--color-base-content) 8%, transparent);
+}
+@media (max-width: 47.99rem) {
+  [data-site-header][data-hidden] {
+    transform: translateY(-100%);
+  }
+}
+
+/* ── Desktop nav: underline draws in from the left; current page gets an
+      accent dot ──────────────────────────────────────────────────────────── */
+.nav-link {
+  position: relative;
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  left: 0.875rem;
+  right: 0.875rem;
+  bottom: 0.35rem;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.45s var(--ease-soft);
+}
+.nav-link:hover::after {
+  transform: scaleX(1);
+}
+.nav-link[aria-current='page']::after {
+  left: 50%;
+  right: auto;
+  bottom: 0.15rem;
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--color-accent);
+  transform: translateX(-50%);
+}
+
+/* ── Headings: each word rises out of its own mask when the heading enters
+      view, and resets when it leaves (so it replays every time) ─────────── */
+/* Same selector motion.js uses, so headings are hidden from the first paint
+   (not only after the script tags them) and never flash before animating. */
+html.motion main :is(h1, .text-headline):not([data-statement]):not([style*='view-transition-name']):not(.is-split) {
+  visibility: hidden;
+  /* Safety net: never leave a heading hidden if the script fails. */
+  animation: reveal-fallback 0s 1.5s forwards;
+}
+@keyframes reveal-fallback {
+  to {
+    visibility: visible;
+  }
+}
+.rw {
+  display: inline-block;
+  overflow: clip;
+  padding: 0 0.06em 0.14em;
+  margin: 0 -0.06em -0.14em;
+  vertical-align: bottom;
+}
+.rw > span {
+  display: inline-block;
+}
+html.motion [data-reveal-words] .rw > span {
+  transform: translateY(105%) rotate(3deg);
+  transform-origin: 0 100%;
+  opacity: 0;
+  transition:
+    transform 1s var(--ease-soft),
+    opacity 1s var(--ease-soft);
+  transition-delay: calc(var(--i, 0) * 45ms);
+}
+html.motion [data-reveal-words].is-in .rw > span {
+  transform: none;
+  opacity: 1;
+}
+
+/* ── Photos: a rounded mask opens up as they enter view ───────────────── */
+html.motion [data-reveal='image'] {
+  clip-path: inset(7% 7% 7% 7% round var(--reveal-radius, 1.75rem));
+  transition: clip-path 1.2s var(--ease-soft);
+}
+html.motion [data-reveal='image'].is-in {
+  clip-path: inset(0 0 0 0 round var(--reveal-radius, 1.75rem));
+}
+
+/* ── Photos fade in over their own average colour instead of popping in ─ */
+html.motion img.fade-img {
+  opacity: 0;
+  transition: opacity 0.8s var(--ease-soft);
+}
+html.motion img.fade-img.is-loaded {
+  opacity: 1;
+}
+
+/* ── Blocks (cards, steps) rise in with a stagger ─────────────────────── */
+html.motion [data-reveal='rise'] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.9s var(--ease-soft),
+    transform 0.9s var(--ease-soft);
+  transition-delay: calc(var(--i, 0) * 80ms);
+}
+html.motion [data-reveal='rise'].is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* ── Hover (real pointers only): cards lift; siblings step back ───────── */
+@media (hover: hover) and (pointer: fine) {
+  [data-lift] {
+    transition:
+      transform 0.55s var(--ease-soft),
+      opacity 0.45s var(--ease-soft);
+  }
+  [data-lift]:hover {
+    transform: translateY(-4px);
+  }
+  [data-dim-group]:has([data-lift]:hover) [data-lift]:not(:hover) {
+    opacity: 0.7;
+  }
+}
+
+/* ── "View" pill that follows the cursor over photos ──────────────────── */
+.view-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 60;
+  pointer-events: none;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--color-base-100) 85%, transparent);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  color: var(--color-base-content);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  opacity: 0;
+  scale: 0.6;
+  transition:
+    opacity 0.25s,
+    scale 0.35s var(--ease-spring);
+}
+.view-cursor.is-on {
+  opacity: 1;
+  scale: 1;
+}

@@ -37,7 +37,7 @@ const og = await getImage({
 ---
 
 <!doctype html>
-<html lang={locale}>
+<html lang={locale} data-view-label={tr('ui.view')}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -80,6 +80,10 @@ const og = await getImage({
           ? saved
           : window.matchMedia('(prefers-color-scheme: dark)').matches ? 'night' : 'light';
         document.documentElement.setAttribute('data-theme', theme);
+        // Motion is opt-out: reveal styles only apply when this class is present.
+        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          document.documentElement.classList.add('motion');
+        }
       })();
     </script>
     <slot name="head" />
@@ -95,5 +99,8 @@ const og = await getImage({
       <slot />
     </main>
     <Footer locale={locale} />
+    <script>
+      import '../scripts/motion.js';
+    </script>
   </body>
 </html>
