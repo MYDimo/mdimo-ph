@@ -23,7 +23,7 @@ const shapes = [
   {
     tiles.slice(0, shapes.length).map((tile, i) => (
       <li class:list={[shapes[i].cls]} data-lift>
-        <a href={tile.href} class="group block h-full overflow-hidden rounded-xl bg-base-300" style={bg(tile.src)} data-reveal="image" data-view>
+        <a href={tile.href} class="group block h-full overflow-hidden rounded-xl bg-base-300" style={bg(tile.src)} data-reveal="image">
           <Image
             src={tile.src}
             alt={tile.alt}

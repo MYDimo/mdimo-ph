@@ -22,6 +22,21 @@ a {
   text-decoration-thickness: 1.5px;
 }
 
+/* ── Text CTAs ("More about me →"): an accent underline draws in under the
+      words only, like the nav; arrows stay clean and just nudge ──────────── */
+.cta-link {
+  text-decoration: none;
+}
+.cta-text {
+  padding-bottom: 2px;
+  background: linear-gradient(var(--color-accent), var(--color-accent)) left 100% / 0 1.5px no-repeat;
+  transition: background-size 0.5s var(--ease-soft);
+}
+.cta-link:hover .cta-text,
+.cta-link:focus-visible .cta-text {
+  background-size: 100% 1.5px;
+}
+
 /* ── Press: every pill button sinks slightly and springs back ─────────── */
 :is(a, button).rounded-full {
   transition:

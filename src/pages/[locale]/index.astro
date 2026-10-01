@@ -121,8 +121,8 @@ const jsonLd = {
   <section class="shell pt-section">
     <div class="mb-10 flex flex-wrap items-end justify-between gap-6">
       <PageIntro as="h2" eyebrow={tr('home.selected.eyebrow')} heading={tr('home.selected.heading')} />
-      <a href={momentsHref} class="inline-flex items-center gap-2 font-medium underline-offset-4 hover:underline">
-        {tr('home.selected.link')} <span class="arrow" aria-hidden="true">→</span>
+      <a href={momentsHref} class="cta-link inline-flex items-center gap-2 font-medium">
+        <span class="cta-text">{tr('home.selected.link')}</span> <span class="arrow" aria-hidden="true">→</span>
       </a>
     </div>
     <BentoGrid tiles={tiles} />
@@ -186,8 +186,8 @@ const jsonLd = {
   <section class="shell pt-section">
     <div class="mb-10 flex flex-wrap items-end justify-between gap-6">
       <PageIntro as="h2" eyebrow={tr('home.services.eyebrow')} heading={tr('home.services.heading')} />
-      <a href={servicesPath} class="inline-flex items-center gap-2 font-medium underline-offset-4 hover:underline">
-        {tr('home.services.link')} <span class="arrow" aria-hidden="true">→</span>
+      <a href={servicesPath} class="cta-link inline-flex items-center gap-2 font-medium">
+        <span class="cta-text">{tr('home.services.link')}</span> <span class="arrow" aria-hidden="true">→</span>
       </a>
     </div>
     <ul class="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4" data-dim-group>
@@ -220,8 +220,8 @@ const jsonLd = {
   <section class="shell pt-section">
     <div class="mb-10 flex flex-wrap items-end justify-between gap-6">
       <PageIntro as="h2" eyebrow={tr('home.recent.eyebrow')} heading={tr('home.recent.heading')} />
-      <a href={momentsHref} class="inline-flex items-center gap-2 font-medium underline-offset-4 hover:underline">
-        {tr('home.recent.link')} <span class="arrow" aria-hidden="true">→</span>
+      <a href={momentsHref} class="cta-link inline-flex items-center gap-2 font-medium">
+        <span class="cta-text">{tr('home.recent.link')}</span> <span class="arrow" aria-hidden="true">→</span>
       </a>
     </div>
     {/* Swipeable row of the latest Moments (native scroll-snap). */}

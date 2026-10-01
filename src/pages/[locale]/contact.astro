@@ -29,10 +29,10 @@ const direct = [
                 <dd class="flex flex-wrap items-center gap-x-3 gap-y-1">
                   <a
                     href={d.href}
-                    class="text-lg font-medium underline-offset-4 hover:underline"
+                    class="cta-link text-lg font-medium"
                     {...(d.external ? { target: '_blank', rel: 'noopener' } : {})}
                   >
-                    {d.value}
+                    <span class="cta-text">{d.value}</span>
                   </a>
                   {d.copy && (
                     <button

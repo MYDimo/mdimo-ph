@@ -127,8 +127,8 @@ const bookHref = (service) => `?service=${service}#inquiry`;
                     {tr('services.more.book')}
                   </a>
                   {m && (
-                    <a href={`${momentsPath}${m.slug}/`} class="text-muted underline-offset-4 hover:text-base-content hover:underline">
-                      {tr('services.more.seeMoment')} <span class="arrow" aria-hidden="true">→</span>
+                    <a href={`${momentsPath}${m.slug}/`} class="cta-link text-muted hover:text-base-content">
+                      <span class="cta-text">{tr('services.more.seeMoment')}</span> <span class="arrow" aria-hidden="true">→</span>
                     </a>
                   )}
                 </div>

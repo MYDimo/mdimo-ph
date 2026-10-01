@@ -28,8 +28,8 @@ const { heading, text, link, image, alt, reverse = false, position = 'center' } 
     <p class="mt-6 text-muted">{text}</p>
     {
       link && (
-        <a href={link.href} class="mt-8 inline-flex items-center gap-2 font-medium underline-offset-4 hover:underline">
-          {link.label} <span class="arrow" aria-hidden="true">→</span>
+        <a href={link.href} class="cta-link mt-8 inline-flex items-center gap-2 font-medium">
+          <span class="cta-text">{link.label}</span> <span class="arrow" aria-hidden="true">→</span>
         </a>
       )
     }

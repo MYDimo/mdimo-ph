@@ -55,8 +55,8 @@ const tint = colorOf(cover) ?? 'transparent';
     <div class="moment-tint" aria-hidden="true"></div>
     <header class="shell grid items-end gap-8 pt-10 md:grid-cols-2 md:gap-12 md:pt-16">
       <div class="md:pb-4">
-        <a href={localizedPath(locale, routes.moments)} class="text-sm text-muted underline-offset-4 hover:text-base-content hover:underline">
-          <span class="arrow arrow-back" aria-hidden="true">←</span> {tr('moments.back')}
+        <a href={localizedPath(locale, routes.moments)} class="cta-link text-sm text-muted hover:text-base-content">
+          <span class="arrow arrow-back" aria-hidden="true">←</span> <span class="cta-text">{tr('moments.back')}</span>
         </a>
         <p class="mt-8 font-serif text-lg italic text-muted">
           {categories.map((c) => tr(`moments.filters.${c}`)).join(' · ')} · {formatDate(locale, date, { month: 'long', year: 'numeric' })}
