@@ -25,24 +25,10 @@ const moreMeta = (s) =>
 // Links that jump to the form below with the service preselected.
 const bookHref = (service) => `?service=${service}#inquiry`;
 
-/*
- * Services bento: photo tiles with a frosted caption panel (unlike the home
- * bento, which is photos only). Weddings is the big tile; the others share the
- * right-hand column. Tapping a tile scrolls to that service's details.
- */
-const [essential] = weddingPackages;
-const [christening, couple, events] = moreServices;
-const tiles = [
-  { id: 'weddings', anchor: 'weddings', doodle: 'rings', photo: momentOf('silvana-and-ivan')?.cover, from: price(essential.price), shape: 'md:col-span-2 md:row-span-2 h-[26rem] md:h-auto' },
-  { id: 'christening', anchor: 'christening', doodle: 'candle', photo: momentOf('viki-christening')?.cover, from: price(christening.price), shape: 'h-[21rem] md:h-auto' },
-  { id: 'couple', anchor: 'couple', doodle: 'heart', photo: momentOf('radina-and-martin')?.cover, from: price(couple.price), shape: 'h-[21rem] md:h-auto' },
-  { id: 'events', anchor: 'events', doodle: 'note', photo: momentOf('probiv')?.images[9], from: `${price(events.pricePerHour)} ${tr('units.perHour')}`, shape: 'md:col-span-2 h-[21rem] md:h-auto' },
-];
-
-// A slim photo strip on top of each wedding collection.
+// A photo on top of each wedding collection (the recommended one gets the wider card).
 const packagePhotos = {
-  essential: momentOf('valentina-and-danail')?.cover,
-  signature: momentOf('elefteria-and-konstantin')?.cover,
+  essential: momentOf('elena-madlena-and-asen')?.images[9],
+  signature: momentOf('elani-and-stanislav')?.images[18],
 };
 const moreDoodles = { christening: 'candle', couple: 'heart', events: 'note' };
 const stepDoodles = ['envelope', 'bubbles', 'calendar', 'camera', 'sparkle', 'photos'];
@@ -64,43 +50,10 @@ const fill = (text) => text.replace(/\{(\w+)\}/g, (_, k) => faqVars[k] ?? `{${k}
       heading={tr('services.intro.heading')}
       text={tr('services.intro.text')}
     />
-    <blockquote class="relative pb-1 font-serif text-title italic leading-snug text-base-content/85">
-      <span class="absolute -left-1 -top-9 font-serif text-6xl not-italic leading-none text-accent" aria-hidden="true">“</span>
+    <blockquote class="relative pb-1 font-serif text-title leading-snug text-base-content/85">
+      <span class="absolute -left-1 -top-9 font-serif text-6xl leading-none text-accent" aria-hidden="true">“</span>
       {tr('services.intro.approach')}
     </blockquote>
-  </section>
-
-  <!-- Services bento -->
-  <section class="shell pt-12 md:pt-16" aria-label={tr('services.bento.label')}>
-    <ul class="grid gap-3 md:auto-rows-[15.5rem] md:grid-cols-4 md:gap-4" data-dim-group>
-      {
-        tiles.map((t) => (
-          <li class:list={['service-tile', t.shape]} data-lift>
-            <a href={`#${t.anchor}`} class="group relative block h-full overflow-hidden rounded-2xl bg-base-300" style={bg(t.photo)} data-reveal="image">
-              {t.photo && (
-                <Image
-                  src={t.photo}
-                  alt=""
-                  widths={[400, 640, 900, 1200]}
-                  sizes={t.id === 'weddings' ? '(min-width: 768px) 38rem, 92vw' : '(min-width: 768px) 19rem, 92vw'}
-                  class="fade-img absolute inset-0 size-full object-cover object-top transition-transform duration-700 ease-soft group-hover:scale-[1.012]"
-                />
-              )}
-              <div class="absolute inset-x-2.5 bottom-2.5 rounded-xl bg-base-100/88 p-4 backdrop-blur-md md:inset-x-3 md:bottom-3">
-                <div class="flex items-start justify-between gap-3">
-                  <div>
-                    <h2 class="text-lg font-semibold leading-tight">{tr(`home.services.items.${t.id}.name`)}</h2>
-                    <p class="mt-1 font-serif text-[0.9375rem] italic text-muted">{tr('services.from', { price: t.from })}</p>
-                  </div>
-                  <Doodle name={t.doodle} class="size-8 shrink-0 text-base-content/80" />
-                </div>
-                {t.id === 'weddings' && <p class="mt-2 text-sm text-muted">{tr('home.services.items.weddings.text')}</p>}
-              </div>
-            </a>
-          </li>
-        ))
-      }
-    </ul>
   </section>
 
   <!-- 02 Wedding collections -->
@@ -111,20 +64,20 @@ const fill = (text) => text.replace(/\{(\w+)\}/g, (_, k) => faqVars[k] ?? `{${k}
       heading={tr('services.weddings.heading')}
       text={tr('services.weddings.text')}
     />
-    <div class="mt-10 grid gap-4 md:grid-cols-2" data-reveal-group>
+    <div class="mt-10 grid items-start gap-4 md:grid-cols-[5fr_7fr]" data-reveal-group>
       {
         weddingPackages.map((p) => (
           <article
             data-reveal="rise"
-            class:list={['flex flex-col rounded-2xl bg-base-100 p-3', p.recommended && 'ring-1 ring-base-content/15']}
+            class:list={['flex flex-col rounded-2xl bg-base-100 p-3', p.recommended && 'ring-2 ring-accent']}
           >
             {packagePhotos[p.id] && (
-              <div class="aspect-[16/7] overflow-hidden rounded-xl bg-base-300" style={bg(packagePhotos[p.id])}>
+              <div class="aspect-[4/3] overflow-hidden rounded-xl bg-base-300" style={bg(packagePhotos[p.id])} data-reveal="image">
                 <Image
                   src={packagePhotos[p.id]}
                   alt=""
                   widths={[400, 640, 900, 1200]}
-                  sizes="(min-width: 768px) 36rem, 92vw"
+                  sizes="(min-width: 768px) 44rem, 92vw"
                   class="fade-img size-full object-cover object-[50%_30%]"
                 />
               </div>
@@ -139,7 +92,7 @@ const fill = (text) => text.replace(/\{(\w+)\}/g, (_, k) => faqVars[k] ?? `{${k}
                 )}
               </div>
               <p class="mt-5 text-headline font-semibold">{price(p.price)}</p>
-              <p class="mt-1 font-serif italic text-muted">{tr('units.upToHours', { n: p.upToHours })}</p>
+              <p class="mt-1 font-serif text-muted">{tr('units.upToHours', { n: p.upToHours })}</p>
               <p class="mt-6">{tr(`services.weddings.packages.${p.id}.summary`)}</p>
               <p class="eyebrow mt-8">{tr('services.weddings.includes')}</p>
               <ul class="mt-3 space-y-2.5 text-[0.9375rem]">
@@ -196,7 +149,7 @@ const fill = (text) => text.replace(/\{(\w+)\}/g, (_, k) => faqVars[k] ?? `{${k}
                   <h3 class="text-title font-semibold">{tr(`services.more.items.${s.id}.name`)}</h3>
                   <Doodle name={moreDoodles[s.id]} class="size-8 shrink-0 text-base-content/70" />
                 </div>
-                <p class="mt-2 font-serif italic text-muted">{moreMeta(s)}</p>
+                <p class="mt-2 font-serif text-muted">{moreMeta(s)}</p>
                 <p class="mt-5 text-[0.9375rem]">{tr(`services.more.items.${s.id}.text`)}</p>
                 <div class="mt-auto flex flex-wrap items-center gap-x-5 gap-y-2 pt-6 text-sm font-medium">
                   <a href={bookHref(s.id)} class="rounded-full bg-base-200 px-4 py-2 transition-opacity hover:opacity-85">
@@ -216,35 +169,37 @@ const fill = (text) => text.replace(/\{(\w+)\}/g, (_, k) => faqVars[k] ?? `{${k}
     </div>
   </section>
 
-  <!-- 04 How it works: a swipeable timeline -->
-  <section class="pt-section">
-    <div class="shell flex flex-wrap items-end justify-between gap-6">
-      <PageIntro as="h2" eyebrow={tr('services.process.eyebrow')} heading={tr('services.process.heading')} />
-      <div class="hidden gap-1 md:flex">
-        <button type="button" class="timeline-btn" aria-label={tr('services.process.prev')} data-timeline-prev>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 6 8.5 12l6 6" /></svg>
-        </button>
-        <button type="button" class="timeline-btn" aria-label={tr('services.process.next')} data-timeline-next>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9.5 6 6 6-6 6" /></svg>
-        </button>
-      </div>
+  <!-- 04 How it works: a scroll story. A curving road is drawn as you scroll;
+       each milestone lights up when the line reaches it and is ticked off once
+       you move past it (src/scripts/services-road.js). -->
+  <section class="shell pt-section">
+    <PageIntro as="h2" eyebrow={tr('services.process.eyebrow')} heading={tr('services.process.heading')} />
+    <div class="road relative mt-14" data-road>
+      <svg class="road-svg" aria-hidden="true">
+        <path class="road-base" />
+        <path class="road-progress" />
+        <circle class="road-tip" r="5" />
+      </svg>
+      <ol class="relative space-y-14 md:space-y-20">
+        {
+          tr('services.process.steps').map((step, i) => (
+            <li class:list={['road-step', i % 2 ? 'is-right' : 'is-left']} data-road-step>
+              <span class="road-node" data-road-node>
+                <span class="road-num">{i + 1}</span>
+                <Doodle name="tick" class="road-tick size-5" />
+              </span>
+              <div class="road-card rounded-2xl bg-base-100 p-6 md:p-7">
+                <div class="flex items-start justify-between gap-4">
+                  <h3 class="text-title font-semibold">{step.title}</h3>
+                  <Doodle name={stepDoodles[i]} class="size-10 shrink-0 text-base-content/75" />
+                </div>
+                <p class="mt-2 text-[0.9375rem] text-muted">{step.text}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
     </div>
-    <ol class="timeline mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-3" data-reveal-group data-timeline>
-      {
-        tr('services.process.steps').map((step, i) => (
-          <li class="step flex w-[78%] shrink-0 snap-start flex-col rounded-2xl bg-base-100 p-7 sm:w-[45%] lg:w-[calc((100%-3rem)/3.4)]" data-reveal="rise">
-            <div class="flex items-center justify-between">
-              <span class="font-serif text-3xl italic text-muted">{String(i + 1).padStart(2, '0')}</span>
-              <Doodle name={stepDoodles[i]} class="size-10 text-base-content/75" />
-            </div>
-            {/* Hairline that draws across once the step is in view, linking one step to the next. */}
-            <span class="step-line" aria-hidden="true"></span>
-            <h3 class="mt-6 text-title font-semibold">{step.title}</h3>
-            <p class="mt-2 text-[0.9375rem] text-muted">{step.text}</p>
-          </li>
-        ))
-      }
-    </ol>
   </section>
 
   <!-- 05 FAQ -->
@@ -273,38 +228,79 @@ const fill = (text) => text.replace(/\{(\w+)\}/g, (_, k) => faqVars[k] ?? `{${k}
 </BaseLayout>
 
 <style>
-  /* Timeline: aligned with the page gutter, scrolls to the screen edge. */
-  .timeline {
-    padding-inline: max(var(--spacing-gutter), calc((100% - 76rem) / 2 + var(--spacing-gutter)));
-    scroll-padding-inline: max(var(--spacing-gutter), calc((100% - 76rem) / 2 + var(--spacing-gutter)));
-    scrollbar-width: none;
+  /* ── How it works road ─────────────────────────────────────────────── */
+  .road-svg {
+    position: absolute;
+    inset: 0;
+    overflow: visible;
+    pointer-events: none;
+    fill: none;
+    stroke-linecap: round;
   }
-  .timeline::-webkit-scrollbar { display: none; }
-  .timeline-btn {
+  .road-base {
+    stroke: var(--color-base-300);
+    stroke-width: 2;
+    stroke-dasharray: 2 9;
+  }
+  .road-progress {
+    stroke: var(--color-accent);
+    stroke-width: 2.5;
+  }
+  .road-tip {
+    fill: var(--color-accent);
+    stroke: none;
+  }
+  /* Mobile: nodes on the left, cards to the right. Desktop: nodes in the
+     middle, cards alternating left and right of the road. */
+  .road-step {
+    display: grid;
+    grid-template-columns: 2.75rem 1fr;
+    gap: 1rem;
+    align-items: center;
+  }
+  @media (min-width: 48rem) {
+    .road-step { grid-template-columns: 1fr 3.25rem 1fr; gap: 2.5rem; }
+    .road-step .road-node { grid-column: 2; grid-row: 1; }
+    .road-step.is-left .road-card { grid-column: 1; grid-row: 1; }
+    .road-step.is-right .road-card { grid-column: 3; grid-row: 1; }
+  }
+  .road-node {
+    position: relative;
+    z-index: 1;
     display: grid;
     place-items: center;
     width: 2.75rem;
     height: 2.75rem;
     border-radius: 999px;
-    color: var(--muted);
-    transition: color 0.2s, background-color 0.2s;
+    background: var(--color-base-100);
+    box-shadow: 0 0 0 2px var(--color-base-300);
+    font-family: var(--font-serif);
+    font-size: 1.125rem;
+    transition: background-color 0.5s var(--ease-soft), color 0.5s, box-shadow 0.5s, transform 0.6s var(--ease-spring);
   }
-  .timeline-btn:hover { color: var(--color-base-content); background: color-mix(in oklab, var(--color-base-300) 50%, transparent); }
-  .timeline-btn svg { width: 1.25rem; height: 1.25rem; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  @media (min-width: 48rem) { .road-node { width: 3.25rem; height: 3.25rem; } }
+  .road-num, .road-tick { grid-area: 1 / 1; transition: opacity 0.4s, transform 0.5s var(--ease-spring); }
+  .road-tick { opacity: 0; transform: scale(0.6); }
+  .road-card {
+    translate: 0 var(--py, 0px); /* gentle parallax, set by the script */
+    transition: opacity 0.6s var(--ease-soft), transform 0.8s var(--ease-soft);
+  }
 
-  .step-line {
-    display: block;
-    height: 1px;
-    margin-top: 1.25rem;
-    background: color-mix(in oklab, var(--color-accent) 70%, transparent);
-    transform: scaleX(0);
-    transform-origin: left;
+  /* States (only once the script runs; otherwise everything is simply visible). */
+  .road:global(.is-live) .road-step .road-card { opacity: 0.35; transform: translateY(14px) scale(0.98); }
+  .road:global(.is-live) .road-step:global(.is-current) .road-card { opacity: 1; transform: none; }
+  .road:global(.is-live) .road-step:global(.is-passed) .road-card { opacity: 0.55; transform: none; }
+  .road:global(.is-live) .road-step:global(.is-reached) .road-node {
+    background: var(--color-accent);
+    color: var(--color-accent-content);
+    box-shadow: 0 0 0 2px var(--color-accent);
   }
-  :global(html:not(.motion)) .step-line,
-  .step:global(.is-in) .step-line {
-    transform: scaleX(1);
-    transition: transform 1.3s var(--ease-soft) calc(var(--i, 0) * 110ms + 300ms);
-  }
+  .road:global(.is-live) .road-step:global(.is-current) .road-node { transform: scale(1.12); }
+  .road:global(.is-live) .road-step:global(.is-passed) .road-num { opacity: 0; transform: scale(0.6); }
+  .road:global(.is-live) .road-step:global(.is-passed) .road-tick { opacity: 1; transform: none; }
+  /* The tick draws itself when a milestone is passed (doodle paths). */
+  .road:global(.is-live) .road-tick :global(path) { stroke-dasharray: 1 1.01; stroke-dashoffset: 1; transition: stroke-dashoffset 0.6s var(--ease-soft) 0.1s; }
+  .road:global(.is-live) .road-step:global(.is-passed) .road-tick :global(path) { stroke-dashoffset: 0; }
 
   /* FAQ: smooth open/close where supported (interpolate-size), a plus that turns into a cross. */
   .faq {
@@ -339,14 +335,9 @@ const fill = (text) => text.replace(/\{(\w+)\}/g, (_, k) => faqVars[k] ?? `{${k}
   .faq-icon::after { rotate: 90deg; }
   .faq[open] .faq-icon { transform: rotate(45deg); color: var(--color-accent); }
 
-  /* Doodles in a list draw one after another. */
-  .service-tile :global(.doodle) { --d: 2; }
 </style>
 
 <script>
-  // Timeline arrows: scroll one step at a time (swipe/trackpad also work natively).
-  const timeline = document.querySelector('[data-timeline]');
-  const step = () => timeline.querySelector('li')?.getBoundingClientRect().width + 16 || 320;
-  document.querySelector('[data-timeline-prev]')?.addEventListener('click', () => timeline.scrollBy({ left: -step(), behavior: 'smooth' }));
-  document.querySelector('[data-timeline-next]')?.addEventListener('click', () => timeline.scrollBy({ left: step(), behavior: 'smooth' }));
+  import { initRoad } from '../../scripts/services-road.js';
+  document.querySelectorAll('[data-road]').forEach(initRoad);
 </script>
