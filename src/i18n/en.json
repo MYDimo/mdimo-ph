@@ -77,7 +77,6 @@
     },
     "alt": {
       "hero1": "Bride and groom laughing as they climb wooden stairs, autumn hills behind them",
-      "hero2": "Two wedding rings resting on white ribbon among white flowers",
       "hero3": "Couple touching foreheads by the water at sunset",
       "hero4": "Black-and-white photo of a groom twirling the bride in backlit sunshine",
       "hero5": "Bride with a peach-toned bouquet laughing with the groom in an autumn forest",
@@ -89,7 +88,9 @@
       "bento3": "Beach table decorated with wildflowers and candles",
       "bento4": "Glass catching the afternoon sun",
       "bento5": "Black-and-white photo of the couple dancing among guests on the beach",
-      "bento6": "Blurred couple embracing under the moon by the sea"
+      "bento6": "Blurred couple embracing under the moon by the sea",
+      "hero7": "Bride laughing with her eyes closed in warm window light",
+      "hero8": "Bride laughing among purple flowers in the garden"
     },
     "services": {
       "eyebrow": "Services",

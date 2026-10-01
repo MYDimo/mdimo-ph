@@ -11,7 +11,7 @@ export { localeStaticPaths as getStaticPaths } from '../../i18n/paths.js';
 const { locale } = Astro.params;
 const tr = useT(locale);
 // Three favourites from the home carousel.
-const favourites = [heroSlides[1], heroSlides[3], heroSlides[5]];
+const favourites = [heroSlides[2], heroSlides[3], heroSlides[5]];
 ---
 
 <BaseLayout locale={locale} title={tr('about.title')} description={tr('seo.about')} image={portrait}>

@@ -66,9 +66,10 @@ Do not add a dependency without stating what it is, why it's needed, and its siz
 - **Hero carousel:** a full-bleed, rounded hero carousel with one short powerful message that stays fixed over/beside the images, followed by a deliberate scroll transition into the next section (in the spirit of adovasio.it).
   - **Auto-rotates slowly from the moment the page loads** (soft crossfade or gentle slide, roughly 5 to 7 seconds per slide, tunable in one place).
   - **Visitor control:** swipe on touch, arrow buttons, dots or a thin progress indicator, and keyboard arrows. Manual interaction pauses autoplay briefly, then it resumes. Also pause on hover/focus and when the tab is hidden.
-  - **Performance:** the first slide is eager and preloaded (it is the LCP image); remaining slides load lazily. Use 4 to 6 slides maximum.
+  - **Performance:** the first slide is eager and preloaded (it is the LCP image); remaining slides load lazily.
+  - **Choosing slides:** vertical photos only; each one a bit special; consistent set of people-and-moment shots (no detail close-ups like rings). Any number of slides.
   - **Accessibility:** if `prefers-reduced-motion` is set, do not autoplay. Provide a visible pause/play control and proper `aria` labels/live-region behavior.
-  - Choose the slides from `/images` and let the user swap them.
+  - Choose the slides from `/images` (or existing Moments) and let the user swap them.
 - **Scroll animation:** image and text move in coordination (parallax, reveal, pin, crossfade). Purposeful, not decorative. Animate `transform` and `opacity` only. Motion should feel smooth and soft, like Apple's own pages.
 - **Menu:** minimal and unobtrusive. Simple top bar on desktop, a clean rounded slide-in or full-screen panel on mobile. Language switcher (EN | BG) and theme toggle always reachable. Not a copy of the adovasio menu.
 
@@ -111,7 +112,7 @@ Suggested flow (to be refined together): hero, short personal positioning statem
 - The user provides an **`/images`** folder in the project root with photos for carousels, bento grids, and galleries.
 - Treat `/images` as **read-only originals**. Never delete, rename, or overwrite them.
 - For optimization with `astro:assets`, copy the chosen images into `src/assets/` (organized by gallery/section) and reference them from there. Tell the user which images you picked for which section and let them swap.
-- Propose the 4 to 6 hero carousel images and let the user approve or swap them.
+- Propose hero carousel images (vertical, special, consistent) and let the user approve or swap them.
 - **Logo:** `/images/logo.svg` is the site logo. Copy it into `src/assets/` and use it in the header, footer, and favicon. Inline it or use `currentColor` where possible so it adapts to the light and dark themes; if it is not single-color, tell the user and propose a light and dark variant. Do not redraw or alter it without asking.
 
 ### Framer export (content only)
