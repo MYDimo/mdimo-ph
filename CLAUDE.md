@@ -218,7 +218,8 @@ public/           # static assets only
 - [x] Micro-interactions: theme toggle (sun pop / moon roll, colour bloom, circular theme reveal), sliding language and filter pills, pill-button press, arrow nudges, nav underline + accent dot, condensing header (hides on mobile scroll-down), send button spinner → check, copy-email, reading-progress hairline, photos fade in over their average colour (`scripts/image-colors.mjs` → `src/data/image-colors.json`)
 
 - [x] Logo sits at a -8° tilt; on the first page of a visit the name writes itself (OS serif italic, pen-stroke outline) and folds into the mark, which then draws (2.4 s); hover redraws
-- [x] Home feature photo rotates per visit between 3 options (`featureOptions` in `src/pages/[locale]/index.astro`); home "Meet the eye" card uses the self-portrait
+- [x] Home feature photo: every image in `src/assets/home/feature/` rotates per visit (drop files in to add/swap). Naming a file after a Moment slug (`probiv.jpg`, `probiv-2.jpg`) adds a caption linking to it. Home "Meet the eye" card uses the self-portrait
+- [x] Header: transparent at top, blur only (no hairline) once scrolled
 - [x] Lightbox corners: rounded and clipped on `.pswp__zoom-wrap`, radius compensated for the zoom scale in `src/scripts/lightbox.js`
 - [x] Motion pacing: slower, softer reveals (words 1.4 s, images 1.3 s, blocks 1.2 s); GSAP scrubs smoothed (`scrub: 1`)
 - [x] Character pass: warm paper/ink neutrals; OS serif accents; accent-coloured link underlines; headings settle from the accent colour into the text colour; each Moment page washes its header (and lightbox) with its cover's average colour; self-drawing logo (once per visit + on hover); a near-full-bleed feature photo on home (Valentina & Danail sparklers); "Recent moments" row on home
