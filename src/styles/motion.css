@@ -65,8 +65,8 @@ a:hover .arrow-back {
   }
 }
 
-/* ── Desktop nav: underline draws in from the left; current page gets an
-      accent dot ──────────────────────────────────────────────────────────── */
+/* ── Desktop nav: underline draws in from the left; the current page gets an
+      accent dot just to the right of its label ──────────────────────────── */
 .nav-link {
   position: relative;
 }
@@ -86,14 +86,15 @@ a:hover .arrow-back {
   transform: scaleX(1);
 }
 .nav-link[aria-current='page']::after {
-  left: 50%;
-  right: auto;
-  bottom: 0.15rem;
-  width: 4px;
-  height: 4px;
+  left: auto;
+  right: 0.3rem; /* sits in the link's own padding, so the menu never shifts */
+  bottom: auto;
+  top: 50%;
+  width: 5px;
+  height: 5px;
   border-radius: 999px;
   background: var(--color-accent);
-  transform: translateX(-50%);
+  transform: translateY(-50%);
 }
 
 /* ── Headings: each word rises out of its own mask when the heading enters

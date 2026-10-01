@@ -15,7 +15,7 @@ const { title, date, categories } = entry.data;
   <a href={`${localizedPath(locale, routes.moments)}${slug}/`} class="block">
     <!-- The transition name sits on the rounded, clipping box (not the <img>) so the
          snapshot that morphs between pages keeps its rounded corners. -->
-    <div class="aspect-[4/5] overflow-hidden rounded-xl bg-base-300" style={bg(cover, `view-transition-name: moment-cover-${slug}`)} data-reveal="image" data-view>
+    <div class="aspect-[4/5] overflow-hidden rounded-xl bg-base-300" style={bg(cover, `view-transition-name: moment-cover-${slug}`)} data-reveal="image">
       <Image
         src={cover}
         alt=""
