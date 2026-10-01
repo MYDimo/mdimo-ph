@@ -217,7 +217,7 @@ public/           # static assets only
 - [x] Motion: every reveal replays each time it enters view (or is scroll-driven); site-wide engine `src/scripts/motion.js` + `src/styles/motion.css` (no dependency). Hooks: `data-reveal="image|rise"`, `data-reveal-group`, `data-lift` + `data-dim-group`, `data-view` (cursor pill); big headings (`h1`, `.text-headline`) split into rising words automatically. Gated by `html.motion` (unset under reduced motion)
 - [x] Micro-interactions: theme toggle (sun pop / moon roll, colour bloom, circular theme reveal), sliding language and filter pills, pill-button press, arrow nudges, nav underline + accent dot, condensing header (hides on mobile scroll-down), send button spinner → check, copy-email, reading-progress hairline, photos fade in over their average colour (`scripts/image-colors.mjs` → `src/data/image-colors.json`)
 
-- [x] Logo sits at a -8° tilt; on the first page of a visit the name writes itself (OS serif italic, pen-stroke outline) and folds into the mark, which then draws (2.4 s); hover redraws
+- [x] Logo sits at a -8° tilt; on arrival from outside the site or a refresh (not when moving between pages) the name writes itself (OS serif italic, pen-stroke outline) and folds into the mark, which then draws (2.4 s); hover redraws
 - [x] Home feature photo: every image in `src/assets/home/feature/` rotates per visit (drop files in to add/swap). Naming a file after a Moment slug (`probiv.jpg`, `probiv-2.jpg`) adds a caption linking to it. Home "Meet the eye" card uses the self-portrait
 - [x] Header: transparent at top, blur only (no hairline) once scrolled
 - [x] Lightbox corners: rounded and clipped on `.pswp__zoom-wrap`, radius compensated for the zoom scale in `src/scripts/lightbox.js`

@@ -84,10 +84,12 @@ const og = await getImage({
         if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
           document.documentElement.classList.add('motion');
         }
-        // The logo draws itself once per visit; later pages show it complete.
+        // The name/logo intro plays when arriving from outside the site or on a
+        // refresh; moving between pages of the site shows the finished logo.
         try {
-          if (sessionStorage.getItem('logo-drawn')) document.documentElement.classList.add('logo-drawn');
-          else sessionStorage.setItem('logo-drawn', '1');
+          var nav = performance.getEntriesByType('navigation')[0];
+          var fromSite = document.referrer && new URL(document.referrer).origin === location.origin;
+          if (fromSite && !(nav && nav.type === 'reload')) document.documentElement.classList.add('logo-drawn');
         } catch (e) {}
       })();
     </script>

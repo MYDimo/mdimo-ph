@@ -103,7 +103,7 @@ a:hover .arrow-back {
 
 /* ── Logo ─────────────────────────────────────────────────────────────────
    The mark sits at a slight tilt, like a stamp.
-   First page of a visit: the name writes itself letter by letter as thin pen
+   On arrival or refresh (not between pages, see BaseLayout): the name writes itself letter by letter as thin pen
    strokes that then fill in (≈2s), folds toward the mark and fades (≈0.9s),
    while the mark draws its single line (≈2.4s) and tilts into place.
    Hovering the logo redraws the line. The path has pathLength="1". */
