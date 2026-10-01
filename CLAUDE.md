@@ -58,7 +58,7 @@ Do not add a dependency without stating what it is, why it's needed, and its siz
 - **System font stack only. No web fonts, no font loading, no flash of unstyled text.**
 - Use something like: `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif` (and the equivalent `system-ui` fallbacks). These cover Cyrillic on all major platforms.
 - Create hierarchy with size, weight, and tracking, not with novelty fonts: very large, tight-tracked headlines; comfortable body size and line height; medium-weight small labels.
-- **Editorial second voice:** the OS serif (`font-serif` = ui-serif / New York / Georgia; no download) in small doses only: the italic "from / through / to", Moment date/venue lines, step numbers, photo captions.
+- **Editorial second voice:** the OS serif (`font-serif` = ui-serif / New York / Georgia; no download), **always upright, never italic**, in small doses only: the "from / through / to" lead words, Moment date/venue lines, step numbers, photo captions, the Services approach quote.
 - Verify Bulgarian text renders well (long words, wrapping, headline line breaks) in both languages.
 - Keep the Bulgarian-style Cyrillic letterforms ("т" like *m*, "д" like *g*) that Apple's system font applies under `lang="bg"`; the user likes them. Don't override `locl`.
 
@@ -223,9 +223,10 @@ public/           # static assets only
 - [x] Header: transparent at top, blur only (no hairline) once scrolled
 - [x] Lightbox corners: rounded and clipped on `.pswp__zoom-wrap`, radius compensated for the zoom scale in `src/scripts/lightbox.js`
 - [x] Motion pacing: slower, softer reveals (words 1.4 s, images 1.3 s, blocks 1.2 s); GSAP scrubs smoothed (`scrub: 1`)
+- [x] No italics anywhere (rejected); serif accents are upright
 - [x] Character pass: warm paper/ink neutrals; OS serif accents; accent-coloured link underlines; headings settle from the accent colour into the text colour; each Moment page washes its header (and lightbox) with its cover's average colour; self-drawing logo (once per visit + on hover); a near-full-bleed feature photo on home (Valentina & Danail sparklers); "Recent moments" row on home
 
-- [x] Services page: approach quote → services bento (photo tiles with frosted caption, doodle, "from" price; differs from the home bento) → wedding collections with photo strips and doodle ticks → other services (anchors `#christening`, `#couple`, `#events`) → swipeable "How it works" timeline → FAQ (`services.faq`, live numbers filled in) → inquiry form. Practical details folded into the FAQ
+- [x] Services page: approach quote → wedding collections (big photos; recommended Full Day card wider with an accent ring; doodle ticks) → other services (anchors `#christening`, `#couple`, `#events`) → "How it works" scroll story (a winding road drawn as you scroll; milestones light up, then turn into ticks once passed; gentle card parallax; `src/scripts/services-road.js`) → FAQ (`services.faq`, live numbers filled in) → inquiry form. No services bento (tried, rejected). Practical details folded into the FAQ
 - [x] Doodles: `src/components/Doodle.astro`, single-line icons in the logo's pen style that draw themselves in view (`data-reveal="doodle"`); add new ones there
 - [x] Text CTAs use `.cta-link` + `.cta-text`: accent underline draws in under the words only (arrows excluded)
 
