@@ -4,6 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageIntro from '../../components/PageIntro.astro';
 import StoryCard from '../../components/StoryCard.astro';
 import BentoGrid from '../../components/BentoGrid.astro';
+import MomentCard from '../../components/MomentCard.astro';
 import HeroCarousel from '../../components/HeroCarousel.astro';
 import { useT, localizedPath, routes } from '../../i18n/index.js';
 import { heroSlides, storyImages, bentoTiles } from '../../data/home.js';
@@ -29,6 +30,12 @@ const serviceCards = [
   { id: 'couple', moment: 'radina-and-martin', href: `${servicesPath}#more` },
   { id: 'events', moment: 'probiv', href: `${servicesPath}#more` },
 ].map((c) => ({ ...c, cover: coverOf(c.moment) }));
+
+// One full-width photo between sections: the sparklers from Valentina & Danail's wedding.
+const feature = moments.find((m) => m.slug === 'valentina-and-danail');
+const featurePhoto = feature?.images[20];
+// The latest few Moments, newest first.
+const recent = moments.slice(0, 4);
 
 // Preload the first hero frame (the LCP image) with the same srcset the carousel uses.
 const lcp = await getImage({ src: heroSlides[0].src, widths: [320, 480, 640, 800, 1000, 1200] });
@@ -81,7 +88,7 @@ const jsonLd = {
         tr('home.statement').map((line) => (
           <span class="block">
             {/* Each word sits in its own clipping mask so it can rise into view (see home-scroll.js). */}
-            <span class="stmt-word"><em class="text-muted" data-word data-lead>{line.lead}</em></span>{' '}
+            <span class="stmt-word"><em class="font-serif font-normal text-muted" data-word data-lead>{line.lead}</em></span>{' '}
             {line.text.split(' ').map((word) => (
               <>
                 <span class="stmt-word"><span data-word>{word}</span></span>{' '}
@@ -111,6 +118,34 @@ const jsonLd = {
     </div>
     <BentoGrid tiles={tiles} />
   </section>
+
+  {
+    feature && featurePhoto && (
+      <section class="pt-section">
+        {/* Near edge-to-edge photo: breaks the card rhythm with one big moment (gentle parallax). */}
+        <a
+          href={`${momentsHref}${feature.slug}/`}
+          class="group relative mx-2 block h-[70vh] min-h-[26rem] overflow-hidden rounded-2xl md:mx-3"
+          style={bg(featurePhoto)}
+          data-reveal="image"
+        >
+          <Image
+            src={featurePhoto}
+            alt={tr('moments.photoAlt', { title: feature.entry.data.title, n: 21, total: feature.images.length })}
+            widths={[640, 1000, 1400, 1800, 2048]}
+            sizes="100vw"
+            class="fade-img size-full scale-[1.12] object-cover"
+            data-parallax
+          />
+          <span class="absolute bottom-4 left-4 rounded-full bg-base-100/85 px-4 py-2 font-serif text-[0.9375rem] italic backdrop-blur md:bottom-6 md:left-6">
+            {feature.entry.data.title}
+            {feature.entry.data.location && ` · ${feature.entry.data.location}`}
+            <span class="arrow ml-1 not-italic" aria-hidden="true">→</span>
+          </span>
+        </a>
+      </section>
+    )
+  }
 
   <section class="shell pt-section">
     <div class="mb-10 flex flex-wrap items-end justify-between gap-6">
@@ -147,6 +182,25 @@ const jsonLd = {
   </section>
 
   <section class="shell pt-section">
+    <div class="mb-10 flex flex-wrap items-end justify-between gap-6">
+      <PageIntro as="h2" eyebrow={tr('home.recent.eyebrow')} heading={tr('home.recent.heading')} />
+      <a href={momentsHref} class="inline-flex items-center gap-2 font-medium underline-offset-4 hover:underline">
+        {tr('home.recent.link')} <span class="arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+    {/* Swipeable row of the latest Moments (native scroll-snap). */}
+    <div class="recent-row flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2" data-dim-group>
+      {
+        recent.map((m) => (
+          <div class="w-[72%] shrink-0 snap-start sm:w-[40%] lg:w-[calc((100%-3rem)/4)]">
+            <MomentCard locale={locale} moment={m} sizes="(min-width: 1024px) 18rem, 72vw" />
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="shell pt-section">
     <StoryCard
       reverse
       heading={tr('home.meet.heading')}
@@ -168,6 +222,15 @@ const jsonLd = {
     vertical-align: bottom;
   }
   .stmt-word > * { display: inline-block; }
+  .recent-row { scrollbar-width: none; }
+  .recent-row::-webkit-scrollbar { display: none; }
+  /* Words arrive in the accent colour and settle into their own colour, in reading order. */
+  :global(html.motion) [data-statement] :global([data-word]) {
+    transition: color 1.6s var(--ease-soft) calc(var(--i, 0) * 55ms);
+  }
+  :global(html.motion) [data-statement]:not(:global(.is-lit)) :global([data-word]) {
+    color: var(--color-accent);
+  }
 </style>
 
 <script>

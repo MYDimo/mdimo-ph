@@ -113,6 +113,11 @@
           "text": "Fast, high-energy coverage."
         }
       }
+    },
+    "recent": {
+      "eyebrow": "Recent moments",
+      "heading": "Lately, in front of the lens.",
+      "link": "All moments"
     }
   },
   "services": {

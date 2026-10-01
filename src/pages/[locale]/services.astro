@@ -147,7 +147,7 @@ const bookHref = (service) => `?service=${service}#inquiry`;
       {
         tr('services.process.steps').map((step, i) => (
           <li class="step rounded-2xl bg-base-100 p-7" data-reveal="rise">
-            <span class="text-sm font-semibold text-muted tabular-nums">{String(i + 1).padStart(2, '0')}</span>
+            <span class="font-serif text-3xl italic text-muted">{String(i + 1).padStart(2, '0')}</span>
             {/* Hairline that draws across once the step is in view, linking one step to the next. */}
             <span class="step-line" aria-hidden="true"></span>
             <h3 class="mt-6 text-title font-semibold">{step.title}</h3>

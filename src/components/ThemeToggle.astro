@@ -133,13 +133,15 @@ const tr = useT(locale);
     const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
     root.classList.add('vt-theme');
     const t = document.startViewTransition(apply);
-    t.ready.then(() =>
-      root.animate(
-        { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
-        { duration: 750, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', pseudoElement: '::view-transition-new(root)' },
-      ),
-    );
-    t.finished.finally(() => root.classList.remove('vt-theme'));
+    t.ready
+      .then(() =>
+        root.animate(
+          { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
+          { duration: 750, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', pseudoElement: '::view-transition-new(root)' },
+        ),
+      )
+      .catch(() => {}); // skipped transitions (e.g. hidden tab) still apply the theme
+    t.finished.catch(() => {}).finally(() => root.classList.remove('vt-theme'));
   }
 
   buttons.forEach((b) =>

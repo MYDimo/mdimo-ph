@@ -111,7 +111,7 @@ const used = categories.filter((c) => moments.some((m) => m.entry.data.categorie
     const update = () => apply(chip.dataset.filter);
     // Cards glide to their new places: each cover/title already has a view-transition
     // name, so a same-document transition morphs them; hidden cards fade out.
-    if (document.startViewTransition && !reduce.matches) document.startViewTransition(update);
+    if (document.startViewTransition && !reduce.matches) document.startViewTransition(update).ready.catch(() => {});
     else update();
   }
 

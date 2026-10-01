@@ -5,7 +5,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import MomentCard from '../../../components/MomentCard.astro';
 import { locales, useT, localizedPath, formatDate, routes } from '../../../i18n/index.js';
 import { getMoments, similarMoments } from '../../../data/moments.js';
-import { bg } from '../../../data/colors.js';
+import { bg, colorOf } from '../../../data/colors.js';
 
 export async function getStaticPaths() {
   const paths = [];
@@ -34,12 +34,16 @@ const alt = (i) => tr('moments.photoAlt', { title, n: i + 1, total });
 // Full-size versions for the lightbox (the imported files are already ≤2048px).
 const full = await Promise.all(images.map((src) => getImage({ src, width: src.width, format: 'webp', quality: 82 })));
 const coverIndex = images.indexOf(cover);
+// Each Moment carries a faint wash of its own cover colour (header + lightbox).
+const tint = colorOf(cover) ?? 'transparent';
 ---
 
 <BaseLayout locale={locale} title={title} description={description} image={cover} imagePosition={entry.data.previewCrop}>
   <!-- Reading progress: an accent hairline across the top that fills as you scroll. -->
   <div class="read-progress" aria-hidden="true" data-read-progress></div>
   <article
+    class="relative isolate"
+    style={`--moment-tint: ${tint}`}
     data-gallery
     data-lb-close={tr('moments.lightbox.close')}
     data-lb-zoom={tr('moments.lightbox.zoom')}
@@ -47,12 +51,14 @@ const coverIndex = images.indexOf(cover);
     data-lb-next={tr('moments.lightbox.next')}
     data-lb-error={tr('moments.lightbox.error')}
   >
+    <!-- The event's colour, washing softly down from the top of the page. -->
+    <div class="moment-tint" aria-hidden="true"></div>
     <header class="shell grid items-end gap-8 pt-10 md:grid-cols-2 md:gap-12 md:pt-16">
       <div class="md:pb-4">
         <a href={localizedPath(locale, routes.moments)} class="text-sm text-muted underline-offset-4 hover:text-base-content hover:underline">
           <span class="arrow arrow-back" aria-hidden="true">←</span> {tr('moments.back')}
         </a>
-        <p class="eyebrow mt-8">
+        <p class="mt-8 font-serif text-lg italic text-muted">
           {categories.map((c) => tr(`moments.filters.${c}`)).join(' · ')} · {formatDate(locale, date, { month: 'long', year: 'numeric' })}
           {location && ` · ${location}`}
         </p>
@@ -132,6 +138,19 @@ const coverIndex = images.indexOf(cover);
   .prose-moment :global(p + p) { margin-top: 1em; }
   .prose-moment :global(a) { color: var(--color-base-content); text-decoration: underline; text-underline-offset: 3px; }
   .more-row { scrollbar-width: none; }
+  .moment-tint {
+    position: absolute;
+    inset: -5rem 0 auto; /* reach up under the transparent header */
+    height: 85vh;
+    z-index: -1;
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      color-mix(in oklab, var(--moment-tint) 26%, transparent),
+      color-mix(in oklab, var(--moment-tint) 8%, transparent) 55%,
+      transparent
+    );
+  }
   .read-progress {
     position: fixed;
     top: 0;
@@ -147,7 +166,8 @@ const coverIndex = images.indexOf(cover);
 
   /* Lightbox: same tonal world as the page instead of a black void. */
   :global(:root .pswp) {
-    --pswp-bg: var(--color-base-200);
+    /* The lightbox takes on a whisper of the event's colour too. */
+    --pswp-bg: color-mix(in oklab, var(--lightbox-tint, transparent) 10%, var(--color-base-200));
     --pswp-icon-color: var(--color-base-content);
     --pswp-icon-color-secondary: var(--color-base-200);
     --pswp-icon-stroke-color: var(--color-base-200);
@@ -159,7 +179,11 @@ const coverIndex = images.indexOf(cover);
 
 <script>
   import { initLightbox } from '../../../scripts/lightbox.js';
-  document.querySelectorAll('[data-gallery]').forEach(initLightbox);
+  document.querySelectorAll('[data-gallery]').forEach((gallery) => {
+    // The lightbox is appended to <body>, outside the article, so hand it the tint.
+    document.documentElement.style.setProperty('--lightbox-tint', gallery.style.getPropertyValue('--moment-tint'));
+    initLightbox(gallery);
+  });
 
   // Reading progress bar: scale the hairline with how far through the page we are.
   const bar = document.querySelector('[data-read-progress]');

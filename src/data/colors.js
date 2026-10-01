@@ -5,6 +5,9 @@ import colors from './image-colors.json';
 const modules = import.meta.glob('../assets/**/*.{jpg,jpeg,JPG}', { eager: true, import: 'default' });
 const bySrc = new Map(Object.entries(modules).map(([p, img]) => [img.src, colors[p.replace('../assets/', '')]]));
 
+/** The image's average colour as a hex string (or undefined). */
+export const colorOf = (image) => (image ? bySrc.get(image.src) : undefined);
+
 /** `background-color: …` for an image, plus any extra inline style. */
 export function bg(image, extra = '') {
   const c = image && bySrc.get(image.src);
