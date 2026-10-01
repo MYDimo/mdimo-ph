@@ -31,19 +31,18 @@ const serviceCards = [
   { id: 'events', moment: 'probiv', href: `${servicesPath}#more` },
 ].map((c) => ({ ...c, cover: coverOf(c.moment) }));
 
-// One full-width photo between sections. Three options showing the range of work;
-// each new visit shows the next one (picked before paint by the inline script below).
-// To change them: edit slug + photo number (as in src/assets/moments/<slug>/NN.jpg).
-const featureOptions = [
-  { slug: 'elena-madlena-and-asen', photo: 9 },
-  { slug: 'mtb-european-dh', photo: 11 },
-  { slug: 'probiv', photo: 10 },
-]
-  .map(({ slug, photo }) => {
-    const m = moments.find((x) => x.slug === slug);
-    return m && { moment: m, n: photo, src: m.images[photo - 1] };
-  })
-  .filter((f) => f?.src);
+// Wide feature photo: every image in src/assets/home/feature/ is an option, and
+// each new visit shows the next one. Name a file after a Moment's slug (e.g.
+// `probiv.jpg`, or `probiv-2.jpg`) to give it a caption linking to that Moment;
+// any other name shows the photo on its own.
+const featureFiles = import.meta.glob('../../assets/home/feature/*.{jpg,jpeg,JPG,png,webp}', { eager: true, import: 'default' });
+const featureOptions = Object.entries(featureFiles)
+  .sort(([a], [b]) => a.localeCompare(b))
+  .map(([path, src]) => {
+    const name = path.split('/').pop().replace(/\.[^.]+$/, '');
+    const moment = moments.find((m) => name === m.slug || name.startsWith(`${m.slug}-`));
+    return { src, moment };
+  });
 // The latest few Moments, newest first.
 const recent = moments.slice(0, 4);
 
@@ -129,50 +128,60 @@ const jsonLd = {
     <BentoGrid tiles={tiles} />
   </section>
 
-  <!-- Pick which feature photo this visit shows, before paint (no flash, only that one loads). -->
-  <script is:inline define:vars={{ count: featureOptions.length }}>
-    (function () {
-      var i = 0;
-      try {
-        var current = sessionStorage.getItem('feature');
-        if (current === null) {
-          var stored = localStorage.getItem('feature-last');
-          i = stored === null ? 0 : (Number(stored) + 1) % count;
-          localStorage.setItem('feature-last', String(i));
-          sessionStorage.setItem('feature', String(i));
-        } else i = Number(current) % count;
-      } catch (e) {}
-      document.documentElement.dataset.feature = String(i);
-    })();
-  </script>
-  <section class="pt-section">
-    {
-      featureOptions.map((f, i) => (
-        // Near edge-to-edge photo: breaks the card rhythm with one big moment (gentle parallax).
-        <a
-          href={`${momentsHref}${f.moment.slug}/`}
-          class="feature group relative mx-2 block h-[70vh] min-h-[26rem] overflow-hidden rounded-2xl md:mx-3"
-          style={bg(f.src)}
-          data-feature-slot={i}
-          data-reveal="image"
-        >
-          <Image
-            src={f.src}
-            alt={tr('moments.photoAlt', { title: f.moment.entry.data.title, n: f.n, total: f.moment.images.length })}
-            widths={[640, 1000, 1400, 1800, 2048]}
-            sizes="100vw"
-            class="fade-img size-full scale-[1.12] object-cover"
-            data-parallax
-          />
-          <span class="absolute bottom-4 left-4 rounded-full bg-base-100/85 px-4 py-2 font-serif text-[0.9375rem] italic backdrop-blur md:bottom-6 md:left-6">
-            {f.moment.entry.data.title}
-            {f.moment.entry.data.location && ` · ${f.moment.entry.data.location}`}
-            <span class="arrow ml-1 not-italic" aria-hidden="true">→</span>
-          </span>
-        </a>
-      ))
-    }
-  </section>
+  {
+    featureOptions.length > 0 && (
+      <section class="pt-section">
+        {featureOptions.map((f, i) => {
+          const Tag = f.moment ? 'a' : 'div';
+          const title = f.moment?.entry.data.title;
+          return (
+            // Near edge-to-edge photo: breaks the card rhythm with one big moment (gentle parallax).
+            <Tag
+              href={f.moment ? `${momentsHref}${f.moment.slug}/` : undefined}
+              class="feature group relative mx-2 block h-[70vh] min-h-[26rem] overflow-hidden rounded-2xl md:mx-3"
+              style={bg(f.src)}
+              data-feature-slot={i}
+              data-reveal="image"
+            >
+              <Image
+                src={f.src}
+                alt={title ?? tr('site.name')}
+                widths={[640, 1000, 1400, 1800, 2048]}
+                sizes="100vw"
+                class="fade-img size-full scale-[1.12] object-cover"
+                data-parallax
+              />
+              {f.moment && (
+                <span class="absolute bottom-4 left-4 rounded-full bg-base-100/85 px-4 py-2 font-serif text-[0.9375rem] italic backdrop-blur md:bottom-6 md:left-6">
+                  {title}
+                  {f.moment.entry.data.location && ` · ${f.moment.entry.data.location}`}
+                  <span class="arrow ml-1 not-italic" aria-hidden="true">→</span>
+                </span>
+              )}
+            </Tag>
+          );
+        })}
+        {/* Show only this visit's photo (hidden ones never load). Runs before paint. */}
+        <script is:inline define:vars={{ count: featureOptions.length }}>
+          (function () {
+            var i = 0;
+            try {
+              var current = sessionStorage.getItem('feature');
+              if (current === null) {
+                var stored = localStorage.getItem('feature-last');
+                i = stored === null ? 0 : (Number(stored) + 1) % count;
+                localStorage.setItem('feature-last', String(i));
+                sessionStorage.setItem('feature', String(i));
+              } else i = Number(current) % count;
+            } catch (e) {}
+            var slot = document.querySelector('.feature[data-feature-slot="' + i + '"]');
+            if (slot) slot.classList.add('is-chosen');
+          })();
+        </script>
+        <noscript><style>.feature[data-feature-slot='0'] { display: block; }</style></noscript>
+      </section>
+    )
+  }
 
   <section class="shell pt-section">
     <div class="mb-10 flex flex-wrap items-end justify-between gap-6">
@@ -253,10 +262,7 @@ const jsonLd = {
   .recent-row { scrollbar-width: none; }
   /* Only the feature photo chosen for this visit is shown (hidden ones never load). */
   .feature { display: none; }
-  :global(html:not([data-feature])) .feature[data-feature-slot='0'],
-  :global(html[data-feature='0']) .feature[data-feature-slot='0'],
-  :global(html[data-feature='1']) .feature[data-feature-slot='1'],
-  :global(html[data-feature='2']) .feature[data-feature-slot='2'] { display: block; }
+  .feature:global(.is-chosen) { display: block; }
   .recent-row::-webkit-scrollbar { display: none; }
   /* Words arrive in the accent colour and settle into their own colour, in reading order. */
   :global(html.motion) [data-statement] :global([data-word]) {
