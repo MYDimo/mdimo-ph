@@ -40,7 +40,7 @@ Do not add a dependency without stating what it is, why it's needed, and its siz
 
 ### Look and feel rules
 - **Rounded everything.** Images, cards, buttons, form fields, lightbox frame, and menu panels use generous, consistent corner radii. Define radius tokens (for example small / medium / large / pill) and reuse them. No sharp corners anywhere.
-- **Light base palette.** The light theme is the primary design: a soft off-white page background with white or very slightly tinted cards, and near-black text (not pure black). Think Apple's neutral greys.
+- **Warm light base palette.** The light theme is the primary design: a warm paper page (`#f6f5f2`), warm-white cards, and ink text (`#1f1d1a`), not pure black. Night is warm charcoal with cream text.
 - **A tiny accent that follows the theme:** golden-hour **amber by day** (`#b06a2a`), blue-hour **violet by night** (`#9d8cff`), as `--color-accent`. Used only for focus rings, text selection, active indicators (filter dot, current-page dot), progress hairlines and step lines. Buttons, links and text stay neutral (near-black / soft light grey) so the photographs provide the colour.
 - **Day/night toggle.** A small, elegant toggle in the header. Behavior:
   - **Follows the visitor's system setting** (`prefers-color-scheme`) on first visit. Light is the fallback when there is no preference.
@@ -58,6 +58,7 @@ Do not add a dependency without stating what it is, why it's needed, and its siz
 - **System font stack only. No web fonts, no font loading, no flash of unstyled text.**
 - Use something like: `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif` (and the equivalent `system-ui` fallbacks). These cover Cyrillic on all major platforms.
 - Create hierarchy with size, weight, and tracking, not with novelty fonts: very large, tight-tracked headlines; comfortable body size and line height; medium-weight small labels.
+- **Editorial second voice:** the OS serif (`font-serif` = ui-serif / New York / Georgia; no download) in small doses only: the italic "from / through / to", Moment date/venue lines, step numbers, photo captions.
 - Verify Bulgarian text renders well (long words, wrapping, headline line breaks) in both languages.
 - Keep the Bulgarian-style Cyrillic letterforms ("т" like *m*, "д" like *g*) that Apple's system font applies under `lang="bg"`; the user likes them. Don't override `locl`.
 
@@ -205,6 +206,8 @@ public/           # static assets only
 
 - [x] Motion: every reveal replays each time it enters view (or is scroll-driven); site-wide engine `src/scripts/motion.js` + `src/styles/motion.css` (no dependency). Hooks: `data-reveal="image|rise"`, `data-reveal-group`, `data-lift` + `data-dim-group`, `data-view` (cursor pill); big headings (`h1`, `.text-headline`) split into rising words automatically. Gated by `html.motion` (unset under reduced motion)
 - [x] Micro-interactions: theme toggle (sun pop / moon roll, colour bloom, circular theme reveal), sliding language and filter pills, pill-button press, arrow nudges, nav underline + accent dot, condensing header (hides on mobile scroll-down), send button spinner → check, copy-email, reading-progress hairline, photos fade in over their average colour (`scripts/image-colors.mjs` → `src/data/image-colors.json`)
+
+- [x] Character pass: warm paper/ink neutrals; OS serif accents; accent-coloured link underlines; headings settle from the accent colour into the text colour; each Moment page washes its header (and lightbox) with its cover's average colour; self-drawing logo (once per visit + on hover); a near-full-bleed feature photo on home (Valentina & Danail sparklers); "Recent moments" row on home
 
 ### Still open
 - [ ] Exact grey scales for light/dark palettes (propose options)
