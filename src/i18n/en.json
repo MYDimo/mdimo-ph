@@ -212,7 +212,8 @@
         }
       ],
       "prev": "Previous step",
-      "next": "Next step"
+      "next": "Next step",
+      "frameLabel": "How it works"
     },
     "from": "from {price}",
     "bento": {

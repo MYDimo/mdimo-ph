@@ -1,24 +1,33 @@
 /*
- * "How it works" road (Services page). No dependencies.
+ * "How it works" road in a pinned screen frame (Services page). No dependencies.
  *
- * Layout: the milestone cards are scattered across the width; a smooth S-curve
- * runs from card to card like a winding road. It's drawn twice: a faint dotted
- * base, and an accent line that is revealed as you scroll.
+ * Structure: [data-road-pin] (tall wrapper) > [data-road-frame] (sticky "screen")
+ * > [data-road-viewport] (clips) > [data-road] (the road content: SVG + cards).
  *
- * Scroll: the "pen tip" sits at 55% of the viewport height. As the page moves,
- * the accent line is drawn down to the tip (plus a dot marking it). The latest
- * milestone the line has reached is "current" (it grows and lights up); earlier
- * ones are "passed" and later ones wait, both smaller and quieter. Cards also
- * drift slightly against the scroll for a soft parallax.
+ *  1. Arrival: while the wrapper scrolls up towards its sticky position, the
+ *     frame grows from 90% to full size.
+ *  2. Pinned: the frame (and the FAQ beside it) stays put. Scroll progress
+ *     through the tall wrapper drives the accent line along the road from the
+ *     first milestone to the last; the road content slides up inside the frame
+ *     so the pen tip stays around the middle of the screen.
+ *  3. Release: at the last milestone the wrapper ends and the page scrolls on.
  *
- * With reduced motion the whole road is simply drawn and every card is shown.
+ * The milestone the line has reached last is "current" (it grows and lights
+ * up); the counter in the frame's title bar follows it.
+ *
+ * Reduced motion: the wrapper isn't pinned (pin styles need html.motion) and the
+ * whole road is drawn.
  */
-export function initRoad(root) {
-  const svg = root.querySelector('.road-svg');
+export function initRoad(pin) {
+  const frame = pin.querySelector('[data-road-frame]');
+  const viewport = pin.querySelector('[data-road-viewport]');
+  const road = pin.querySelector('[data-road]');
+  const svg = road.querySelector('.road-svg');
   const base = svg.querySelector('.road-base');
   const line = svg.querySelector('.road-progress');
   const tip = svg.querySelector('.road-tip');
-  const steps = [...root.querySelectorAll('[data-road-step]')];
+  const counter = pin.querySelector('[data-road-count]');
+  const steps = [...road.querySelectorAll('[data-road-step]')];
   const nodes = steps.map((s) => s.querySelector('[data-road-node]'));
   const live = document.documentElement.classList.contains('motion');
   let length = 0;
@@ -37,7 +46,8 @@ export function initRoad(root) {
   };
 
   function layout() {
-    const box = root.getBoundingClientRect();
+    road.style.transform = ''; // measure untranslated
+    const box = road.getBoundingClientRect();
     svg.setAttribute('width', box.width);
     svg.setAttribute('height', box.height);
     svg.setAttribute('viewBox', `0 0 ${box.width} ${box.height}`);
@@ -45,8 +55,7 @@ export function initRoad(root) {
       const r = n.getBoundingClientRect();
       return { x: r.left - box.left + r.width / 2, y: r.top - box.top + r.height / 2 };
     });
-    // The cards are scattered, so the road simply flows from one card's centre to
-    // the next with soft S-curves (it passes under the cards, which hide it there).
+    // Soft S-curves from one card's centre to the next (the cards hide the road beneath them).
     let d = `M ${pts[0].x} ${pts[0].y}`;
     for (let i = 1; i < pts.length; i++) {
       const a = pts[i - 1];
@@ -68,16 +77,33 @@ export function initRoad(root) {
       tip.style.display = 'none';
       return;
     }
-    const box = root.getBoundingClientRect();
-    const tipY = Math.max(0, Math.min(box.height, innerHeight * 0.55 - box.top));
-    const drawn = tipY <= 0 ? 0 : lengthAtY(tipY);
+    const pinBox = pin.getBoundingClientRect();
+    const stickyTop = parseFloat(getComputedStyle(frame).top) || 0;
+    const travel = pin.offsetHeight - frame.offsetHeight;
+
+    // 1. Arrival: grow the frame into place as it approaches its pinned position.
+    const enter = Math.min(1, Math.max(0, 1 - (pinBox.top - stickyTop) / (innerHeight * 0.75)));
+    const eased = 1 - (1 - enter) ** 3;
+    frame.style.transform = enter < 1 ? `scale(${0.9 + 0.1 * eased})` : '';
+
+    // 2. Pinned progress (0 → 1) drives the line from the first milestone to the last.
+    const progress = travel > 0 ? Math.min(1, Math.max(0, (stickyTop - pinBox.top) / travel)) : 0;
+    const first = stops[0];
+    const last = stops[stops.length - 1];
+    const drawn = first + (last - first) * progress;
     line.style.strokeDashoffset = `${length - drawn}`;
     const p = line.getPointAtLength(drawn);
     tip.setAttribute('cx', p.x);
     tip.setAttribute('cy', p.y);
-    tip.style.opacity = drawn > 0 && drawn < length - 1 ? '1' : '0';
+    tip.style.opacity = progress > 0 && progress < 1 ? '1' : '0';
 
-    let current = -1;
+    // Slide the road up inside the frame so the pen tip stays near the middle.
+    const view = viewport.clientHeight;
+    const maxShift = Math.max(0, road.offsetHeight - view + 72); // room for the bottom fade
+    const shift = Math.min(maxShift, Math.max(0, p.y - view * 0.5));
+    road.style.transform = `translateY(${-shift}px)`;
+
+    let current = 0;
     stops.forEach((s, i) => {
       if (drawn >= s - 2) current = i;
     });
@@ -85,14 +111,10 @@ export function initRoad(root) {
       step.classList.toggle('is-reached', i <= current);
       step.classList.toggle('is-current', i === current);
       step.classList.toggle('is-passed', i < current);
-      // Parallax: cards drift a little against the scroll, more the further from centre.
-      const r = step.getBoundingClientRect();
-      const offset = r.top + r.height / 2 - innerHeight / 2;
-      step.style.setProperty('--py', `${(-offset * 0.05).toFixed(1)}px`);
     });
+    if (counter) counter.textContent = String(current + 1);
   }
 
-  if (live) root.classList.add('is-live');
   let queued = false;
   addEventListener('scroll', () => {
     if (!queued) {

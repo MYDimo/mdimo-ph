@@ -179,51 +179,70 @@ const fill = (text) => text.replace(/\{(\w+)\}/g, (_, k) => faqVars[k] ?? `{${k}
     </div>
   </section>
 
-  <!-- 04 How it works: a scroll story. A curving road is drawn as you scroll;
-       each milestone lights up when the line reaches it and is ticked off once
-       you move past it (src/scripts/services-road.js). -->
+  <!-- 04 How it works + 05 FAQ, side by side.
+       The milestones live in a rounded "screen" frame. As the section arrives the
+       frame grows into place, then it pins (with the FAQ beside it) while scrolling
+       moves the winding road and its milestones inside the frame. When the last
+       milestone is reached the pin releases and the page carries on.
+       Logic: src/scripts/services-road.js. Without JS / with reduced motion it's a
+       normal, un-pinned section with the whole road drawn. -->
   <section class="shell pt-section">
     <PageIntro as="h2" eyebrow={tr('services.process.eyebrow')} heading={tr('services.process.heading')} />
-    <div class="road relative mt-14" data-road>
-      <svg class="road-svg" aria-hidden="true">
-        <path class="road-base" />
-        <path class="road-progress" />
-        <circle class="road-tip" r="5" />
-      </svg>
-      <ol class="relative">
-        {
-          tr('services.process.steps').map((step, i) => (
-            <li class="road-step" style={roadPlaces[i]} data-road-step>
-              <div class="road-card rounded-2xl bg-base-100 p-5" data-road-node>
-                <span class="road-num">{String(i + 1).padStart(2, '0')}</span>
-                <div class="mt-2 flex items-center gap-3">
-                  <Doodle name={stepDoodles[i]} class="size-8 shrink-0 text-base-content/75" />
-                  <h3 class="text-lg font-semibold leading-tight md:text-xl">{step.title}</h3>
-                </div>
-                <p class="mt-2 text-[0.9375rem] text-muted">{step.text}</p>
-              </div>
-            </li>
-          ))
-        }
-      </ol>
-    </div>
-  </section>
+    <div class="road-layout mt-12 grid gap-10 md:grid-cols-[7fr_5fr] md:gap-8 lg:gap-12">
+      <div class="road-pin" data-road-pin>
+        <div class="road-frame rounded-2xl bg-base-100" data-road-frame>
+          <div class="road-bar">
+            <span>{tr('services.process.frameLabel')}</span>
+            <span class="road-count" aria-hidden="true"><span data-road-count>1</span> / {tr('services.process.steps').length}</span>
+          </div>
+          <div class="road-viewport" data-road-viewport>
+            <div class="road relative" data-road>
+              <svg class="road-svg" aria-hidden="true">
+                <path class="road-base" />
+                <path class="road-progress" />
+                <circle class="road-tip" r="5" />
+              </svg>
+              <ol class="relative">
+                {
+                  tr('services.process.steps').map((step, i) => (
+                    <li class="road-step" style={roadPlaces[i]} data-road-step>
+                      <div class="road-card rounded-2xl bg-base-200 p-5" data-road-node>
+                        <span class="road-num">{String(i + 1).padStart(2, '0')}</span>
+                        <div class="mt-2 flex items-center gap-3">
+                          <Doodle name={stepDoodles[i]} class="size-8 shrink-0 text-base-content/75" />
+                          <h3 class="text-lg font-semibold leading-tight">{step.title}</h3>
+                        </div>
+                        <p class="mt-2 text-[0.9375rem] text-muted">{step.text}</p>
+                      </div>
+                    </li>
+                  ))
+                }
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
 
-  <!-- 05 FAQ -->
-  <section class="shell grid gap-10 pt-section md:grid-cols-[2fr_3fr] md:gap-12">
-    <PageIntro as="h2" eyebrow={tr('services.faq.eyebrow')} heading={tr('services.faq.heading')} />
-    <div class="divide-y divide-base-300 rounded-2xl bg-base-100 px-5 md:px-7">
-      {
-        tr('services.faq.items').map((item) => (
-          <details class="faq group">
-            <summary class="flex cursor-pointer list-none items-center justify-between gap-6 py-5 font-medium">
-              {item.q}
-              <span class="faq-icon" aria-hidden="true"></span>
-            </summary>
-            <p class="pb-6 pr-8 text-[0.9375rem] text-muted">{fill(item.a)}</p>
-          </details>
-        ))
-      }
+      <!-- FAQ: stays beside the frame while it's pinned (desktop). -->
+      <div class="road-faq">
+        <div class="road-faq-inner">
+          <p class="eyebrow mb-4">{tr('services.faq.eyebrow')}</p>
+          <h2 class="text-title font-semibold">{tr('services.faq.heading')}</h2>
+          <div class="mt-6 divide-y divide-base-300 rounded-2xl bg-base-100 px-5 md:px-6">
+            {
+              tr('services.faq.items').map((item) => (
+                <details class="faq group">
+                  <summary class="flex cursor-pointer list-none items-center justify-between gap-6 py-4 font-medium">
+                    {item.q}
+                    <span class="faq-icon" aria-hidden="true"></span>
+                  </summary>
+                  <p class="pb-5 pr-6 text-[0.9375rem] text-muted">{fill(item.a)}</p>
+                </details>
+              ))
+            }
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -235,7 +254,63 @@ const fill = (text) => text.replace(/\{(\w+)\}/g, (_, k) => faqVars[k] ?? `{${k}
 </BaseLayout>
 
 <style>
-  /* ── How it works road ─────────────────────────────────────────────── */
+  /* ── How it works: frame, pin and road ─────────────────────────────── */
+  .road-pin {
+    --sticky-top: 5.5rem;
+    --frame-h: min(calc(100svh - var(--sticky-top) - 1.5rem), 46rem);
+  }
+  @media (max-width: 47.99rem) {
+    .road-pin { --sticky-top: 0.75rem; }
+  }
+  .road-frame {
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 0 1px var(--color-base-300);
+    transform-origin: 50% 0;
+  }
+  /* "Screen" title bar: label on the left, milestone counter on the right. */
+  .road-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.9rem 1.25rem;
+    border-bottom: 1px solid var(--color-base-300);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--muted);
+  }
+  .road-count { font-family: var(--font-serif); font-variant-numeric: tabular-nums; }
+  .road-viewport { position: relative; padding: 1.5rem 1.25rem 2rem; }
+
+  /* Pinned mode (whenever motion is allowed, from the first paint so nothing
+     jumps): the wrapper is tall, the frame sticks, and the road scrolls inside
+     a fixed-height viewport. */
+  :global(html.motion) .road-pin { height: calc(var(--frame-h, 46rem) + 220svh); }
+  :global(html.motion) .road-pin .road-frame {
+    position: sticky;
+    top: var(--sticky-top);
+    height: var(--frame-h);
+  }
+  :global(html.motion) .road-pin .road-viewport { flex: 1; overflow: hidden; }
+  :global(html.motion) .road-pin .road { will-change: transform; }
+  /* Soft fade at the frame's top and bottom edges while the road scrolls. */
+  :global(html.motion) .road-pin .road-viewport::before,
+  :global(html.motion) .road-pin .road-viewport::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    height: 2.5rem;
+    z-index: 2;
+    pointer-events: none;
+  }
+  :global(html.motion) .road-pin .road-viewport::before { top: 0; background: linear-gradient(var(--color-base-100), transparent); }
+  :global(html.motion) .road-pin .road-viewport::after { bottom: 0; background: linear-gradient(transparent, var(--color-base-100)); }
+
+  /* The FAQ sticks beside the pinned frame on desktop. */
+  @media (min-width: 48rem) {
+    .road-faq-inner { position: sticky; top: 5.5rem; }
+  }
+
   .road-svg {
     position: absolute;
     inset: 0;
@@ -257,20 +332,20 @@ const fill = (text) => text.replace(/\{(\w+)\}/g, (_, k) => faqVars[k] ?? `{${k}
     fill: var(--color-accent);
     stroke: none;
   }
-  /* Compact cards scattered across the width; the road runs between them
+  /* Compact cards scattered across the frame; the road runs between them
      (it passes under the cards, which sit above the drawing). */
   .road-step {
-    --w: min(86%, 21rem);
+    --w: min(84%, 19rem);
     position: relative;
     width: var(--w);
-    margin-top: calc(1.75rem + var(--gap, 0rem) * 0.5);
-    margin-left: calc((100% - var(--w)) * var(--x, 0) * 0.6);
+    margin-top: calc(1.75rem + var(--gap, 0rem) * 0.6);
+    margin-left: calc((100% - var(--w)) * var(--x, 0) * 0.7);
   }
-  .road-step:first-child { margin-top: 0; }
+  .road-step:first-child { margin-top: 0.5rem; }
   @media (min-width: 48rem) {
     .road-step {
-      --w: 22rem;
-      margin-top: calc(1rem + var(--gap, 0rem));
+      --w: min(62%, 20rem);
+      margin-top: calc(1.5rem + var(--gap, 0rem));
       margin-left: calc((100% - var(--w)) * var(--x, 0));
     }
   }
@@ -282,26 +357,11 @@ const fill = (text) => text.replace(/\{(\w+)\}/g, (_, k) => faqVars[k] ?? `{${k}
   }
   .road-card {
     position: relative;
-    translate: 0 var(--py, 0px); /* gentle parallax, set by the script */
     transform-origin: center;
     transition:
       transform 0.8s var(--ease-soft),
       box-shadow 0.6s var(--ease-soft);
   }
-
-  /* States (only once the script runs; otherwise everything is simply visible):
-     the milestone in focus is larger and fully lit; the rest are smaller and quieter. */
-  /* Only the contents dim; the card itself stays opaque so the road never shows through. */
-  .road-card > * { transition: opacity 0.6s var(--ease-soft); }
-  .road:global(.is-live) .road-card { transform: scale(0.92); }
-  .road:global(.is-live) .road-card > * { opacity: 0.4; }
-  .road:global(.is-live) .road-step:global(.is-passed) .road-card > * { opacity: 0.6; }
-  .road:global(.is-live) .road-step:global(.is-current) .road-card > * { opacity: 1; }
-  .road:global(.is-live) .road-step:global(.is-current) .road-card {
-    transform: scale(1.06);
-    box-shadow: 0 0 0 1.5px var(--color-accent);
-  }
-  .road:global(.is-live) .road-step:global(.is-current) .road-num { color: var(--color-accent); }
 
   /* FAQ: smooth open/close where supported (interpolate-size), a plus that turns into a cross. */
   .faq {
@@ -340,5 +400,5 @@ const fill = (text) => text.replace(/\{(\w+)\}/g, (_, k) => faqVars[k] ?? `{${k}
 
 <script>
   import { initRoad } from '../../scripts/services-road.js';
-  document.querySelectorAll('[data-road]').forEach(initRoad);
+  document.querySelectorAll('[data-road-pin]').forEach(initRoad);
 </script>
