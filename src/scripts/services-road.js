@@ -1,15 +1,15 @@
 /*
  * "How it works" road (Services page). No dependencies.
  *
- * Layout: a smooth curve is generated through the milestone nodes, swaying left
- * and right between them like a winding road (wider on desktop). It's drawn
- * twice: a faint dotted base, and an accent line that is revealed as you scroll.
+ * Layout: the milestone cards are scattered across the width; a smooth S-curve
+ * runs from card to card like a winding road. It's drawn twice: a faint dotted
+ * base, and an accent line that is revealed as you scroll.
  *
  * Scroll: the "pen tip" sits at 55% of the viewport height. As the page moves,
- * the accent line is drawn down to the tip (plus a dot marking it). A milestone
- * the line has reached lights up; the latest one is "current"; earlier ones are
- * "passed" (their number turns into a tick and their card steps back). Cards
- * also drift slightly against the scroll for a soft parallax.
+ * the accent line is drawn down to the tip (plus a dot marking it). The latest
+ * milestone the line has reached is "current" (it grows and lights up); earlier
+ * ones are "passed" and later ones wait, both smaller and quieter. Cards also
+ * drift slightly against the scroll for a soft parallax.
  *
  * With reduced motion the whole road is simply drawn and every card is shown.
  */
@@ -45,14 +45,14 @@ export function initRoad(root) {
       const r = n.getBoundingClientRect();
       return { x: r.left - box.left + r.width / 2, y: r.top - box.top + r.height / 2 };
     });
-    const sway = box.width >= 768 ? Math.min(160, box.width * 0.14) : 20;
+    // The cards are scattered, so the road simply flows from one card's centre to
+    // the next with soft S-curves (it passes under the cards, which hide it there).
     let d = `M ${pts[0].x} ${pts[0].y}`;
     for (let i = 1; i < pts.length; i++) {
       const a = pts[i - 1];
       const b = pts[i];
-      const s = (i % 2 ? 1 : -1) * sway; // alternate the bend so the road winds
       const dy = b.y - a.y;
-      d += ` C ${a.x + s} ${a.y + dy * 0.4}, ${b.x + s} ${b.y - dy * 0.4}, ${b.x} ${b.y}`;
+      d += ` C ${a.x} ${a.y + dy * 0.55}, ${b.x} ${b.y - dy * 0.55}, ${b.x} ${b.y}`;
     }
     base.setAttribute('d', d);
     line.setAttribute('d', d);

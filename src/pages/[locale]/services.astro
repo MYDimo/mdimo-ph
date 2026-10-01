@@ -32,6 +32,16 @@ const packagePhotos = {
 };
 const moreDoodles = { christening: 'candle', couple: 'heart', events: 'note' };
 const stepDoodles = ['envelope', 'bubbles', 'calendar', 'camera', 'sparkle', 'photos'];
+// Hand-placed, slightly "random" positions for the milestones: --x is how far
+// across the free width the card sits (0 = left, 1 = right); --gap is the space above it.
+const roadPlaces = [
+  '--x: 0.06; --gap: 0rem',
+  '--x: 0.78; --gap: 1.5rem',
+  '--x: 0.3; --gap: 3rem',
+  '--x: 0.96; --gap: 0.5rem',
+  '--x: 0.12; --gap: 2.5rem',
+  '--x: 0.58; --gap: 1rem',
+];
 
 // FAQ answers carry the live numbers (travel rate, overtime prices).
 const faqVars = {
@@ -180,18 +190,15 @@ const fill = (text) => text.replace(/\{(\w+)\}/g, (_, k) => faqVars[k] ?? `{${k}
         <path class="road-progress" />
         <circle class="road-tip" r="5" />
       </svg>
-      <ol class="relative space-y-14 md:space-y-20">
+      <ol class="relative">
         {
           tr('services.process.steps').map((step, i) => (
-            <li class:list={['road-step', i % 2 ? 'is-right' : 'is-left']} data-road-step>
-              <span class="road-node" data-road-node>
-                <span class="road-num">{i + 1}</span>
-                <Doodle name="tick" class="road-tick size-5" />
-              </span>
-              <div class="road-card rounded-2xl bg-base-100 p-6 md:p-7">
-                <div class="flex items-start justify-between gap-4">
-                  <h3 class="text-title font-semibold">{step.title}</h3>
-                  <Doodle name={stepDoodles[i]} class="size-10 shrink-0 text-base-content/75" />
+            <li class="road-step" style={roadPlaces[i]} data-road-step>
+              <div class="road-card rounded-2xl bg-base-100 p-5" data-road-node>
+                <span class="road-num">{String(i + 1).padStart(2, '0')}</span>
+                <div class="mt-2 flex items-center gap-3">
+                  <Doodle name={stepDoodles[i]} class="size-8 shrink-0 text-base-content/75" />
+                  <h3 class="text-lg font-semibold leading-tight md:text-xl">{step.title}</h3>
                 </div>
                 <p class="mt-2 text-[0.9375rem] text-muted">{step.text}</p>
               </div>
@@ -250,57 +257,51 @@ const fill = (text) => text.replace(/\{(\w+)\}/g, (_, k) => faqVars[k] ?? `{${k}
     fill: var(--color-accent);
     stroke: none;
   }
-  /* Mobile: nodes on the left, cards to the right. Desktop: nodes in the
-     middle, cards alternating left and right of the road. */
+  /* Compact cards scattered across the width; the road runs between them
+     (it passes under the cards, which sit above the drawing). */
   .road-step {
-    display: grid;
-    grid-template-columns: 2.75rem 1fr;
-    gap: 1rem;
-    align-items: center;
-  }
-  @media (min-width: 48rem) {
-    .road-step { grid-template-columns: 1fr 3.25rem 1fr; gap: 2.5rem; }
-    .road-step .road-node { grid-column: 2; grid-row: 1; }
-    .road-step.is-left .road-card { grid-column: 1; grid-row: 1; }
-    .road-step.is-right .road-card { grid-column: 3; grid-row: 1; }
-  }
-  .road-node {
+    --w: min(86%, 21rem);
     position: relative;
-    z-index: 1;
-    display: grid;
-    place-items: center;
-    width: 2.75rem;
-    height: 2.75rem;
-    border-radius: 999px;
-    background: var(--color-base-100);
-    box-shadow: 0 0 0 2px var(--color-base-300);
-    font-family: var(--font-serif);
-    font-size: 1.125rem;
-    transition: background-color 0.5s var(--ease-soft), color 0.5s, box-shadow 0.5s, transform 0.6s var(--ease-spring);
+    width: var(--w);
+    margin-top: calc(1.75rem + var(--gap, 0rem) * 0.5);
+    margin-left: calc((100% - var(--w)) * var(--x, 0) * 0.6);
   }
-  @media (min-width: 48rem) { .road-node { width: 3.25rem; height: 3.25rem; } }
-  .road-num, .road-tick { grid-area: 1 / 1; transition: opacity 0.4s, transform 0.5s var(--ease-spring); }
-  .road-tick { opacity: 0; transform: scale(0.6); }
+  .road-step:first-child { margin-top: 0; }
+  @media (min-width: 48rem) {
+    .road-step {
+      --w: 22rem;
+      margin-top: calc(1rem + var(--gap, 0rem));
+      margin-left: calc((100% - var(--w)) * var(--x, 0));
+    }
+  }
+  .road-num {
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    color: var(--muted);
+    transition: color 0.5s;
+  }
   .road-card {
+    position: relative;
     translate: 0 var(--py, 0px); /* gentle parallax, set by the script */
-    transition: opacity 0.6s var(--ease-soft), transform 0.8s var(--ease-soft);
+    transform-origin: center;
+    transition:
+      transform 0.8s var(--ease-soft),
+      box-shadow 0.6s var(--ease-soft);
   }
 
-  /* States (only once the script runs; otherwise everything is simply visible). */
-  .road:global(.is-live) .road-step .road-card { opacity: 0.35; transform: translateY(14px) scale(0.98); }
-  .road:global(.is-live) .road-step:global(.is-current) .road-card { opacity: 1; transform: none; }
-  .road:global(.is-live) .road-step:global(.is-passed) .road-card { opacity: 0.55; transform: none; }
-  .road:global(.is-live) .road-step:global(.is-reached) .road-node {
-    background: var(--color-accent);
-    color: var(--color-accent-content);
-    box-shadow: 0 0 0 2px var(--color-accent);
+  /* States (only once the script runs; otherwise everything is simply visible):
+     the milestone in focus is larger and fully lit; the rest are smaller and quieter. */
+  /* Only the contents dim; the card itself stays opaque so the road never shows through. */
+  .road-card > * { transition: opacity 0.6s var(--ease-soft); }
+  .road:global(.is-live) .road-card { transform: scale(0.92); }
+  .road:global(.is-live) .road-card > * { opacity: 0.4; }
+  .road:global(.is-live) .road-step:global(.is-passed) .road-card > * { opacity: 0.6; }
+  .road:global(.is-live) .road-step:global(.is-current) .road-card > * { opacity: 1; }
+  .road:global(.is-live) .road-step:global(.is-current) .road-card {
+    transform: scale(1.06);
+    box-shadow: 0 0 0 1.5px var(--color-accent);
   }
-  .road:global(.is-live) .road-step:global(.is-current) .road-node { transform: scale(1.12); }
-  .road:global(.is-live) .road-step:global(.is-passed) .road-num { opacity: 0; transform: scale(0.6); }
-  .road:global(.is-live) .road-step:global(.is-passed) .road-tick { opacity: 1; transform: none; }
-  /* The tick draws itself when a milestone is passed (doodle paths). */
-  .road:global(.is-live) .road-tick :global(path) { stroke-dasharray: 1 1.01; stroke-dashoffset: 1; transition: stroke-dashoffset 0.6s var(--ease-soft) 0.1s; }
-  .road:global(.is-live) .road-step:global(.is-passed) .road-tick :global(path) { stroke-dashoffset: 0; }
+  .road:global(.is-live) .road-step:global(.is-current) .road-num { color: var(--color-accent); }
 
   /* FAQ: smooth open/close where supported (interpolate-size), a plus that turns into a cross. */
   .faq {
