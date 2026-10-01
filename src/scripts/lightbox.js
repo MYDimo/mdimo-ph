@@ -25,18 +25,25 @@ export function initLightbox(root) {
 }
 
 /*
- * The open/close "zoom" animation scales the photo from thumbnail size to full
- * size. Scaling shrinks rounded corners with it, so on their own the corners
- * would look tiny at the start and grow mid-flight. To keep them visually equal
- * to the thumbnail's radius, start with radius ÷ scale and ease back to the
- * normal radius in step with the zoom (and the reverse when closing).
+ * Rounded corners that stay constant through the open/close zoom.
+ *
+ * During the zoom PhotoSwipe shows two layers inside one container (the zoom
+ * wrap): a low-res placeholder on a grey box and, once loaded, the full photo.
+ * Rounding only the images left the grey box square and the late-arriving photo
+ * un-compensated. So the container itself is rounded and clips both layers.
+ *
+ * The container is scaled during the zoom (thumbnail size → full size), and a
+ * scaled radius shrinks with it. To keep the corners visually equal to the
+ * thumbnail's, the radius starts at RADIUS ÷ scale and eases back to RADIUS in
+ * step with the zoom (reverse on close). When the visitor zooms in, the radius
+ * is divided by the zoom factor so corners don't balloon.
  */
-const RADIUS = 20; // px; matches the gallery tiles (rounded-lg) and .pswp__img
+const RADIUS = 20; // px; matches the gallery tiles (rounded-lg)
 const DURATION = 333; // PhotoSwipe's default show/hide animation
 const EASING = 'cubic-bezier(0.4, 0, 0.22, 1)'; // PhotoSwipe's default easing
 
 function keepCornersDuringZoom(lightbox) {
-  const images = (slide) => slide?.holderElement?.querySelectorAll('.pswp__img') ?? [];
+  let animating = false;
   // Thumbnail width ÷ the photo's on-screen width. When opening, the current zoom
   // isn't applied yet, so use the level the photo will settle at (`initial`).
   const thumbScale = (slide, opening = false) => {
@@ -46,19 +53,28 @@ function keepCornersDuringZoom(lightbox) {
     return thumb && shown ? Math.min(1, thumb.getBoundingClientRect().width / shown) : 1;
   };
   const setRadius = (slide, px, animate) => {
-    for (const img of images(slide)) {
-      img.style.transition = animate ? `border-radius ${DURATION}ms ${EASING}` : 'none';
-      img.style.borderRadius = `${px}px`;
-    }
+    const wrap = slide?.container;
+    if (!wrap) return;
+    wrap.style.transition = animate ? `border-radius ${DURATION}ms ${EASING}` : 'none';
+    wrap.style.borderRadius = `${px}px`;
   };
 
   lightbox.on('openingAnimationStart', () => {
+    animating = true;
     const slide = lightbox.pswp.currSlide;
     setRadius(slide, RADIUS / thumbScale(slide, true), false);
-    requestAnimationFrame(() => setRadius(slide, RADIUS, true));
+    requestAnimationFrame(() => requestAnimationFrame(() => setRadius(slide, RADIUS, true)));
   });
+  lightbox.on('openingAnimationEnd', () => (animating = false));
   lightbox.on('closingAnimationStart', () => {
+    animating = true;
     const slide = lightbox.pswp.currSlide;
     setRadius(slide, RADIUS / thumbScale(slide), true);
+  });
+  // Keep corners the same size while zooming/panning and on other slides.
+  lightbox.on('zoomPanUpdate', ({ slide }) => {
+    if (animating || !slide?.container) return;
+    const scale = slide.currZoomLevel / (slide.currentResolution || slide.zoomLevels.initial || 1);
+    setRadius(slide, RADIUS / (scale || 1), false);
   });
 }

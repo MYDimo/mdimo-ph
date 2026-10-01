@@ -173,7 +173,9 @@ const tint = colorOf(cover) ?? 'transparent';
     --pswp-icon-stroke-color: var(--color-base-200);
     --pswp-placeholder-bg: var(--color-base-300);
   }
-  :global(.pswp__img) { border-radius: var(--radius-lg); }
+  /* Corners live on the zoom container (it clips placeholder + photo together);
+     the radius is kept constant during zoom by src/scripts/lightbox.js. */
+  :global(.pswp__zoom-wrap) { overflow: hidden; border-radius: 20px; }
   :global(.pswp__counter) { color: var(--muted); text-shadow: none; }
 </style>
 
