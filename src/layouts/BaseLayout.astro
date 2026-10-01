@@ -64,8 +64,8 @@ const og = await getImage({
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="sitemap" href="/sitemap.xml" />
-    <meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#111113" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f6f5f2" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#12110f" media="(prefers-color-scheme: dark)" />
     <meta name="color-scheme" content="light dark" />
     {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
     <!--
@@ -84,6 +84,11 @@ const og = await getImage({
         if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
           document.documentElement.classList.add('motion');
         }
+        // The logo draws itself once per visit; later pages show it complete.
+        try {
+          if (sessionStorage.getItem('logo-drawn')) document.documentElement.classList.add('logo-drawn');
+          else sessionStorage.setItem('logo-drawn', '1');
+        } catch (e) {}
       })();
     </script>
     <slot name="head" />

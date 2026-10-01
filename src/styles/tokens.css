@@ -1,8 +1,8 @@
 /*
  * Design tokens.
- * Two DaisyUI themes (light / night) carry the grey scale and corner radii.
- * The UI is neutral: "primary" is a near-black grey in light and a soft light
- * grey in night. The only colour is a tiny accent that follows the theme:
+ * Two DaisyUI themes (light / night) carry the palette and corner radii.
+ * Neutrals are warm (paper and ink by day, warm charcoal by night): "primary"
+ * is ink in light and soft cream in night. The only colour is a tiny accent that follows the theme:
  * golden-hour amber by day, blue-hour violet by night (focus rings, selection,
  * active indicators, progress). Buttons and text never use it.
  */
@@ -12,14 +12,14 @@
   default: true;
   color-scheme: light;
 
-  --color-base-100: #ffffff; /* cards, fields */
-  --color-base-200: #f5f5f7; /* page */
-  --color-base-300: #e5e5ea; /* hairlines, subtle fills */
-  --color-base-content: #1d1d1f;
+  --color-base-100: #fffefb; /* cards, fields: warm white */
+  --color-base-200: #f6f5f2; /* page: paper */
+  --color-base-300: #e7e4de; /* hairlines, subtle fills */
+  --color-base-content: #1f1d1a; /* ink */
 
-  --color-primary: #1d1d1f;
-  --color-primary-content: #ffffff;
-  --color-secondary: #3a3a3c;
+  --color-primary: #1f1d1a;
+  --color-primary-content: #fffefb;
+  --color-secondary: #3b3834;
   --color-secondary-content: #ffffff;
   --color-accent: #b06a2a; /* golden hour: used sparingly (focus, selection, indicators) */
   --color-accent-content: #ffffff;
@@ -50,14 +50,14 @@
   prefersdark: true;
   color-scheme: dark;
 
-  --color-base-100: #1c1c1e;
-  --color-base-200: #111113;
-  --color-base-300: #2c2c2e;
-  --color-base-content: #f5f5f7;
+  --color-base-100: #1e1c1a; /* warm charcoal */
+  --color-base-200: #12110f;
+  --color-base-300: #2e2b28;
+  --color-base-content: #f4f1ec;
 
-  --color-primary: #f5f5f7;
-  --color-primary-content: #1d1d1f;
-  --color-secondary: #d1d1d6;
+  --color-primary: #f4f1ec;
+  --color-primary-content: #1f1d1a;
+  --color-secondary: #d6d1ca;
   --color-secondary-content: #1d1d1f;
   --color-accent: #9d8cff; /* blue hour: the night counterpart of the amber */
   --color-accent-content: #111113;
@@ -86,14 +86,14 @@
 /* Secondary text grey per theme (kept at WCAG AA on base-100 and base-200). */
 :root,
 [data-theme="light"] {
-  --muted: #6e6e73;
+  --muted: #6c675f;
 }
 [data-theme="night"] {
-  --muted: #a1a1a6;
+  --muted: #a8a299;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
-    --muted: #a1a1a6;
+    --muted: #a8a299;
   }
 }
 
@@ -102,6 +102,10 @@
     "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
 
   --color-muted: var(--muted);
+
+  /* Editorial second voice: the serif built into each OS (New York on Apple,
+     Georgia elsewhere). No font download; covers Cyrillic. */
+  --font-serif: ui-serif, "New York", "Iowan Old Style", Georgia, "Times New Roman", serif;
 
   /* Radius scale: no sharp corners anywhere. rounded-full = pill. */
   --radius-sm: 0.5rem;
