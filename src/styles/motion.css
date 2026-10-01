@@ -116,11 +116,8 @@ a:hover .arrow-back {
   transform: translateY(-50%);
 }
 
-/* ── Logo: the mark sits at a slight tilt, like a stamp. Hovering it redraws
-      its single line (the path has pathLength="1"). ─────────────────────── */
-.logo-draw {
-  rotate: -8deg;
-}
+/* ── Logo: the mark sits at a slight tilt (built into src/assets/logo.svg so it
+      stays crisp). Hovering it redraws its single line (pathLength="1"). ── */
 @media (hover: hover) {
   html.motion a:hover > .logo-draw path {
     stroke-dasharray: 1 1.01;
