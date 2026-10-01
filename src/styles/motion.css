@@ -184,6 +184,18 @@ html.motion [data-reveal='image'].is-in {
   clip-path: inset(0 0 0 0 round var(--reveal-radius, 1.75rem));
 }
 
+/* ── Doodles: line icons draw themselves stroke by stroke when they come into
+      view (paths have pathLength="1"); --d delays a doodle within a list ── */
+html.motion [data-reveal='doodle'] path {
+  stroke-dasharray: 1 1.01;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 1.6s var(--ease-soft);
+  transition-delay: calc(var(--d, 0) * 120ms + var(--p, 0) * 280ms + 150ms);
+}
+html.motion [data-reveal='doodle'].is-in path {
+  stroke-dashoffset: 0;
+}
+
 /* ── Photos fade in over their own average colour instead of popping in ─ */
 html.motion img.fade-img {
   opacity: 0;
