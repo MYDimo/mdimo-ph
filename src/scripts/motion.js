@@ -47,7 +47,7 @@ function splitWords(el) {
 // Big headings reveal word by word. Skip ones that morph between pages
 // (they carry a view-transition-name) and the home statement (GSAP-driven).
 const headings = document.querySelectorAll(
-  'main :is(h1, .text-headline):not([data-statement]):not([style*="view-transition-name"])',
+  'main :is(h1, .text-headline, [data-split]):not([data-statement]):not([style*="view-transition-name"])',
 );
 headings.forEach((h) => {
   h.setAttribute('data-reveal-words', '');

@@ -226,9 +226,11 @@ public/           # static assets only
 - [x] No italics anywhere (rejected); serif accents are upright
 - [x] Character pass: warm paper/ink neutrals; OS serif accents; accent-coloured link underlines; headings settle from the accent colour into the text colour; each Moment page washes its header (and lightbox) with its cover's average colour; self-drawing logo (once per visit + on hover); a near-full-bleed feature photo on home (Valentina & Danail sparklers); "Recent moments" row on home
 
-- [x] Services page: approach quote → wedding collections (big photos; recommended Full Day card wider with an accent ring; doodle ticks) → other services (anchors `#christening`, `#couple`, `#events`) → "How it works" + FAQ side by side: milestones inside a rounded "screen" frame (title bar + "n / 6" counter) that grows into place, then pins (CSS sticky, tall wrapper) while scroll draws the winding road and slides the scattered milestone cards up inside it; the FAQ sticks beside it; released after the last milestone (`src/scripts/services-road.js`; un-pinned under reduced motion) → inquiry form. No services bento (tried, rejected). Practical details folded into the FAQ
+- [x] Services page: big approach statement (upright serif, muted lead-in, accent squiggle under the last words) → wedding collections (big photos; recommended Full Day card wider with an accent ring; doodle ticks) → other services (anchors `#christening`, `#couple`, `#events`) → "How it works" + FAQ side by side in a wider section (88rem): the heading + a rounded "screen" frame (title bar + "n / 6" counter) form a stage that grows into place, then pins centred on screen (CSS sticky, tall wrapper) while scroll draws the winding road and slides the scattered milestone cards up inside it; cards scale/fade by distance from the frame's middle; the FAQ sticks beside it, also centred; released after the last milestone (`src/scripts/services-road.js`; un-pinned under reduced motion) → inquiry form. No services bento (tried, rejected). Practical details folded into the FAQ
 - [x] Doodles: `src/components/Doodle.astro`, single-line icons in the logo's pen style that draw themselves in view (`data-reveal="doodle"`); add new ones there
 - [x] Text CTAs use `.cta-link` + `.cta-text`: accent underline draws in under the words only (arrows excluded)
+
+- [x] Overtime is €100/hour on both wedding collections
 
 ### Still open
 - [ ] Exact grey scales for light/dark palettes (propose options)

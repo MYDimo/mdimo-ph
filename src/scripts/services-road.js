@@ -1,8 +1,9 @@
 /*
  * "How it works" road in a pinned screen frame (Services page). No dependencies.
  *
- * Structure: [data-road-pin] (tall wrapper) > [data-road-frame] (sticky "screen")
- * > [data-road-viewport] (clips) > [data-road] (the road content: SVG + cards).
+ * Structure: [data-road-pin] (tall wrapper) > [data-road-stage] (sticky, centred:
+ * heading + frame) > [data-road-frame] ("screen") > [data-road-viewport] (clips)
+ * > [data-road] (the road content: SVG + cards).
  *
  *  1. Arrival: while the wrapper scrolls up towards its sticky position, the
  *     frame grows from 90% to full size.
@@ -12,13 +13,16 @@
  *     so the pen tip stays around the middle of the screen.
  *  3. Release: at the last milestone the wrapper ends and the page scrolls on.
  *
- * The milestone the line has reached last is "current" (it grows and lights
- * up); the counter in the frame's title bar follows it.
+ * Each milestone's size and opacity follow its distance from the middle of the
+ * frame: small and faint as it arrives, full size in the middle, small and faint
+ * again as it leaves. The one the line has reached last is "current" (accent
+ * ring); the counter in the frame's title bar follows it.
  *
  * Reduced motion: the wrapper isn't pinned (pin styles need html.motion) and the
  * whole road is drawn.
  */
 export function initRoad(pin) {
+  const stage = pin.querySelector('[data-road-stage]');
   const frame = pin.querySelector('[data-road-frame]');
   const viewport = pin.querySelector('[data-road-viewport]');
   const road = pin.querySelector('[data-road]');
@@ -78,8 +82,8 @@ export function initRoad(pin) {
       return;
     }
     const pinBox = pin.getBoundingClientRect();
-    const stickyTop = parseFloat(getComputedStyle(frame).top) || 0;
-    const travel = pin.offsetHeight - frame.offsetHeight;
+    const stickyTop = parseFloat(getComputedStyle(stage).top) || 0;
+    const travel = pin.offsetHeight - stage.offsetHeight;
 
     // 1. Arrival: grow the frame into place as it approaches its pinned position.
     const enter = Math.min(1, Math.max(0, 1 - (pinBox.top - stickyTop) / (innerHeight * 0.75)));
@@ -107,10 +111,18 @@ export function initRoad(pin) {
     stops.forEach((s, i) => {
       if (drawn >= s - 2) current = i;
     });
+    // Size and opacity by distance from the frame's middle (0 = centred, 1 = at the edge or beyond).
+    const vr = viewport.getBoundingClientRect();
+    const middle = vr.top + vr.height / 2;
     steps.forEach((step, i) => {
       step.classList.toggle('is-reached', i <= current);
       step.classList.toggle('is-current', i === current);
       step.classList.toggle('is-passed', i < current);
+      const r = nodes[i].getBoundingClientRect();
+      const t = Math.min(1, Math.abs(r.top + r.height / 2 - middle) / (vr.height * 0.55));
+      const ease = t * t * (3 - 2 * t); // smoothstep: gentle near the middle, quicker at the edges
+      nodes[i].style.setProperty('--s', (1.04 - 0.22 * ease).toFixed(3));
+      nodes[i].style.setProperty('--o', (1 - 0.82 * ease).toFixed(3));
     });
     if (counter) counter.textContent = String(current + 1);
   }

@@ -136,7 +136,7 @@ a:hover .arrow-back {
       view, and resets when it leaves (so it replays every time) ─────────── */
 /* Same selector motion.js uses, so headings are hidden from the first paint
    (not only after the script tags them) and never flash before animating. */
-html.motion main :is(h1, .text-headline):not([data-statement]):not([style*='view-transition-name']):not(.is-split) {
+html.motion main :is(h1, .text-headline, [data-split]):not([data-statement]):not([style*='view-transition-name']):not(.is-split) {
   visibility: hidden;
   /* Safety net: never leave a heading hidden if the script fails. */
   animation: reveal-fallback 0s 1.5s forwards;
