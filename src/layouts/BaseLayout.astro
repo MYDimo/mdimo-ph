@@ -84,13 +84,6 @@ const og = await getImage({
         if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
           document.documentElement.classList.add('motion');
         }
-        // The name/logo intro plays when arriving from outside the site or on a
-        // refresh; moving between pages of the site shows the finished logo.
-        try {
-          var nav = performance.getEntriesByType('navigation')[0];
-          var fromSite = document.referrer && new URL(document.referrer).origin === location.origin;
-          if (fromSite && !(nav && nav.type === 'reload')) document.documentElement.classList.add('logo-drawn');
-        } catch (e) {}
       })();
     </script>
     <slot name="head" />

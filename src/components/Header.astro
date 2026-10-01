@@ -17,12 +17,8 @@ const isCurrent = (href) => path.startsWith(href);
 
 <header data-site-header class="sticky top-0 z-40">
   <div class="shell flex h-16 items-center justify-between gap-6 md:h-18">
-    <a href={localizedPath(locale)} class="brand relative -m-2 rounded-full p-2 text-base-content" aria-label={tr('site.name')}>
+    <a href={localizedPath(locale)} class="-m-2 rounded-full p-2 text-base-content" aria-label={tr('site.name')}>
       <Logo class="logo-draw h-[1.925rem] w-auto md:h-[2.2rem]" aria-hidden="true" />
-      <!-- On arrival or refresh: the name writes itself, then folds into the mark (motion.css). -->
-      <svg class="brand-name" viewBox="0 0 280 40" aria-hidden="true">
-        <text x="2" y="30">{[...tr('site.name')].map((ch, i) => <tspan style={`--i: ${i}`}>{ch}</tspan>)}</text>
-      </svg>
     </a>
 
     <nav aria-label={tr('nav.label')} class="hidden md:block">

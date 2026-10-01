@@ -101,75 +101,20 @@ a:hover .arrow-back {
   transform: translateY(-50%);
 }
 
-/* ── Logo ─────────────────────────────────────────────────────────────────
-   The mark sits at a slight tilt, like a stamp.
-   On arrival or refresh (not between pages, see BaseLayout): the name writes itself letter by letter as thin pen
-   strokes that then fill in (≈2s), folds toward the mark and fades (≈0.9s),
-   while the mark draws its single line (≈2.4s) and tilts into place.
-   Hovering the logo redraws the line. The path has pathLength="1". */
+/* ── Logo: the mark sits at a slight tilt, like a stamp. Hovering it redraws
+      its single line (the path has pathLength="1"). ─────────────────────── */
 .logo-draw {
   rotate: -8deg;
-}
-.brand-name {
-  display: none;
-}
-html.motion:not(.logo-drawn) .brand-name {
-  display: block;
-  position: absolute;
-  left: 0.5rem;
-  top: 50%;
-  height: 2.1rem;
-  width: auto;
-  translate: 0 -50%;
-  overflow: visible;
-  pointer-events: none;
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: 30px;
-  fill: currentColor;
-  transform-origin: 0 50%;
-  animation: name-fold 0.9s var(--ease-soft) 2.3s both;
-}
-html.motion:not(.logo-drawn) .brand-name tspan {
-  stroke: currentColor;
-  stroke-width: 0.6;
-  stroke-dasharray: 160;
-  stroke-dashoffset: 160;
-  fill-opacity: 0;
-  animation: name-write 1.1s ease-in-out calc(var(--i, 0) * 85ms) both;
-}
-@keyframes name-write {
-  70% { stroke-dashoffset: 0; fill-opacity: 0; }
-  100% { stroke-dashoffset: 0; fill-opacity: 1; stroke-width: 0; }
-}
-@keyframes name-fold {
-  to { opacity: 0; transform: scale(0.35); }
-}
-html.motion:not(.logo-drawn) .logo-draw path {
-  stroke-dasharray: 1 1.01;
-  stroke-dashoffset: 1;
-  animation: logo-draw 2.4s var(--ease-soft) 2.6s both;
-}
-html.motion:not(.logo-drawn) .logo-draw {
-  animation: logo-tilt 1.2s var(--ease-spring) 4.2s both;
 }
 @media (hover: hover) {
   html.motion a:hover > .logo-draw path {
     stroke-dasharray: 1 1.01;
-    animation: logo-redraw 1.8s var(--ease-soft);
+    animation: logo-redraw 2.4s var(--ease-soft);
   }
-}
-@keyframes logo-draw {
-  from { stroke-dashoffset: 1; }
-  to { stroke-dashoffset: 0; }
 }
 @keyframes logo-redraw {
   from { stroke-dashoffset: 1; }
   to { stroke-dashoffset: 0; }
-}
-@keyframes logo-tilt {
-  from { rotate: 0deg; }
-  to { rotate: -8deg; }
 }
 
 /* ── Headings: each word rises out of its own mask when the heading enters
