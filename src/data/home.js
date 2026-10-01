@@ -7,7 +7,7 @@ import hero4 from '../assets/home/hero/04-sunlit-dance.jpg';
 import hero5 from '../assets/home/hero/05-autumn-forest.jpg';
 import hero6 from '../assets/home/hero/06-golden-hour.jpg';
 import story from '../assets/home/story/every-frame.jpg';
-import meet from '../assets/home/story/meet.jpg';
+import meet from '../assets/about/self-portrait.jpg';
 import bento1 from '../assets/home/bento/1-seaside-bride.jpg';
 import bento2 from '../assets/home/bento/2-night-dance.jpg';
 import bento3 from '../assets/home/bento/3-table.jpg';
@@ -27,7 +27,7 @@ export const heroSlides = [
 
 export const storyImages = {
   story: { src: story, alt: 'story' },
-  meet: { src: meet, alt: 'meet' },
+  meet: { src: meet, alt: 'meet' }, // Mihaylo's self-portrait (also on About)
 };
 
 /** Bento tiles, in grid order: big, tall, small, small, wide, wide. */
