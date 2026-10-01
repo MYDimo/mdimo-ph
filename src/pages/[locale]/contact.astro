@@ -9,7 +9,7 @@ export { localeStaticPaths as getStaticPaths } from '../../i18n/paths.js';
 const { locale } = Astro.params;
 const tr = useT(locale);
 const direct = [
-  { label: tr('contact.email'), value: contact.email, href: `mailto:${contact.email}` },
+  { label: tr('contact.email'), value: contact.email, href: `mailto:${contact.email}`, copy: true },
   { label: tr('contact.phone'), value: contact.phoneDisplay, href: `tel:${contact.phone}` },
   { label: tr('contact.instagram'), value: contact.instagram, href: contact.instagramUrl, external: true },
 ];
@@ -26,7 +26,7 @@ const direct = [
             direct.map((d) => (
               <div>
                 <dt class="text-sm text-muted">{d.label}</dt>
-                <dd>
+                <dd class="flex flex-wrap items-center gap-x-3 gap-y-1">
                   <a
                     href={d.href}
                     class="text-lg font-medium underline-offset-4 hover:underline"
@@ -34,6 +34,17 @@ const direct = [
                   >
                     {d.value}
                   </a>
+                  {d.copy && (
+                    <button
+                      type="button"
+                      class="copy-btn rounded-full bg-base-100 px-3 py-1 text-sm text-muted hover:text-base-content"
+                      data-copy={d.value}
+                      data-copied={tr('ui.copied')}
+                      hidden
+                    >
+                      <span data-copy-label>{tr('ui.copy')}</span>
+                    </button>
+                  )}
                 </dd>
               </div>
             ))
@@ -45,3 +56,32 @@ const direct = [
     <InquiryForm locale={locale} />
   </section>
 </BaseLayout>
+
+<style>
+  .copy-btn[data-done] { color: var(--color-base-content); }
+  .copy-btn[data-done] [data-copy-label] { animation: copied 0.5s var(--ease-spring); }
+  @keyframes copied { from { opacity: 0; transform: translateY(6px); } }
+</style>
+
+<script>
+  // Copy the email with one click; the label briefly says "Copied". Hidden without clipboard support.
+  document.querySelectorAll('[data-copy]').forEach((btn) => {
+    if (!navigator.clipboard) return;
+    btn.hidden = false;
+    const label = btn.querySelector('[data-copy-label]');
+    const original = label.textContent;
+    let timer;
+    btn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(btn.dataset.copy);
+        label.textContent = btn.dataset.copied;
+        btn.setAttribute('data-done', '');
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+          label.textContent = original;
+          btn.removeAttribute('data-done');
+        }, 1800);
+      } catch {}
+    });
+  });
+</script>

@@ -4,6 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import ContactCta from '../../components/ContactCta.astro';
 import { useT } from '../../i18n/index.js';
 import { heroSlides } from '../../data/home.js';
+import { bg } from '../../data/colors.js';
 export { localeStaticPaths as getStaticPaths } from '../../i18n/paths.js';
 
 const { locale } = Astro.params;
@@ -26,13 +27,13 @@ const favourites = [heroSlides[1], heroSlides[3], heroSlides[5]];
     <div class="mt-6 grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
       {
         favourites.map((photo, i) => (
-          <div class:list={['aspect-[4/5] overflow-hidden rounded-xl bg-base-300', i === 2 && 'hidden md:block']}>
+          <div class:list={['aspect-[4/5] overflow-hidden rounded-xl bg-base-300', i === 2 && 'hidden md:block']} style={bg(photo.src)} data-reveal="image">
             <Image
               src={photo.src}
               alt={tr(`home.alt.${photo.alt}`)}
               widths={[320, 480, 640, 800]}
               sizes="(min-width: 768px) 24rem, 46vw"
-              class="size-full object-cover"
+              class="fade-img size-full object-cover"
             />
           </div>
         ))

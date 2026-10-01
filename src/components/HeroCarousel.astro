@@ -7,6 +7,7 @@
  */
 import { Image } from 'astro:assets';
 import { useT } from '../i18n/index.js';
+import { bg } from '../data/colors.js';
 
 const { locale, slides, interval = 6000 } = Astro.props;
 const tr = useT(locale);
@@ -39,6 +40,7 @@ const widths = [320, 480, 640, 800, 1000, 1200];
             aria-label={copy === 0 ? tr('home.carousel.slide', { n: i + 1, total }) : undefined}
             aria-hidden={copy === 1 ? 'true' : undefined}
             inert={copy === 1}
+            style={bg(slide.src)}
           >
             <Image
               src={slide.src}
@@ -48,7 +50,7 @@ const widths = [320, 480, 640, 800, 1000, 1200];
               loading={copy === 0 && i < 2 ? 'eager' : 'lazy'}
               fetchpriority={copy === 0 && i === 0 ? 'high' : undefined}
               decoding={copy === 0 && i === 0 ? 'sync' : 'async'}
-              class="size-full object-cover"
+              class:list={['size-full object-cover', !(copy === 0 && i === 0) && 'fade-img']}
               draggable="false"
             />
           </div>

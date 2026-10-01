@@ -20,7 +20,9 @@ const used = categories.filter((c) => moments.some((m) => m.entry.data.categorie
 
     <!-- Filter chips: invisible (but taking their space, so nothing shifts) until the script
          runs; without JS every Moment simply shows. -->
-    <div class="invisible mt-10 flex flex-wrap gap-2" role="group" aria-label={tr('moments.filterLabel')} data-filters>
+    <div class="invisible relative mt-10 flex flex-wrap gap-2" role="group" aria-label={tr('moments.filterLabel')} data-filters>
+      <!-- One shared pill that glides behind the active chip. -->
+      <span class="filter-indicator" aria-hidden="true" data-filter-indicator></span>
       {
         ['all', ...used].map((c) => (
           <button
@@ -35,22 +37,63 @@ const used = categories.filter((c) => moments.some((m) => m.entry.data.categorie
       }
     </div>
 
-    <div class="mt-8 grid gap-x-4 gap-y-10 sm:grid-cols-2 lg:grid-cols-3" data-moments>
+    <div class="mt-8 grid gap-x-4 gap-y-10 sm:grid-cols-2 lg:grid-cols-3" data-moments data-dim-group>
       {moments.map((m, i) => <MomentCard locale={locale} moment={m} eager={i === 0} priority={i === 0} />)}
     </div>
   </section>
 </BaseLayout>
 
 <style>
-  .filter-chip { background: var(--color-base-100); color: var(--muted); }
+  .filter-chip {
+    position: relative;
+    z-index: 1;
+    background: var(--color-base-100);
+    color: var(--muted);
+    transition: color 0.35s var(--ease-soft), background-color 0.35s;
+  }
   .filter-chip:hover { color: var(--color-base-content); }
-  .filter-chip[aria-pressed='true'] { background: var(--color-primary); color: var(--color-primary-content); }
+  .filter-chip[aria-pressed='true'] { background: transparent; color: var(--color-primary-content); }
+  /* Before the script positions the indicator, the active chip paints itself. */
+  [data-filters]:not(.has-indicator) .filter-chip[aria-pressed='true'] { background: var(--color-primary); }
+  .filter-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 999px;
+    background: var(--color-primary);
+    transition:
+      transform 0.55s var(--ease-spring),
+      width 0.55s var(--ease-spring),
+      height 0.55s var(--ease-spring);
+  }
+  /* A tiny accent dot inside the active chip. */
+  .filter-chip[aria-pressed='true']::after {
+    content: '';
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    margin-left: 0.5rem;
+    border-radius: 999px;
+    background: var(--color-accent);
+    vertical-align: middle;
+  }
 </style>
 
 <script>
   const bar = document.querySelector('[data-filters]');
+  const indicator = bar.querySelector('[data-filter-indicator]');
   const cards = document.querySelectorAll('[data-moments] > [data-categories]');
   const chips = bar.querySelectorAll('[data-filter]');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  /* Move the shared pill under the active chip (it springs there via CSS). */
+  function placeIndicator(chip, instant = false) {
+    if (instant) indicator.style.transition = 'none';
+    indicator.style.width = `${chip.offsetWidth}px`;
+    indicator.style.height = `${chip.offsetHeight}px`;
+    indicator.style.transform = `translate(${chip.offsetLeft}px, ${chip.offsetTop}px)`;
+    if (instant) requestAnimationFrame(() => (indicator.style.transition = ''));
+  }
 
   function apply(filter) {
     chips.forEach((chip) => chip.setAttribute('aria-pressed', String(chip.dataset.filter === filter)));
@@ -61,8 +104,23 @@ const used = categories.filter((c) => moments.some((m) => m.entry.data.categorie
     history.replaceState(null, '', filter === 'all' ? location.pathname : `#${filter}`);
   }
 
-  chips.forEach((chip) => chip.addEventListener('click', () => apply(chip.dataset.filter)));
+  function choose(chip) {
+    // Mark the chip active first: its accent dot changes its width, which the pill matches.
+    chips.forEach((c) => c.setAttribute('aria-pressed', String(c === chip)));
+    placeIndicator(chip);
+    const update = () => apply(chip.dataset.filter);
+    // Cards glide to their new places: each cover/title already has a view-transition
+    // name, so a same-document transition morphs them; hidden cards fade out.
+    if (document.startViewTransition && !reduce.matches) document.startViewTransition(update);
+    else update();
+  }
+
+  chips.forEach((chip) => chip.addEventListener('click', () => choose(chip)));
   const initial = location.hash.slice(1);
-  apply([...chips].some((c) => c.dataset.filter === initial) ? initial : 'all');
+  const start = [...chips].find((c) => c.dataset.filter === initial) ?? chips[0];
+  apply(start.dataset.filter);
   bar.classList.remove('invisible');
+  bar.classList.add('has-indicator');
+  placeIndicator(start, true);
+  window.addEventListener('resize', () => placeIndicator(bar.querySelector('[aria-pressed="true"]'), true));
 </script>

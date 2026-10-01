@@ -1,6 +1,7 @@
 ---
 // Rounded card: photo on one side, text on the other. `reverse` puts the photo first on desktop.
 import { Image } from 'astro:assets';
+import { bg } from '../data/colors.js';
 
 const { heading, text, link, image, alt, reverse = false } = Astro.props;
 ---
@@ -8,13 +9,15 @@ const { heading, text, link, image, alt, reverse = false } = Astro.props;
 <article class="grid items-center gap-8 rounded-2xl bg-base-100 p-4 md:grid-cols-2 md:gap-12 md:p-5">
   <div
     class:list={['aspect-[4/5] overflow-hidden rounded-xl bg-base-300', reverse ? 'md:order-first' : 'md:order-last']}
+    data-reveal="image"
+    style={bg(image)}
   >
     <Image
       src={image}
       alt={alt}
       widths={[320, 480, 640, 800, 1000, 1200]}
       sizes="(min-width: 768px) min(45vw, 36rem), 92vw"
-      class="size-full scale-[1.12] object-cover"
+      class="fade-img size-full scale-[1.12] object-cover"
       data-parallax
     />
   </div>
@@ -24,7 +27,7 @@ const { heading, text, link, image, alt, reverse = false } = Astro.props;
     {
       link && (
         <a href={link.href} class="mt-8 inline-flex items-center gap-2 font-medium underline-offset-4 hover:underline">
-          {link.label} <span aria-hidden="true">→</span>
+          {link.label} <span class="arrow" aria-hidden="true">→</span>
         </a>
       )
     }

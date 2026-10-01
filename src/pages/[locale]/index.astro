@@ -9,6 +9,7 @@ import { useT, localizedPath, routes } from '../../i18n/index.js';
 import { heroSlides, storyImages, bentoTiles } from '../../data/home.js';
 import { getMoments } from '../../data/moments.js';
 import { contact } from '../../data/contact.js';
+import { bg } from '../../data/colors.js';
 export { localeStaticPaths as getStaticPaths } from '../../i18n/paths.js';
 
 const { locale } = Astro.params;
@@ -66,7 +67,7 @@ const jsonLd = {
         href="#intro"
         class="mt-8 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-[0.9375rem] font-medium text-primary-content transition-opacity hover:opacity-85"
       >
-        {tr('home.explore')} <span aria-hidden="true">↓</span>
+        {tr('home.explore')} <span class="arrow arrow-down" aria-hidden="true">↓</span>
       </a>
     </div>
     <div class="shell mt-12 md:mt-16 md:w-[80vw] md:max-w-none md:px-0" data-hero-frames>
@@ -105,7 +106,7 @@ const jsonLd = {
     <div class="mb-10 flex flex-wrap items-end justify-between gap-6">
       <PageIntro as="h2" eyebrow={tr('home.selected.eyebrow')} heading={tr('home.selected.heading')} />
       <a href={momentsHref} class="inline-flex items-center gap-2 font-medium underline-offset-4 hover:underline">
-        {tr('home.selected.link')} <span aria-hidden="true">→</span>
+        {tr('home.selected.link')} <span class="arrow" aria-hidden="true">→</span>
       </a>
     </div>
     <BentoGrid tiles={tiles} />
@@ -115,22 +116,22 @@ const jsonLd = {
     <div class="mb-10 flex flex-wrap items-end justify-between gap-6">
       <PageIntro as="h2" eyebrow={tr('home.services.eyebrow')} heading={tr('home.services.heading')} />
       <a href={servicesPath} class="inline-flex items-center gap-2 font-medium underline-offset-4 hover:underline">
-        {tr('home.services.link')} <span aria-hidden="true">→</span>
+        {tr('home.services.link')} <span class="arrow" aria-hidden="true">→</span>
       </a>
     </div>
-    <ul class="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
+    <ul class="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4" data-dim-group>
       {
         serviceCards.map((c) => (
-          <li>
+          <li data-lift>
             <a href={c.href} class="group block h-full rounded-2xl bg-base-100 p-2.5 md:p-3">
-              <div class="aspect-[4/5] overflow-hidden rounded-xl bg-base-300">
+              <div class="aspect-[4/5] overflow-hidden rounded-xl bg-base-300" style={bg(c.cover)} data-reveal="image">
                 {c.cover && (
                   <Image
                     src={c.cover}
                     alt=""
                     widths={[320, 480, 640]}
                     sizes="(min-width: 768px) 17rem, 44vw"
-                    class="size-full object-cover object-top transition-transform duration-700 ease-soft group-hover:scale-[1.03]"
+                    class="fade-img size-full object-cover object-top transition-transform duration-700 ease-soft group-hover:scale-[1.03]"
                   />
                 )}
               </div>

@@ -17,16 +17,18 @@ export function initHomeScroll() {
     gsap.to('[data-hero-frames]', { scale: 0.94, opacity: 0.6, ease: 'none', scrollTrigger: out });
   }
 
-  //    Statement: "from / through / to …" plays once as it comes into view.
+  //    Statement: "from / through / to …" plays each time it comes into view.
   //    Every word rises out of its own mask in reading order with a slight tilt
   //    settling flat; the grey italic lead words also slide in from the left, so
-  //    each line visibly starts with its from / through / to.
+  //    each line visibly starts with its from / through / to. It resets once the
+  //    statement has left the screen (either direction) so the next pass replays it.
   const statement = document.querySelector('[data-statement]');
   if (statement) {
     const words = statement.querySelectorAll('[data-word]');
+    const leads = statement.querySelectorAll('[data-lead]');
     gsap.set(words, { yPercent: 115, rotate: 4, opacity: 0, transformOrigin: '0% 100%' });
-    gsap.set(statement.querySelectorAll('[data-lead]'), { x: -24 });
-    gsap.to(words, {
+    gsap.set(leads, { x: -24 });
+    const tl = gsap.timeline({ paused: true }).to(words, {
       yPercent: 0,
       rotate: 0,
       x: 0,
@@ -34,7 +36,22 @@ export function initHomeScroll() {
       duration: 1.1,
       ease: 'power4.out',
       stagger: 0.055,
-      scrollTrigger: { trigger: statement, start: 'top 78%', once: true },
+    });
+    // Play when it is well inside the viewport…
+    ScrollTrigger.create({
+      trigger: statement,
+      start: 'top 82%',
+      end: 'bottom 18%',
+      onEnter: () => tl.restart(),
+      onEnterBack: () => tl.restart(),
+    });
+    // …and rewind only once it is completely off screen, so it never resets in view.
+    ScrollTrigger.create({
+      trigger: statement,
+      start: 'top bottom',
+      end: 'bottom top',
+      onLeave: () => tl.pause(0),
+      onLeaveBack: () => tl.pause(0),
     });
   }
 
@@ -47,15 +64,5 @@ export function initHomeScroll() {
       { yPercent: 5, ease: 'none', scrollTrigger: { trigger: img.parentElement, start: 'top bottom', end: 'bottom top', scrub: true } },
     );
   });
-
-  // 3. Bento: tiles rise and fade in with a soft stagger the first time they appear.
-  const tiles = gsap.utils.toArray('[data-bento-tile]');
-  if (tiles.length) {
-    gsap.set(tiles, { opacity: 0, y: 40 });
-    ScrollTrigger.batch(tiles, {
-      start: 'top 92%',
-      once: true,
-      onEnter: (batch) => gsap.to(batch, { opacity: 1, y: 0, duration: 0.9, stagger: 0.08, ease: 'power3.out' }),
-    });
-  }
+  // 3. Bento tiles, cards and headings use the site-wide reveals in src/scripts/motion.js.
 }

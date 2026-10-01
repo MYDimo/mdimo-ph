@@ -64,14 +64,18 @@ const field = 'input w-full';
     <p class="text-sm text-muted sm:col-span-2">{tr('inquiry.note')}</p>
     <button
       type="submit"
-      class="rounded-full bg-primary px-6 py-3.5 font-medium text-primary-content transition-opacity hover:opacity-85 disabled:opacity-60 sm:col-span-2"
+      class="send-btn relative overflow-hidden rounded-full bg-primary px-6 py-3.5 font-medium text-primary-content transition-opacity hover:opacity-85 sm:col-span-2"
+      data-state="idle"
     >
-      {tr('inquiry.submit')}
+      <span class="send-label" data-send-label>{tr('inquiry.submit')}</span>
+      <!-- Spinner while sending, then a check that draws itself on success. -->
+      <svg class="send-spinner" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle></svg>
+      <svg class="send-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
     </button>
   </div>
 
   <!-- Result panels, shown by the script. -->
-  <div class="py-6 text-center" role="status" aria-live="polite" tabindex="-1" data-form-success hidden>
+  <div class="form-success py-6 text-center" role="status" aria-live="polite" tabindex="-1" data-form-success hidden>
     <p class="text-title font-semibold">{tr('inquiry.successTitle')}</p>
     <p class="mt-2 text-muted">{tr('inquiry.success')}</p>
     <button type="button" class="mt-6 text-sm font-medium underline underline-offset-4" data-form-again>
@@ -98,6 +102,34 @@ const field = 'input w-full';
     font-weight: 400;
     color: var(--muted);
   }
+  /* Send button states: idle → sending (spinner) → done (check) */
+  .send-btn svg {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 1.375rem;
+    height: 1.375rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .send-label { display: inline-block; transition: opacity 0.25s, transform 0.4s var(--ease-soft); }
+  .send-btn:not([data-state='idle']) .send-label { opacity: 0; transform: translateY(-8px); }
+  .send-btn[data-state='sending'] .send-spinner { opacity: 1; }
+  .send-spinner circle { stroke-dasharray: 40 60; animation: spin 0.9s linear infinite; transform-origin: center; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .send-btn[data-state='done'] .send-check { opacity: 1; }
+  .send-check path { stroke-dasharray: 24; stroke-dashoffset: 24; }
+  .send-btn[data-state='done'] .send-check path { animation: draw 0.5s var(--ease-soft) forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  /* The thank-you panel rises in. */
+  .form-success:not([hidden]) { animation: rise-in 0.7s var(--ease-soft); }
+  @keyframes rise-in { from { opacity: 0; transform: translateY(16px); } }
+
   /* Calm, borderless fields on a subtle fill; the ring appears only on focus. */
   .form-field :is(.input, .select, .textarea) {
     background: var(--color-base-200);
@@ -119,7 +151,8 @@ const field = 'input w-full';
     const success = form.querySelector('[data-form-success]');
     const error = form.querySelector('[data-form-error]');
     const button = fields.querySelector('button[type="submit"]');
-    const label = button.textContent;
+    const sendLabel = button.querySelector('[data-send-label]');
+    const label = sendLabel.textContent;
 
     // Preselect the service from a link like ?service=wedding#inquiry.
     const wanted = new URLSearchParams(location.search).get('service');
@@ -131,14 +164,18 @@ const field = 'input w-full';
       if (!form.reportValidity()) return;
       error.hidden = true;
       button.disabled = true;
-      button.textContent = form.dataset.sending;
+      button.dataset.state = 'sending';
+      sendLabel.textContent = form.dataset.sending; // announced to screen readers via the button name
+      const wait = (ms) => new Promise((r) => setTimeout(r, ms));
       try {
         const body = new URLSearchParams(new FormData(form)).toString();
         // Netlify Forms only exist on the deployed site; in local dev we simulate success.
         const res = import.meta.env.DEV
-          ? await new Promise((r) => setTimeout(() => r({ ok: true }), 600))
+          ? await wait(700).then(() => ({ ok: true }))
           : await fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body });
         if (!res.ok) throw new Error(String(res.status));
+        button.dataset.state = 'done';
+        await wait(650); // let the check draw before the panel swaps in
         form.reset();
         fields.hidden = true;
         success.hidden = false;
@@ -147,7 +184,8 @@ const field = 'input w-full';
         error.hidden = false;
       } finally {
         button.disabled = false;
-        button.textContent = label;
+        button.dataset.state = 'idle';
+        sendLabel.textContent = label;
       }
     });
 

@@ -6,6 +6,7 @@
  *   [   wide    ][   wide   ]
  */
 import { Image } from 'astro:assets';
+import { bg } from '../data/colors.js';
 
 const { tiles } = Astro.props; // [{ src, alt, href }]
 const shapes = [
@@ -18,17 +19,17 @@ const shapes = [
 ];
 ---
 
-<ul class="grid auto-rows-[10.5rem] grid-cols-2 gap-3 md:auto-rows-[15rem] md:grid-cols-4 md:gap-4">
+<ul class="grid auto-rows-[10.5rem] grid-cols-2 gap-3 md:auto-rows-[15rem] md:grid-cols-4 md:gap-4" data-dim-group>
   {
     tiles.slice(0, shapes.length).map((tile, i) => (
-      <li class:list={[shapes[i].cls]} data-bento-tile>
-        <a href={tile.href} class="group block h-full overflow-hidden rounded-xl bg-base-300">
+      <li class:list={[shapes[i].cls]} data-lift>
+        <a href={tile.href} class="group block h-full overflow-hidden rounded-xl bg-base-300" style={bg(tile.src)} data-reveal="image" data-view>
           <Image
             src={tile.src}
             alt={tile.alt}
             widths={[320, 480, 640, 800, 1000, 1200]}
             sizes={shapes[i].sizes}
-            class="size-full object-cover object-top transition-transform duration-700 ease-soft group-hover:scale-[1.03]"
+            class="fade-img size-full object-cover object-top transition-transform duration-700 ease-soft group-hover:scale-[1.03]"
           />
         </a>
       </li>

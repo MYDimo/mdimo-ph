@@ -5,6 +5,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import MomentCard from '../../../components/MomentCard.astro';
 import { locales, useT, localizedPath, formatDate, routes } from '../../../i18n/index.js';
 import { getMoments, similarMoments } from '../../../data/moments.js';
+import { bg } from '../../../data/colors.js';
 
 export async function getStaticPaths() {
   const paths = [];
@@ -36,6 +37,8 @@ const coverIndex = images.indexOf(cover);
 ---
 
 <BaseLayout locale={locale} title={title} description={description} image={cover} imagePosition={entry.data.previewCrop}>
+  <!-- Reading progress: an accent hairline across the top that fills as you scroll. -->
+  <div class="read-progress" aria-hidden="true" data-read-progress></div>
   <article
     data-gallery
     data-lb-close={tr('moments.lightbox.close')}
@@ -47,7 +50,7 @@ const coverIndex = images.indexOf(cover);
     <header class="shell grid items-end gap-8 pt-10 md:grid-cols-2 md:gap-12 md:pt-16">
       <div class="md:pb-4">
         <a href={localizedPath(locale, routes.moments)} class="text-sm text-muted underline-offset-4 hover:text-base-content hover:underline">
-          <span aria-hidden="true">←</span> {tr('moments.back')}
+          <span class="arrow arrow-back" aria-hidden="true">←</span> {tr('moments.back')}
         </a>
         <p class="eyebrow mt-8">
           {categories.map((c) => tr(`moments.filters.${c}`)).join(' · ')} · {formatDate(locale, date, { month: 'long', year: 'numeric' })}
@@ -64,7 +67,7 @@ const coverIndex = images.indexOf(cover);
         data-pswp-height={full[coverIndex].attributes.height}
         data-cropped="true"
         class="block aspect-[4/5] overflow-hidden rounded-2xl bg-base-300"
-        style={`view-transition-name: moment-cover-${slug}`}
+        style={bg(cover, `view-transition-name: moment-cover-${slug}`)}
       >
         <Image
           src={cover}
@@ -90,13 +93,16 @@ const coverIndex = images.indexOf(cover);
                 data-pswp-width={full[i].attributes.width}
                 data-pswp-height={full[i].attributes.height}
                 class="mb-3 block break-inside-avoid overflow-hidden rounded-lg bg-base-300 md:mb-4"
+                style={bg(src, '--reveal-radius: 1.25rem')}
+                data-reveal="image"
+                data-view
               >
                 <Image
                   src={src}
                   alt={alt(i)}
                   widths={[320, 480, 640, 800, 1000]}
                   sizes="(min-width: 768px) min(31vw, 24rem), 46vw"
-                  class="w-full transition-transform duration-700 ease-soft hover:scale-[1.02]"
+                  class="fade-img w-full transition-transform duration-700 ease-soft hover:scale-[1.02]"
                 />
               </a>
             ),
@@ -127,6 +133,17 @@ const coverIndex = images.indexOf(cover);
   .prose-moment :global(p + p) { margin-top: 1em; }
   .prose-moment :global(a) { color: var(--color-base-content); text-decoration: underline; text-underline-offset: 3px; }
   .more-row { scrollbar-width: none; }
+  .read-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    height: 2px;
+    background: var(--color-accent);
+    transform: scaleX(0);
+    transform-origin: left;
+  }
   .more-row::-webkit-scrollbar { display: none; }
 
   /* Lightbox: same tonal world as the page instead of a black void. */
@@ -144,4 +161,16 @@ const coverIndex = images.indexOf(cover);
 <script>
   import { initLightbox } from '../../../scripts/lightbox.js';
   document.querySelectorAll('[data-gallery]').forEach(initLightbox);
+
+  // Reading progress bar: scale the hairline with how far through the page we are.
+  const bar = document.querySelector('[data-read-progress]');
+  let queued = false;
+  const update = () => {
+    const max = document.documentElement.scrollHeight - innerHeight;
+    bar.style.transform = `scaleX(${max > 0 ? Math.min(1, scrollY / max) : 0})`;
+    queued = false;
+  };
+  addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(update); } }, { passive: true });
+  addEventListener('resize', update);
+  update();
 </script>
