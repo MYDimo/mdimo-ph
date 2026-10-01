@@ -20,7 +20,7 @@ export function initHomeScroll() {
 
   //    Statement: "from / through / to …" plays each time it comes into view.
   //    Every word rises out of its own mask in reading order with a slight tilt
-  //    settling flat; the grey italic lead words also slide in from the left, so
+  //    settling flat; the grey serif lead words also slide in from the left, so
   //    each line visibly starts with its from / through / to. It resets once the
   //    statement has left the screen (either direction) so the next pass replays it.
   const statement = document.querySelector('[data-statement]');

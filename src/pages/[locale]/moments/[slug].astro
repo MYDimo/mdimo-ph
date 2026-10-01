@@ -58,7 +58,7 @@ const tint = colorOf(cover) ?? 'transparent';
         <a href={localizedPath(locale, routes.moments)} class="cta-link text-sm text-muted hover:text-base-content">
           <span class="arrow arrow-back" aria-hidden="true">←</span> <span class="cta-text">{tr('moments.back')}</span>
         </a>
-        <p class="mt-8 font-serif text-lg italic text-muted">
+        <p class="mt-8 font-serif text-lg text-muted">
           {categories.map((c) => tr(`moments.filters.${c}`)).join(' · ')} · {formatDate(locale, date, { month: 'long', year: 'numeric' })}
           {location && ` · ${location}`}
         </p>

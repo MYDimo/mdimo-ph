@@ -97,7 +97,7 @@ const jsonLd = {
         tr('home.statement').map((line) => (
           <span class="block">
             {/* Each word sits in its own clipping mask so it can rise into view (see home-scroll.js). */}
-            <span class="stmt-word"><em class="font-serif font-normal text-muted" data-word data-lead>{line.lead}</em></span>{' '}
+            <span class="stmt-word"><em class="font-serif font-normal not-italic text-muted" data-word data-lead>{line.lead}</em></span>{' '}
             {line.text.split(' ').map((word) => (
               <>
                 <span class="stmt-word"><span data-word>{word}</span></span>{' '}
@@ -152,10 +152,10 @@ const jsonLd = {
                 data-parallax
               />
               {f.moment && (
-                <span class="absolute bottom-4 left-4 rounded-full bg-base-100/85 px-4 py-2 font-serif text-[0.9375rem] italic backdrop-blur md:bottom-6 md:left-6">
+                <span class="absolute bottom-4 left-4 rounded-full bg-base-100/85 px-4 py-2 font-serif text-[0.9375rem] backdrop-blur md:bottom-6 md:left-6">
                   {title}
                   {f.moment.entry.data.location && ` · ${f.moment.entry.data.location}`}
-                  <span class="arrow ml-1 not-italic" aria-hidden="true">→</span>
+                  <span class="arrow ml-1" aria-hidden="true">→</span>
                 </span>
               )}
             </Tag>
