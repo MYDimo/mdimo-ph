@@ -41,7 +41,7 @@ Do not add a dependency without stating what it is, why it's needed, and its siz
 ### Look and feel rules
 - **Rounded everything.** Images, cards, buttons, form fields, lightbox frame, and menu panels use generous, consistent corner radii. Define radius tokens (for example small / medium / large / pill) and reuse them. No sharp corners anywhere.
 - **Light base palette.** The light theme is the primary design: a soft off-white page background with white or very slightly tinted cards, and near-black text (not pure black). Think Apple's neutral greys.
-- **No colored accent.** The accent is **shades of very dark grey** (for buttons, links, active states, focus rings). The whole UI stays neutral so the photographs provide all the color. Define a small grey scale in the tokens and reuse it. In the dark theme, invert the same idea with soft light greys.
+- **A tiny accent that follows the theme:** golden-hour **amber by day** (`#b06a2a`), blue-hour **violet by night** (`#9d8cff`), as `--color-accent`. Used only for focus rings, text selection, active indicators (filter dot, current-page dot), progress hairlines and step lines. Buttons, links and text stay neutral (near-black / soft light grey) so the photographs provide the colour.
 - **Day/night toggle.** A small, elegant toggle in the header. Behavior:
   - **Follows the visitor's system setting** (`prefers-color-scheme`) on first visit. Light is the fallback when there is no preference.
   - A manual choice overrides the system setting and is saved in `localStorage`.
@@ -174,7 +174,7 @@ public/           # static assets only
 - [x] Copy: pull any needed text from the `some content from framer/` folder
 - [x] No testimonials or client logos
 - [x] Logo: `/images/logo.svg`
-- [x] Accent: shades of very dark grey (fully neutral UI)
+- [x] Accent: theme-split, amber (day) / violet (night), in tiny doses only (replaces "fully neutral")
 - [x] Theme on first visit: follows the visitor's system setting, light as fallback, manual toggle overrides
 - [x] Hero: auto-rotating carousel (slow start on landing, visitor can control it)
 - [x] Prices are shown publicly, EUR only
@@ -202,6 +202,9 @@ public/           # static assets only
 - [x] SEO: per-page descriptions (`seo.*` in i18n), Open Graph/Twitter tags, JSON-LD (ProfessionalService) on home, sitemap.xml + robots.txt endpoints (no plugin), bilingual 404 (`/bg/*` → `/bg/404/` via `_redirects`), `_headers` for caching/security
 - [x] Link-preview images: the page's own photo cropped to 1200×630 (`image`/`imagePosition` props on BaseLayout; Moments can set `previewCrop` in frontmatter when the default crop misses faces)
 - [x] Domain: https://www.mdimophotography.bg is primary (Netlify's recommendation with external DNS); the bare domain redirects to it. Set as `site` in astro.config.mjs
+
+- [x] Motion: every reveal replays each time it enters view (or is scroll-driven); site-wide engine `src/scripts/motion.js` + `src/styles/motion.css` (no dependency). Hooks: `data-reveal="image|rise"`, `data-reveal-group`, `data-lift` + `data-dim-group`, `data-view` (cursor pill); big headings (`h1`, `.text-headline`) split into rising words automatically. Gated by `html.motion` (unset under reduced motion)
+- [x] Micro-interactions: theme toggle (sun pop / moon roll, colour bloom, circular theme reveal), sliding language and filter pills, pill-button press, arrow nudges, nav underline + accent dot, condensing header (hides on mobile scroll-down), send button spinner → check, copy-email, reading-progress hairline, photos fade in over their average colour (`scripts/image-colors.mjs` → `src/data/image-colors.json`)
 
 ### Still open
 - [ ] Exact grey scales for light/dark palettes (propose options)
