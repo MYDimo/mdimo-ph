@@ -219,9 +219,9 @@ const fill = (text) => text.replace(/\{(\w+)\}/g, (_, k) => faqVars[k] ?? `{${k}
                   tr('services.process.steps').map((step, i) => (
                     <li class="road-step" style={roadPlaces[i]} data-road-step>
                       <div class="road-card rounded-2xl bg-base-200 p-5" data-road-node>
-                        <span class="road-num">{String(i + 1).padStart(2, '0')}</span>
-                        <div class="mt-2 flex items-center gap-3">
-                          <Doodle name={stepDoodles[i]} class="size-8 shrink-0 text-base-content/75" />
+                        <div class="flex items-center gap-3">
+                          <span class="road-num">{String(i + 1).padStart(2, '0')}</span>
+                          <Doodle name={stepDoodles[i]} class="size-7 shrink-0 text-base-content/75" />
                           <h3 class="text-lg font-semibold leading-tight">{step.title}</h3>
                         </div>
                         <p class="mt-2 text-[0.9375rem] text-muted">{step.text}</p>
@@ -390,9 +390,9 @@ const fill = (text) => text.replace(/\{(\w+)\}/g, (_, k) => faqVars[k] ?? `{${k}
     transform-origin: center;
   }
 
-  /* Milestones grow and fade with their distance from the middle of the frame:
-     they arrive small and faint, are full size in the middle, and shrink and fade
-     again as they leave (--s / --o are set by the script on each scroll; only the
+  /* Milestones grow and fade with their distance from the pen tip (the point the
+     road is being drawn to): they arrive small and faint, are full size when the
+     line reaches them, and shrink and fade again as it moves on (--s / --o are set by the script on each scroll; only the
      contents fade so the cards stay opaque over the road). The one the line has
      reached last also gets an accent ring and number. */
   .road-card > * { opacity: var(--o, 1); }

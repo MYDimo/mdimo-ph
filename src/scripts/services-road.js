@@ -13,10 +13,10 @@
  *     so the pen tip stays around the middle of the screen.
  *  3. Release: at the last milestone the wrapper ends and the page scrolls on.
  *
- * Each milestone's size and opacity follow its distance from the middle of the
- * frame: small and faint as it arrives, full size in the middle, small and faint
- * again as it leaves. The one the line has reached last is "current" (accent
- * ring); the counter in the frame's title bar follows it.
+ * Each milestone's size and opacity follow its distance from the pen tip: small
+ * and faint as it arrives, full size when the line reaches it, small and faint
+ * again as the line moves on. The one nearest the tip is "current" (accent ring); the
+ * counter in the frame's title bar follows it.
  *
  * Reduced motion: the wrapper isn't pinned (pin styles need html.motion) and the
  * whole road is drawn.
@@ -107,13 +107,16 @@ export function initRoad(pin) {
     const shift = Math.min(maxShift, Math.max(0, p.y - view * 0.5));
     road.style.transform = `translateY(${-shift}px)`;
 
+    // "Current" = the milestone nearest the pen tip (matches the card in focus).
     let current = 0;
     stops.forEach((s, i) => {
-      if (drawn >= s - 2) current = i;
+      if (Math.abs(s - drawn) < Math.abs(stops[current] - drawn)) current = i;
     });
-    // Size and opacity by distance from the frame's middle (0 = centred, 1 = at the edge or beyond).
+    // Size and opacity by distance from the pen tip (0 = the line is in this card,
+    // 1 = far away), so whichever card the road is drawing into is the one in focus,
+    // all the way to the last milestone.
     const vr = viewport.getBoundingClientRect();
-    const middle = vr.top + vr.height / 2;
+    const middle = road.getBoundingClientRect().top + p.y;
     steps.forEach((step, i) => {
       step.classList.toggle('is-reached', i <= current);
       step.classList.toggle('is-current', i === current);
