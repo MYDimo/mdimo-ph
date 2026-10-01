@@ -26,6 +26,9 @@ export function initHomeScroll() {
   if (statement) {
     const words = statement.querySelectorAll('[data-word]');
     const leads = statement.querySelectorAll('[data-lead]');
+    // Colour is handled in CSS (accent → text colour, keyed off .is-lit) so it
+    // always follows the current theme; GSAP only moves the words.
+    words.forEach((w, i) => w.style.setProperty('--i', String(i)));
     gsap.set(words, { yPercent: 115, rotate: 4, opacity: 0, transformOrigin: '0% 100%' });
     gsap.set(leads, { x: -24 });
     const tl = gsap.timeline({ paused: true }).to(words, {
@@ -42,16 +45,16 @@ export function initHomeScroll() {
       trigger: statement,
       start: 'top 82%',
       end: 'bottom 18%',
-      onEnter: () => tl.restart(),
-      onEnterBack: () => tl.restart(),
+      onEnter: () => { tl.restart(); statement.classList.add('is-lit'); },
+      onEnterBack: () => { tl.restart(); statement.classList.add('is-lit'); },
     });
     // …and rewind only once it is completely off screen, so it never resets in view.
     ScrollTrigger.create({
       trigger: statement,
       start: 'top bottom',
       end: 'bottom top',
-      onLeave: () => tl.pause(0),
-      onLeaveBack: () => tl.pause(0),
+      onLeave: () => { tl.pause(0); statement.classList.remove('is-lit'); },
+      onLeaveBack: () => { tl.pause(0); statement.classList.remove('is-lit'); },
     });
   }
 

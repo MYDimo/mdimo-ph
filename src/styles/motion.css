@@ -16,6 +16,12 @@
   color: var(--color-accent-content);
 }
 
+/* ── Links: underlines are drawn in the accent colour ──────────────────── */
+a {
+  text-decoration-color: var(--color-accent);
+  text-decoration-thickness: 1.5px;
+}
+
 /* ── Press: every pill button sinks slightly and springs back ─────────── */
 :is(a, button).rounded-full {
   transition:
@@ -76,8 +82,8 @@ a:hover .arrow-back {
   left: 0.875rem;
   right: 0.875rem;
   bottom: 0.35rem;
-  height: 1px;
-  background: currentColor;
+  height: 1.5px;
+  background: var(--color-accent);
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 0.45s var(--ease-soft);
@@ -95,6 +101,27 @@ a:hover .arrow-back {
   border-radius: 999px;
   background: var(--color-accent);
   transform: translateY(-50%);
+}
+
+/* ── Logo: its single line draws itself on the first page of a visit, and
+      again whenever it is hovered (the path has pathLength="1") ─────────── */
+html.motion:not(.logo-drawn) .logo-draw path {
+  stroke-dasharray: 1 1.01;
+  stroke-dashoffset: 1;
+  animation: logo-draw 1.5s var(--ease-soft) 0.15s forwards;
+}
+@media (hover: hover) {
+  html.motion a:hover > .logo-draw path {
+    stroke-dasharray: 1 1.01;
+    animation: logo-redraw 1.1s var(--ease-soft);
+  }
+}
+@keyframes logo-draw {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes logo-redraw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
 }
 
 /* ── Headings: each word rises out of its own mask when the heading enters
@@ -121,18 +148,23 @@ html.motion main :is(h1, .text-headline):not([data-statement]):not([style*='view
 .rw > span {
   display: inline-block;
 }
+/* Words rise in the accent colour, faded, then settle into the text colour
+   (the colour change runs a little longer so it lingers as a warm glint). */
 html.motion [data-reveal-words] .rw > span {
   transform: translateY(105%) rotate(3deg);
   transform-origin: 0 100%;
   opacity: 0;
+  color: var(--color-accent);
   transition:
     transform 1s var(--ease-soft),
-    opacity 1s var(--ease-soft);
+    opacity 1s var(--ease-soft),
+    color 1.6s var(--ease-soft);
   transition-delay: calc(var(--i, 0) * 45ms);
 }
 html.motion [data-reveal-words].is-in .rw > span {
   transform: none;
   opacity: 1;
+  color: inherit;
 }
 
 /* ── Photos: a rounded mask opens up as they enter view ───────────────── */
