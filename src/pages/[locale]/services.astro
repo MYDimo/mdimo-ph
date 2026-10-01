@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageIntro from '../../components/PageIntro.astro';
 import InquiryForm from '../../components/InquiryForm.astro';
+import Doodle from '../../components/Doodle.astro';
 import { useT, formatPrice, formatRange, localizedPath, routes } from '../../i18n/index.js';
 import { weddingPackages, moreServices, travelRatePerKm } from '../../data/services.js';
 import { getMoments } from '../../data/moments.js';
@@ -23,25 +24,87 @@ const moreMeta = (s) =>
 
 // Links that jump to the form below with the service preselected.
 const bookHref = (service) => `?service=${service}#inquiry`;
+
+/*
+ * Services bento: photo tiles with a frosted caption panel (unlike the home
+ * bento, which is photos only). Weddings is the big tile; the others share the
+ * right-hand column. Tapping a tile scrolls to that service's details.
+ */
+const [essential] = weddingPackages;
+const [christening, couple, events] = moreServices;
+const tiles = [
+  { id: 'weddings', anchor: 'weddings', doodle: 'rings', photo: momentOf('silvana-and-ivan')?.cover, from: price(essential.price), shape: 'md:col-span-2 md:row-span-2 h-[26rem] md:h-auto' },
+  { id: 'christening', anchor: 'christening', doodle: 'candle', photo: momentOf('viki-christening')?.cover, from: price(christening.price), shape: 'h-[21rem] md:h-auto' },
+  { id: 'couple', anchor: 'couple', doodle: 'heart', photo: momentOf('radina-and-martin')?.cover, from: price(couple.price), shape: 'h-[21rem] md:h-auto' },
+  { id: 'events', anchor: 'events', doodle: 'note', photo: momentOf('probiv')?.images[9], from: `${price(events.pricePerHour)} ${tr('units.perHour')}`, shape: 'md:col-span-2 h-[21rem] md:h-auto' },
+];
+
+// A slim photo strip on top of each wedding collection.
+const packagePhotos = {
+  essential: momentOf('valentina-and-danail')?.cover,
+  signature: momentOf('elefteria-and-konstantin')?.cover,
+};
+const moreDoodles = { christening: 'candle', couple: 'heart', events: 'note' };
+const stepDoodles = ['envelope', 'bubbles', 'calendar', 'camera', 'sparkle', 'photos'];
+
+// FAQ answers carry the live numbers (travel rate, overtime prices).
+const faqVars = {
+  rate: formatPrice(locale, travelRatePerKm, { decimals: 2 }),
+  essential: price(weddingPackages[0].overtimePerHour),
+  signature: price(weddingPackages[1].overtimePerHour),
+};
+const fill = (text) => text.replace(/\{(\w+)\}/g, (_, k) => faqVars[k] ?? `{${k}}`);
 ---
 
 <BaseLayout locale={locale} title={tr('services.title')} description={tr('seo.services')} image={momentOf('silvana-and-ivan')?.cover}>
-  <section class="shell pt-16 md:pt-24">
+  <!-- 01 Intro: what I do + how I work (approach first, prices right after) -->
+  <section class="shell grid items-end gap-10 pt-16 md:grid-cols-[3fr_2fr] md:gap-14 md:pt-24">
     <PageIntro
       eyebrow={tr('services.intro.eyebrow')}
       heading={tr('services.intro.heading')}
       text={tr('services.intro.text')}
-    >
-      <a
-        href="#weddings"
-        class="mt-8 inline-flex rounded-full bg-primary px-6 py-3 text-[0.9375rem] font-medium text-primary-content transition-opacity hover:opacity-85"
-        >{tr('services.intro.cta')}</a
-      >
-    </PageIntro>
+    />
+    <blockquote class="relative pb-1 font-serif text-title italic leading-snug text-base-content/85">
+      <span class="absolute -left-1 -top-9 font-serif text-6xl not-italic leading-none text-accent" aria-hidden="true">“</span>
+      {tr('services.intro.approach')}
+    </blockquote>
+  </section>
+
+  <!-- Services bento -->
+  <section class="shell pt-12 md:pt-16" aria-label={tr('services.bento.label')}>
+    <ul class="grid gap-3 md:auto-rows-[15.5rem] md:grid-cols-4 md:gap-4" data-dim-group>
+      {
+        tiles.map((t) => (
+          <li class:list={['service-tile', t.shape]} data-lift>
+            <a href={`#${t.anchor}`} class="group relative block h-full overflow-hidden rounded-2xl bg-base-300" style={bg(t.photo)} data-reveal="image">
+              {t.photo && (
+                <Image
+                  src={t.photo}
+                  alt=""
+                  widths={[400, 640, 900, 1200]}
+                  sizes={t.id === 'weddings' ? '(min-width: 768px) 38rem, 92vw' : '(min-width: 768px) 19rem, 92vw'}
+                  class="fade-img absolute inset-0 size-full object-cover object-top transition-transform duration-700 ease-soft group-hover:scale-[1.012]"
+                />
+              )}
+              <div class="absolute inset-x-2.5 bottom-2.5 rounded-xl bg-base-100/88 p-4 backdrop-blur-md md:inset-x-3 md:bottom-3">
+                <div class="flex items-start justify-between gap-3">
+                  <div>
+                    <h2 class="text-lg font-semibold leading-tight">{tr(`home.services.items.${t.id}.name`)}</h2>
+                    <p class="mt-1 font-serif text-[0.9375rem] italic text-muted">{tr('services.from', { price: t.from })}</p>
+                  </div>
+                  <Doodle name={t.doodle} class="size-8 shrink-0 text-base-content/80" />
+                </div>
+                {t.id === 'weddings' && <p class="mt-2 text-sm text-muted">{tr('home.services.items.weddings.text')}</p>}
+              </div>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
   </section>
 
   <!-- 02 Wedding collections -->
-  <section id="weddings" class="shell pt-section">
+  <section id="weddings" class="shell scroll-mt-24 pt-section">
     <PageIntro
       as="h2"
       eyebrow={tr('services.weddings.eyebrow')}
@@ -53,44 +116,54 @@ const bookHref = (service) => `?service=${service}#inquiry`;
         weddingPackages.map((p) => (
           <article
             data-reveal="rise"
-            class:list={[
-              'flex flex-col rounded-2xl bg-base-100 p-7 md:p-9',
-              p.recommended && 'ring-1 ring-base-content/15',
-            ]}
+            class:list={['flex flex-col rounded-2xl bg-base-100 p-3', p.recommended && 'ring-1 ring-base-content/15']}
           >
-            <div class="flex min-h-7 items-center justify-between gap-4">
-              <h3 class="eyebrow">{tr(`services.weddings.packages.${p.id}.name`)}</h3>
-              {p.recommended && (
-                <span class="rounded-full bg-primary px-3 py-1 text-label font-medium text-primary-content">
-                  {tr('services.weddings.recommended')}
-                </span>
-              )}
-            </div>
-            <p class="mt-5 text-headline font-semibold">{price(p.price)}</p>
-            <p class="mt-1 text-sm text-muted">{tr('units.upToHours', { n: p.upToHours })}</p>
-            <p class="mt-6">{tr(`services.weddings.packages.${p.id}.summary`)}</p>
-            <p class="eyebrow mt-8">{tr('services.weddings.includes')}</p>
-            <ul class="mt-3 space-y-2 text-[0.9375rem]">
-              {tr(`services.weddings.packages.${p.id}.items`).map((item) => (
-                <li class="flex gap-3">
-                  <span class="mt-2.5 size-1 shrink-0 rounded-full bg-base-content/50" aria-hidden="true" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-            <p class="mt-8 text-sm text-muted">
-              {tr('services.weddings.overtime')}: {price(p.overtimePerHour)} {tr('units.perHour')}
-            </p>
-            <div class="mt-auto pt-8">
-              <a
-                href={bookHref('wedding')}
-                class:list={[
-                  'inline-flex rounded-full px-5 py-2.5 text-[0.9375rem] font-medium transition-opacity hover:opacity-85',
-                  p.recommended ? 'bg-primary text-primary-content' : 'bg-base-200 text-base-content',
-                ]}
-              >
-                {tr('services.weddings.book')}
-              </a>
+            {packagePhotos[p.id] && (
+              <div class="aspect-[16/7] overflow-hidden rounded-xl bg-base-300" style={bg(packagePhotos[p.id])}>
+                <Image
+                  src={packagePhotos[p.id]}
+                  alt=""
+                  widths={[400, 640, 900, 1200]}
+                  sizes="(min-width: 768px) 36rem, 92vw"
+                  class="fade-img size-full object-cover object-[50%_30%]"
+                />
+              </div>
+            )}
+            <div class="flex flex-1 flex-col p-4 pt-6 md:p-6">
+              <div class="flex min-h-7 items-center justify-between gap-4">
+                <h3 class="eyebrow">{tr(`services.weddings.packages.${p.id}.name`)}</h3>
+                {p.recommended && (
+                  <span class="rounded-full bg-primary px-3 py-1 text-label font-medium text-primary-content">
+                    {tr('services.weddings.recommended')}
+                  </span>
+                )}
+              </div>
+              <p class="mt-5 text-headline font-semibold">{price(p.price)}</p>
+              <p class="mt-1 font-serif italic text-muted">{tr('units.upToHours', { n: p.upToHours })}</p>
+              <p class="mt-6">{tr(`services.weddings.packages.${p.id}.summary`)}</p>
+              <p class="eyebrow mt-8">{tr('services.weddings.includes')}</p>
+              <ul class="mt-3 space-y-2.5 text-[0.9375rem]">
+                {tr(`services.weddings.packages.${p.id}.items`).map((item, i) => (
+                  <li class="flex gap-3" style={`--d: ${i}`}>
+                    <Doodle name="tick" class="mt-0.5 size-[1.15rem] shrink-0 text-accent" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <p class="mt-8 text-sm text-muted">
+                {tr('services.weddings.overtime')}: {price(p.overtimePerHour)} {tr('units.perHour')}
+              </p>
+              <div class="mt-auto pt-8">
+                <a
+                  href={bookHref('wedding')}
+                  class:list={[
+                    'inline-flex rounded-full px-5 py-2.5 text-[0.9375rem] font-medium transition-opacity hover:opacity-85',
+                    p.recommended ? 'bg-primary text-primary-content' : 'bg-base-200 text-base-content',
+                  ]}
+                >
+                  {tr('services.weddings.book')}
+                </a>
+              </div>
             </div>
           </article>
         ))
@@ -99,16 +172,16 @@ const bookHref = (service) => `?service=${service}#inquiry`;
   </section>
 
   <!-- 03 More ways to remember -->
-  <section id="more" class="shell pt-section">
+  <section class="shell pt-section">
     <PageIntro as="h2" eyebrow={tr('services.more.eyebrow')} heading={tr('services.more.heading')} />
     <div class="mt-10 grid gap-4 md:grid-cols-3" data-reveal-group data-dim-group>
       {
         moreServices.map((s) => {
           const m = momentOf(s.moment);
           return (
-            <article class="flex flex-col rounded-2xl bg-base-100 p-3" data-lift>
+            <article id={s.id} class="flex scroll-mt-24 flex-col rounded-2xl bg-base-100 p-3" data-lift>
               {m && (
-                <a href={`${momentsPath}${m.slug}/`} class="block aspect-[4/3] overflow-hidden rounded-xl bg-base-300" style={bg(m.cover)} data-reveal="image" data-view>
+                <a href={`${momentsPath}${m.slug}/`} class="block aspect-[4/3] overflow-hidden rounded-xl bg-base-300" style={bg(m.cover)} data-reveal="image">
                   <Image
                     src={m.cover}
                     alt={m.entry.data.title}
@@ -119,8 +192,11 @@ const bookHref = (service) => `?service=${service}#inquiry`;
                 </a>
               )}
               <div class="flex flex-1 flex-col p-4 pt-5">
-                <h3 class="text-title font-semibold">{tr(`services.more.items.${s.id}.name`)}</h3>
-                <p class="mt-2 text-sm text-muted">{moreMeta(s)}</p>
+                <div class="flex items-start justify-between gap-3">
+                  <h3 class="text-title font-semibold">{tr(`services.more.items.${s.id}.name`)}</h3>
+                  <Doodle name={moreDoodles[s.id]} class="size-8 shrink-0 text-base-content/70" />
+                </div>
+                <p class="mt-2 font-serif italic text-muted">{moreMeta(s)}</p>
                 <p class="mt-5 text-[0.9375rem]">{tr(`services.more.items.${s.id}.text`)}</p>
                 <div class="mt-auto flex flex-wrap items-center gap-x-5 gap-y-2 pt-6 text-sm font-medium">
                   <a href={bookHref(s.id)} class="rounded-full bg-base-200 px-4 py-2 transition-opacity hover:opacity-85">
@@ -140,14 +216,27 @@ const bookHref = (service) => `?service=${service}#inquiry`;
     </div>
   </section>
 
-  <!-- 04 How it works -->
-  <section class="shell pt-section">
-    <PageIntro as="h2" eyebrow={tr('services.process.eyebrow')} heading={tr('services.process.heading')} />
-    <ol class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" data-reveal-group>
+  <!-- 04 How it works: a swipeable timeline -->
+  <section class="pt-section">
+    <div class="shell flex flex-wrap items-end justify-between gap-6">
+      <PageIntro as="h2" eyebrow={tr('services.process.eyebrow')} heading={tr('services.process.heading')} />
+      <div class="hidden gap-1 md:flex">
+        <button type="button" class="timeline-btn" aria-label={tr('services.process.prev')} data-timeline-prev>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 6 8.5 12l6 6" /></svg>
+        </button>
+        <button type="button" class="timeline-btn" aria-label={tr('services.process.next')} data-timeline-next>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9.5 6 6 6-6 6" /></svg>
+        </button>
+      </div>
+    </div>
+    <ol class="timeline mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-3" data-reveal-group data-timeline>
       {
         tr('services.process.steps').map((step, i) => (
-          <li class="step rounded-2xl bg-base-100 p-7" data-reveal="rise">
-            <span class="font-serif text-3xl italic text-muted">{String(i + 1).padStart(2, '0')}</span>
+          <li class="step flex w-[78%] shrink-0 snap-start flex-col rounded-2xl bg-base-100 p-7 sm:w-[45%] lg:w-[calc((100%-3rem)/3.4)]" data-reveal="rise">
+            <div class="flex items-center justify-between">
+              <span class="font-serif text-3xl italic text-muted">{String(i + 1).padStart(2, '0')}</span>
+              <Doodle name={stepDoodles[i]} class="size-10 text-base-content/75" />
+            </div>
             {/* Hairline that draws across once the step is in view, linking one step to the next. */}
             <span class="step-line" aria-hidden="true"></span>
             <h3 class="mt-6 text-title font-semibold">{step.title}</h3>
@@ -158,24 +247,25 @@ const bookHref = (service) => `?service=${service}#inquiry`;
     </ol>
   </section>
 
-  <!-- Practical details -->
-  <section class="shell pt-section">
-    <h2 class="text-title font-semibold">{tr('services.practical.heading')}</h2>
-    <dl class="mt-6 grid gap-6 md:grid-cols-3">
+  <!-- 05 FAQ -->
+  <section class="shell grid gap-10 pt-section md:grid-cols-[2fr_3fr] md:gap-12">
+    <PageIntro as="h2" eyebrow={tr('services.faq.eyebrow')} heading={tr('services.faq.heading')} />
+    <div class="divide-y divide-base-300 rounded-2xl bg-base-100 px-5 md:px-7">
       {
-        tr('services.practical.items').map((item) => (
-          <div>
-            <dt class="font-medium">{item.term}</dt>
-            <dd class="mt-1 text-[0.9375rem] text-muted">
-              {item.text.replace('{rate}', formatPrice(locale, travelRatePerKm, { decimals: 2 }))}
-            </dd>
-          </div>
+        tr('services.faq.items').map((item) => (
+          <details class="faq group">
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-6 py-5 font-medium">
+              {item.q}
+              <span class="faq-icon" aria-hidden="true"></span>
+            </summary>
+            <p class="pb-6 pr-8 text-[0.9375rem] text-muted">{fill(item.a)}</p>
+          </details>
         ))
       }
-    </dl>
+    </div>
   </section>
 
-  <!-- 05 Start a conversation -->
+  <!-- 06 Start a conversation -->
   <section id="inquiry" class="shell grid scroll-mt-24 gap-10 pt-section md:grid-cols-[2fr_3fr] md:gap-12">
     <PageIntro as="h2" eyebrow={tr('inquiry.eyebrow')} heading={tr('inquiry.heading')} text={tr('inquiry.text')} />
     <InquiryForm locale={locale} />
@@ -183,6 +273,25 @@ const bookHref = (service) => `?service=${service}#inquiry`;
 </BaseLayout>
 
 <style>
+  /* Timeline: aligned with the page gutter, scrolls to the screen edge. */
+  .timeline {
+    padding-inline: max(var(--spacing-gutter), calc((100% - 76rem) / 2 + var(--spacing-gutter)));
+    scroll-padding-inline: max(var(--spacing-gutter), calc((100% - 76rem) / 2 + var(--spacing-gutter)));
+    scrollbar-width: none;
+  }
+  .timeline::-webkit-scrollbar { display: none; }
+  .timeline-btn {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 999px;
+    color: var(--muted);
+    transition: color 0.2s, background-color 0.2s;
+  }
+  .timeline-btn:hover { color: var(--color-base-content); background: color-mix(in oklab, var(--color-base-300) 50%, transparent); }
+  .timeline-btn svg { width: 1.25rem; height: 1.25rem; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+
   .step-line {
     display: block;
     height: 1px;
@@ -194,6 +303,50 @@ const bookHref = (service) => `?service=${service}#inquiry`;
   :global(html:not(.motion)) .step-line,
   .step:global(.is-in) .step-line {
     transform: scaleX(1);
-    transition: transform 1.1s var(--ease-soft) calc(var(--i, 0) * 80ms + 250ms);
+    transition: transform 1.3s var(--ease-soft) calc(var(--i, 0) * 110ms + 300ms);
   }
+
+  /* FAQ: smooth open/close where supported (interpolate-size), a plus that turns into a cross. */
+  .faq {
+    interpolate-size: allow-keywords;
+  }
+  .faq::details-content {
+    height: 0;
+    overflow: clip;
+    transition: height 0.5s var(--ease-soft), content-visibility 0.5s allow-discrete;
+  }
+  .faq[open]::details-content {
+    height: auto;
+  }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq-icon {
+    position: relative;
+    width: 0.9rem;
+    height: 0.9rem;
+    flex-shrink: 0;
+    transition: transform 0.45s var(--ease-spring);
+  }
+  .faq-icon::before,
+  .faq-icon::after {
+    content: '';
+    position: absolute;
+    inset: 50% 0 auto;
+    height: 1.5px;
+    border-radius: 999px;
+    background: currentColor;
+    translate: 0 -50%;
+  }
+  .faq-icon::after { rotate: 90deg; }
+  .faq[open] .faq-icon { transform: rotate(45deg); color: var(--color-accent); }
+
+  /* Doodles in a list draw one after another. */
+  .service-tile :global(.doodle) { --d: 2; }
 </style>
+
+<script>
+  // Timeline arrows: scroll one step at a time (swipe/trackpad also work natively).
+  const timeline = document.querySelector('[data-timeline]');
+  const step = () => timeline.querySelector('li')?.getBoundingClientRect().width + 16 || 320;
+  document.querySelector('[data-timeline-prev]')?.addEventListener('click', () => timeline.scrollBy({ left: -step(), behavior: 'smooth' }));
+  document.querySelector('[data-timeline-next]')?.addEventListener('click', () => timeline.scrollBy({ left: step(), behavior: 'smooth' }));
+</script>
