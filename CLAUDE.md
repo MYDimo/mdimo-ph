@@ -233,8 +233,8 @@ public/           # static assets only
 - [x] Overtime is €100/hour on both wedding collections
 
 - [x] Inquiry form posts to its own page URL (`fetch(location.pathname)`), never to `/` (the root redirect swallows POSTs: the thank-you showed but nothing was sent). Email needs a dot + 2+ letter ending (pattern + translated message `inquiry.emailInvalid`); the value is trimmed
-- [x] Theme switch: colour transitions are disabled while the circular reveal runs (`html.vt-theme`), otherwise the frosted header shows pale and unblurred for ~0.3 s
-- [x] Verifying motion: the built-in browser pane is hidden during sessions, which freezes animation frames; check animations in real headless Chrome (DevTools protocol, slowed with `Animation.setPlaybackRate`) and look at screenshots, not only computed values
+- [x] Theme switch: colour transitions are disabled while the circular reveal runs (`html.vt-theme`), otherwise the frosted header shows pale and unblurred for ~0.3 s. In **Firefox** (the owner's browser) view-transition snapshots can't draw `backdrop-filter`, so there the header is near-solid during the switch and a 0.5 s settle (`html.vt-theme` / `html.vt-settle`, `@supports (-moz-appearance: none)` in `motion.css`), then fades to its normal blur
+- [x] Verifying motion: the built-in browser pane is hidden during sessions, which freezes animation frames. Check in real headless/visible Chrome (DevTools protocol; `Animation.setPlaybackRate` to slow, `Page.startScreencast` for every frame) and in Firefox (WebDriver BiDi, `firefox --remote-debugging-port`), and sample computed styles inside the page. Firefox's screenshot API never draws `backdrop-filter`, and macOS screen capture is not permitted, so blur itself can't be judged from screenshots: reason from computed styles or ask the user
 
 ### Still open
 - [ ] Exact grey scales for light/dark palettes (propose options)
