@@ -1,0 +1,13 @@
+import { launch } from './cdp.mjs';
+import { readdirSync, writeFileSync } from 'node:fs';
+const [from, to, name] = [Number(process.argv[2]), Number(process.argv[3]), process.argv[4]];
+const dir = new URL('./shots/', import.meta.url).pathname;
+const frames = readdirSync(dir).filter(f => /^cast-\d{3}-.*ms\.jpg$/.test(f)).map(f => ({ f, ms: Number(f.match(/-(-?\d+)ms\.jpg$/)[1]) })).filter(x => x.ms >= from && x.ms <= to).sort((a, b) => a.ms - b.ms);
+const cell = (x) => `<div style="width:720px"><div style="font:11px system-ui;background:#fff;padding:1px 4px">${x.ms}ms</div><div style="height:110px;overflow:hidden;position:relative"><img src="${x.f}" style="position:absolute;left:-380px;top:0;width:1440px"></div></div>`;
+writeFileSync(dir + `${name}.html`, `<body style="margin:0;background:#777;display:grid;grid-template-columns:720px 720px;gap:4px">${frames.map(cell).join('')}</body>`);
+const rows = Math.ceil(frames.length / 2);
+const c = await launch({ width: 1450, height: rows * 135 + 20 });
+await c.goto('file://' + dir + `${name}.html`, 800);
+await c.shot(dir + `${name}.png`);
+await c.close();
+console.log(frames.length, 'frames', from, '→', to);

@@ -1,0 +1,11 @@
+import { launch } from './cdp.mjs';
+import { readdirSync, writeFileSync } from 'node:fs';
+const tag = process.argv[2];
+const dir = new URL('./shots/', import.meta.url).pathname;
+const files = readdirSync(dir).filter(f => f.startsWith(tag + '-')).sort();
+writeFileSync(dir + `sheet-${tag}.html`, `<body style="margin:0;background:#888;font:12px system-ui">${files.map(f => `<div style="margin:0 0 6px"><div style="background:#fff;padding:2px 6px">${f}</div><div style="height:${process.argv[3] || 9999}px;overflow:hidden"><img src="${f}" style="display:block;width:1280px"></div></div>`).join('')}</body>`);
+const c = await launch({ width: 1280, height: 200 + files.length * 140 });
+await c.goto('file://' + dir + `sheet-${tag}.html`, 800);
+await c.shot(dir + `sheet-${tag}.png`);
+await c.close();
+console.log(files.length, 'frames');
