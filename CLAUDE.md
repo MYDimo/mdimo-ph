@@ -221,7 +221,7 @@ public/           # static assets only
 - [x] Logo sits at a -8° tilt, built into `src/assets/logo.svg` (`<g transform="rotate(-8 …)">`), not CSS: a CSS rotation gets rasterised and looks jagged. Hovering it redraws its line (2.4 s). No intro animation on load (tried, rejected)
 - [x] Home feature photo: every image in `src/assets/home/feature/` rotates per visit (drop files in to add/swap). Naming a file after a Moment slug (`probiv.jpg`, `probiv-2.jpg`) adds a caption linking to it. Home "Meet the eye" card uses the self-portrait
 - [x] Header: transparent at top, blur only (no hairline) once scrolled
-- [x] Lightbox corners: rounded and clipped on `.pswp__zoom-wrap`, radius compensated for the zoom scale in `src/scripts/lightbox.js`
+- [x] Lightbox corners: each photo layer's radius = the clicked thumbnail's own radius ÷ its real on-screen scale, recomputed every frame during the zoom (`src/scripts/lightbox.js`), so the visible corner never changes. NEVER put `overflow:hidden` on `.pswp__zoom-wrap` (it has no size of its own and hides the photo)
 - [x] Motion pacing: slower, softer reveals (words 1.4 s, images 1.3 s, blocks 1.2 s); GSAP scrubs smoothed (`scrub: 1`)
 - [x] No italics anywhere (rejected); serif accents are upright
 - [x] Character pass: warm paper/ink neutrals; OS serif accents; accent-coloured link underlines; headings settle from the accent colour into the text colour; each Moment page washes its header (and lightbox) with its cover's average colour; self-drawing logo (once per visit + on hover); a near-full-bleed feature photo on home (Valentina & Danail sparklers); "Recent moments" row on home
@@ -231,6 +231,10 @@ public/           # static assets only
 - [x] Text CTAs use `.cta-link` + `.cta-text`: accent underline draws in under the words only (arrows excluded)
 
 - [x] Overtime is €100/hour on both wedding collections
+
+- [x] Inquiry form posts to its own page URL (`fetch(location.pathname)`), never to `/` (the root redirect swallows POSTs: the thank-you showed but nothing was sent). Email needs a dot + 2+ letter ending (pattern + translated message `inquiry.emailInvalid`); the value is trimmed
+- [x] Theme switch: colour transitions are disabled while the circular reveal runs (`html.vt-theme`), otherwise the frosted header shows pale and unblurred for ~0.3 s
+- [x] Verifying motion: the built-in browser pane is hidden during sessions, which freezes animation frames; check animations in real headless Chrome (DevTools protocol, slowed with `Animation.setPlaybackRate`) and look at screenshots, not only computed values
 
 ### Still open
 - [ ] Exact grey scales for light/dark palettes (propose options)
