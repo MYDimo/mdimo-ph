@@ -101,6 +101,15 @@ const tr = useT(locale);
   :global(html.vt-theme body *) {
     view-transition-name: none !important;
   }
+  /* The revealed "new" page is a live view, so any colour that is still fading from
+     the old theme (e.g. the frosted header's background) would show up pale and
+     unblurred for a moment. Switch every colour instantly; the circle reveal is
+     the animation. */
+  :global(html.vt-theme *),
+  :global(html.vt-theme *::before),
+  :global(html.vt-theme *::after) {
+    transition: none !important;
+  }
   :global(html.vt-theme::view-transition-old(root)),
   :global(html.vt-theme::view-transition-new(root)) {
     animation: none;
