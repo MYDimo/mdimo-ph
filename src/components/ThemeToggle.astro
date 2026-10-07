@@ -150,7 +150,12 @@ const tr = useT(locale);
         ),
       )
       .catch(() => {}); // skipped transitions (e.g. hidden tab) still apply the theme
-    t.finished.catch(() => {}).finally(() => root.classList.remove('vt-theme'));
+    t.finished.catch(() => {}).finally(() => {
+      root.classList.remove('vt-theme');
+      // Let the header settle (see motion.css): near-solid for a moment longer, then it fades to its blur.
+      root.classList.add('vt-settle');
+      setTimeout(() => root.classList.remove('vt-settle'), 500);
+    });
   }
 
   buttons.forEach((b) =>

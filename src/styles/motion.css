@@ -78,6 +78,24 @@ a:hover .arrow-back {
   -webkit-backdrop-filter: blur(20px) saturate(1.6);
   backdrop-filter: blur(20px) saturate(1.6);
 }
+/* Firefox draws the page as flat snapshots during the theme-switch view
+   transition, and a snapshot has no backdrop to blur: the frosted header shows
+   as a translucent tint with crisp text behind it. So in Firefox only (it alone
+   understands -moz-appearance) the header is nearly solid while the switch runs
+   (html.vt-theme) and for a moment after (html.vt-settle, set by ThemeToggle).
+   During the settle phase the blur is already back on underneath, and the
+   header's normal background transition then fades it to its usual see-through
+   look. Chrome and Safari render the blur correctly and are left alone. */
+@supports (-moz-appearance: none) {
+  html.vt-theme [data-site-header][data-scrolled] {
+    background: color-mix(in oklab, var(--color-base-200) 97%, transparent);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  html.vt-settle [data-site-header][data-scrolled] {
+    background: color-mix(in oklab, var(--color-base-200) 97%, transparent);
+  }
+}
 @media (max-width: 47.99rem) {
   [data-site-header][data-hidden] {
     transform: translateY(-100%);
