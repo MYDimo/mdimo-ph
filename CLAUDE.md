@@ -237,5 +237,17 @@ public/           # static assets only
 - [x] Verifying motion: the built-in browser pane is hidden during sessions, which freezes animation frames. Check in real headless/visible Chrome (DevTools protocol; `Animation.setPlaybackRate` to slow, `Page.startScreencast` for every frame) and in Firefox (WebDriver BiDi, `firefox --remote-debugging-port`), and sample computed styles inside the page. Firefox's screenshot API never draws `backdrop-filter`, and macOS screen capture is not permitted, so blur itself can't be judged from screenshots: reason from computed styles or ask the user
 
 ### Still open
-- [ ] Exact grey scales for light/dark palettes (propose options)
-- [ ] Form notifications go to mihaylo.dimo@gmail.com (set in Netlify at deploy)
+- [ ] Search Console: add the Domain property `mdimophotography.bg` (DNS TXT record in Netlify DNS), submit the **full URL** `https://mdimophotography.bg/sitemap.xml` (a Domain property rejects the short `sitemap.xml`), request indexing for `/en/` and `/bg/` (owner is doing this)
+- [ ] Confirm form notification emails reach mihaylo.dimo@gmail.com (the form itself delivers to Netlify Forms → `inquiry`; Netlify notification must be set under Project configuration → Notifications)
+- [ ] About, Services and other copy flagged "to review" is the owner's to polish (Bulgarian text is Claude-written)
+- [ ] Optional: Google Business Profile for local search; more Moments as new work comes in (recipe in section 6b)
+
+## 10. Live site and operations (state at handoff)
+
+- **Live:** https://mdimophotography.bg (primary; `www` redirects to it), deployed by Netlify from `main` on GitHub (`MYDimo/mdimo-ph`, public repo). Every push to `main` rebuilds in ~30–40 s. Netlify project also has a `*.netlify.app` address.
+- **Domain:** registered at SuperHosting.bg (a .bg domain needs a signed registration document). Its name servers are set to **Netlify's** four, so DNS records (including any TXT for Search Console) are edited in **Netlify → Domains**, not at SuperHosting. HTTPS is automatic (Let's Encrypt via Netlify).
+- **Form:** Netlify Forms, form name `inquiry`; the page script posts to its own URL (never `/`). Submissions: Netlify → Forms → inquiry.
+- **Owner:** Mihaylo Dimo; browses in **Firefox 157 on macOS**, so reproduce visual bugs in Firefox as well as Chrome. Contact details in `src/data/contact.js`.
+- **Workflow with the owner:** plan first; small commits; do not push without being told ("push"); say what was verified and what wasn't.
+- **Testing rigs:** `scripts/dev-testing/` (see its README): drive real Chrome (DevTools protocol) and Firefox (WebDriver BiDi). Use them for anything animated; the built-in browser pane freezes animation frames.
+- **Adding content:** new Moment = section 6b; home wide photos = drop files in `src/assets/home/feature/`; hero slides = `src/data/home.js`; prices = `src/data/services.js`; copy = `src/i18n/{en,bg}.json`.
