@@ -279,7 +279,8 @@
     "errorDirect": "You can also write to me at",
     "sendAnother": "Send another inquiry",
     "successTitle": "Thank you!",
-    "honeypot": "Leave this field empty"
+    "honeypot": "Leave this field empty",
+    "emailInvalid": "Please enter a full email address, like name@example.com."
   },
   "about": {
     "title": "About",

@@ -36,7 +36,20 @@ const field = 'input w-full';
     </label>
     <label class="form-field">
       <span>{tr('inquiry.fields.email')}</span>
-      <input class={field} type="email" name="email" autocomplete="email" required />
+      <!-- type=email alone accepts "name@host" (no dot); the pattern also requires a domain
+           with a dot and a 2+ letter ending, e.g. name@example.com (Cyrillic endings work too). -->
+      <input
+        class={field}
+        type="email"
+        name="email"
+        autocomplete="email"
+        inputmode="email"
+        autocapitalize="off"
+        spellcheck="false"
+        pattern="[^\s@]+@[^\s@]+\.[^\s@.]{2,}"
+        data-email-message={tr('inquiry.emailInvalid')}
+        required
+      />
     </label>
     <label class="form-field">
       <span>{tr('inquiry.fields.phone')} <small>({tr('inquiry.optional')})</small></span>
@@ -159,8 +172,18 @@ const field = 'input w-full';
     const select = form.querySelector('[data-service-select]');
     if (wanted && [...select.options].some((o) => o.value === wanted)) select.value = wanted;
 
+    // Friendly, translated message for a malformed email (the browser default is generic).
+    const email = form.querySelector('input[name="email"]');
+    const checkEmail = () => {
+      email.setCustomValidity('');
+      email.setCustomValidity(email.validity.typeMismatch || email.validity.patternMismatch ? email.dataset.emailMessage : '');
+    };
+    email.addEventListener('input', checkEmail);
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      email.value = email.value.trim();
+      checkEmail();
       if (!form.reportValidity()) return;
       error.hidden = true;
       button.disabled = true;
@@ -170,9 +193,11 @@ const field = 'input w-full';
       try {
         const body = new URLSearchParams(new FormData(form)).toString();
         // Netlify Forms only exist on the deployed site; in local dev we simulate success.
+        // The POST goes to this page's own URL (where Netlify found the form). Posting to "/"
+        // would be caught by the root redirect and silently never reach the form.
         const res = import.meta.env.DEV
           ? await wait(700).then(() => ({ ok: true }))
-          : await fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body });
+          : await fetch(location.pathname, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body });
         if (!res.ok) throw new Error(String(res.status));
         button.dataset.state = 'done';
         await wait(650); // let the check draw before the panel swaps in
