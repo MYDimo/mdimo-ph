@@ -20,61 +20,67 @@ export function initLightbox(root) {
     errorMsg: d.lbError,
     showHideAnimationType: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'none' : 'zoom',
   });
-  keepCornersDuringZoom(lightbox);
+  keepCornersConstant(lightbox);
   lightbox.init();
 }
 
 /*
- * Rounded corners that stay constant through the open/close zoom.
+ * Rounded corners that stay the same size through the open/close zoom.
  *
- * During the zoom PhotoSwipe shows two layers inside one container (the zoom
- * wrap): a low-res placeholder on a grey box and, once loaded, the full photo.
- * Rounding only the images left the grey box square and the late-arriving photo
- * un-compensated. So the container itself is rounded and clips both layers.
+ * PhotoSwipe scales the photo with CSS transforms (the whole slide container, plus
+ * the stand-in thumbnail's own scale), and a border-radius is scaled by those
+ * transforms too, so a fixed radius shrinks and grows mid-zoom. Instead, for each
+ * photo layer we measure how much it is really scaled on screen
+ * (bounding box ÷ layout size) and set its radius to RADIUS ÷ scale, so the visible
+ * corner is always exactly RADIUS: the thumbnail's own radius, read from the
+ * link that was clicked. This runs every frame during the zoom animations, and
+ * whenever a photo loads, the slide changes or the visitor zooms.
  *
- * The container is scaled during the zoom (thumbnail size → full size), and a
- * scaled radius shrinks with it. To keep the corners visually equal to the
- * thumbnail's, the radius starts at RADIUS ÷ scale and eases back to RADIUS in
- * step with the zoom (reverse on close). When the visitor zooms in, the radius
- * is divided by the zoom factor so corners don't balloon.
+ * (Don't clip the zoom container with overflow:hidden instead: it has no size of
+ * its own, so that hides the photo completely.)
  */
-const RADIUS = 20; // px; matches the gallery tiles (rounded-lg)
-const DURATION = 333; // PhotoSwipe's default show/hide animation
-const EASING = 'cubic-bezier(0.4, 0, 0.22, 1)'; // PhotoSwipe's default easing
+const FALLBACK_RADIUS = 20; // px; the gallery tiles' radius
 
-function keepCornersDuringZoom(lightbox) {
-  let animating = false;
-  // Thumbnail width ÷ the photo's on-screen width. When opening, the current zoom
-  // isn't applied yet, so use the level the photo will settle at (`initial`).
-  const thumbScale = (slide, opening = false) => {
+function keepCornersConstant(lightbox) {
+  let raf = 0;
+
+  const radiusFor = (slide) => {
     const thumb = slide?.data?.element;
-    const zoom = opening ? slide?.zoomLevels?.initial : slide?.currZoomLevel;
-    const shown = slide && zoom ? slide.width * zoom : 0;
-    return thumb && shown ? Math.min(1, thumb.getBoundingClientRect().width / shown) : 1;
+    const r = thumb ? parseFloat(getComputedStyle(thumb).borderTopLeftRadius) : NaN;
+    return Number.isFinite(r) && r > 0 ? r : FALLBACK_RADIUS;
   };
-  const setRadius = (slide, px, animate) => {
-    const wrap = slide?.container;
-    if (!wrap) return;
-    wrap.style.transition = animate ? `border-radius ${DURATION}ms ${EASING}` : 'none';
-    wrap.style.borderRadius = `${px}px`;
+
+  const apply = () => {
+    const slide = lightbox.pswp?.currSlide;
+    const layers = slide?.holderElement?.querySelectorAll('.pswp__img');
+    if (!layers) return;
+    const radius = radiusFor(slide);
+    for (const img of layers) {
+      const layout = img.offsetWidth;
+      if (!layout) continue;
+      const scale = img.getBoundingClientRect().width / layout;
+      img.style.borderRadius = `${(radius / (scale || 1)).toFixed(2)}px`;
+    }
+  };
+
+  const loop = () => {
+    apply();
+    raf = requestAnimationFrame(loop);
+  };
+  const stop = () => {
+    cancelAnimationFrame(raf);
+    apply();
   };
 
   lightbox.on('openingAnimationStart', () => {
-    animating = true;
-    const slide = lightbox.pswp.currSlide;
-    setRadius(slide, RADIUS / thumbScale(slide, true), false);
-    requestAnimationFrame(() => requestAnimationFrame(() => setRadius(slide, RADIUS, true)));
+    cancelAnimationFrame(raf);
+    loop();
   });
-  lightbox.on('openingAnimationEnd', () => (animating = false));
+  lightbox.on('openingAnimationEnd', stop);
   lightbox.on('closingAnimationStart', () => {
-    animating = true;
-    const slide = lightbox.pswp.currSlide;
-    setRadius(slide, RADIUS / thumbScale(slide), true);
+    cancelAnimationFrame(raf);
+    loop();
   });
-  // Keep corners the same size while zooming/panning and on other slides.
-  lightbox.on('zoomPanUpdate', ({ slide }) => {
-    if (animating || !slide?.container) return;
-    const scale = slide.currZoomLevel / (slide.currentResolution || slide.zoomLevels.initial || 1);
-    setRadius(slide, RADIUS / (scale || 1), false);
-  });
+  lightbox.on('close', () => setTimeout(() => cancelAnimationFrame(raf), 1000));
+  for (const name of ['afterInit', 'change', 'loadComplete', 'zoomPanUpdate', 'resize']) lightbox.on(name, apply);
 }
