@@ -4,7 +4,7 @@ import mdx from '@astrojs/mdx';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-  site: 'https://www.mdimophotography.bg',
+  site: 'https://mdimophotography.bg',
   output: 'static',
   trailingSlash: 'always',
   // CSS is ~6.5 KB gzipped: inlining it removes a render-blocking request (faster LCP).

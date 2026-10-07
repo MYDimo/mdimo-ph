@@ -1,6 +1,7 @@
 # Netlify build settings (read automatically when the repo is connected).
-# The primary domain is www.mdimophotography.bg; Netlify redirects the bare
-# domain (and the .netlify.app address) to it automatically once both are added.
+# The primary domain is mdimophotography.bg (DNS is hosted by Netlify, so the bare
+# domain is served from the CDN directly); Netlify redirects www and the
+# .netlify.app address to it automatically.
 [build]
   command = "npm run build"
   publish = "dist"
