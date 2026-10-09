@@ -67,7 +67,12 @@ const jsonLd = {
       address: { '@type': 'PostalAddress', addressLocality: locale === 'bg' ? 'София' : 'Sofia', addressCountry: 'BG' },
       // City centre of Sofia: the service area, not a street address.
       geo: { '@type': 'GeoCoordinates', latitude: 42.6977, longitude: 23.3219 },
-      areaServed: [{ '@type': 'Country', name: locale === 'bg' ? 'България' : 'Bulgaria' }],
+      // Based in Sofia, working in and around it first, then across Bulgaria.
+      areaServed: [
+        { '@type': 'City', name: locale === 'bg' ? 'София' : 'Sofia' },
+        { '@type': 'AdministrativeArea', name: locale === 'bg' ? 'Софийска област' : 'Sofia Region' },
+        { '@type': 'Country', name: locale === 'bg' ? 'България' : 'Bulgaria' },
+      ],
       priceRange: '€€',
       knowsLanguage: ['en', 'bg'],
       founder: { '@id': `${homeUrl}#person` },
