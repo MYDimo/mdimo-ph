@@ -11,10 +11,10 @@ const tr = useT(locale);
   <section class="shell pt-16 md:pt-24">
     <PageIntro heading={tr('notFound.title')} text={tr('notFound.text')}>
       <div class="mt-8 flex flex-wrap gap-3">
-        <a href={localizedPath(locale)} class="inline-flex rounded-full bg-primary px-6 py-3 font-medium text-primary-content">
+        <a href={localizedPath(locale)} class="btn btn-lg btn-primary">
           {tr('notFound.home')}
         </a>
-        <a href={localizedPath(locale, routes.moments)} class="inline-flex rounded-full bg-base-100 px-6 py-3 font-medium">
+        <a href={localizedPath(locale, routes.moments)} class="btn btn-lg btn-light">
           {tr('nav.moments')}
         </a>
       </div>

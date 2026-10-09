@@ -8,6 +8,18 @@
 @import "./tokens.css";
 @import "./motion.css";
 
+@layer components {
+  /* Pill buttons: they hug their copy (never full width). .btn-lg for page-level CTAs. */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-[0.9375rem] font-medium whitespace-nowrap transition-opacity hover:opacity-85;
+  }
+  .btn-lg { @apply px-6 py-3; }
+  .btn-primary { @apply bg-primary text-primary-content; }
+  .btn-soft { @apply bg-base-200 text-base-content; }
+  .btn-light { @apply bg-base-100 text-base-content; }
+  .btn-outline { @apply text-muted ring-1 ring-inset ring-base-content/15 transition-colors hover:text-base-content hover:opacity-100; }
+}
+
 @layer base {
   /* <picture> (AVIF/WebP) must not become a box between a frame and its <img>. */
   picture { display: contents; }

@@ -158,10 +158,7 @@ const approach = tr('services.intro.approach');
               <div class="mt-auto pt-8">
                 <a
                   href={bookHref('wedding')}
-                  class:list={[
-                    'inline-flex rounded-full px-5 py-2.5 text-[0.9375rem] font-medium transition-opacity hover:opacity-85',
-                    p.recommended ? 'bg-primary text-primary-content' : 'bg-base-200 text-base-content',
-                  ]}
+                  class:list={['btn', p.recommended ? 'btn-primary' : 'btn-soft']}
                 >
                   {tr('services.weddings.book')}
                 </a>
@@ -199,12 +196,12 @@ const approach = tr('services.intro.approach');
                 </div>
                 <p class="mt-2 font-serif text-muted">{moreMeta(s)}</p>
                 <p class="mt-5 text-[0.9375rem]">{tr(`services.more.items.${s.id}.text`)}</p>
-                <div class="mt-auto flex flex-wrap gap-2 pt-6 text-sm font-medium">
-                  <a href={bookHref(s.id)} class="flex-auto whitespace-nowrap rounded-full bg-base-200 px-4 py-2.5 text-center transition-opacity hover:opacity-85">
+                <div class="mt-auto flex flex-wrap items-center justify-center gap-2 pt-6">
+                  <a href={bookHref(s.id)} class="btn btn-soft">
                     {tr('services.more.book')}
                   </a>
                   {m && (
-                    <a href={`${momentsPath}${m.slug}/`} class="cta-link flex-auto whitespace-nowrap rounded-full px-4 py-2.5 text-center text-muted ring-1 ring-inset ring-base-content/15 transition-colors hover:text-base-content">
+                    <a href={`${momentsPath}${m.slug}/`} class="cta-link btn btn-outline">
                       <span class="cta-text">{tr('services.more.seeMoment')}</span> <span class="arrow" aria-hidden="true">→</span>
                     </a>
                   )}
