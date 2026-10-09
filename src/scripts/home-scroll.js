@@ -62,10 +62,13 @@ export function initHomeScroll() {
   // 2. Story cards: the photo drifts gently against the card as it passes
   //    (the image is pre-scaled in CSS so the drift never reveals an edge).
   gsap.utils.toArray('[data-parallax]').forEach((img) => {
+    // data-parallax="n" sets the drift in % of the image height (default 5); it must stay
+    // under half the pre-scale overshoot (scale 1.12 -> 6%, scale 1.06 -> 3%).
+    const drift = Number(img.dataset.parallax) || 5;
     gsap.fromTo(
       img,
-      { yPercent: -5 },
-      { yPercent: 5, ease: 'none', scrollTrigger: { trigger: img.parentElement, start: 'top bottom', end: 'bottom top', scrub: 1.2 } },
+      { yPercent: -drift },
+      { yPercent: drift, ease: 'none', scrollTrigger: { trigger: img.parentElement, start: 'top bottom', end: 'bottom top', scrub: 1.2 } },
     );
   });
   // 3. Bento tiles, cards and headings use the site-wide reveals in src/scripts/motion.js.
