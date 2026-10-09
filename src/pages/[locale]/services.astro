@@ -85,7 +85,7 @@ const jsonLd = {
 const approach = tr('services.intro.approach');
 ---
 
-<BaseLayout locale={locale} title={tr('services.title')} description={tr('seo.services')} image={momentOf('silvana-and-ivan')?.cover} jsonLd={jsonLd}>
+<BaseLayout locale={locale} title={tr('services.title')} description={fill(tr('seo.services'))} image={momentOf('silvana-and-ivan')?.cover} jsonLd={jsonLd}>
   <!-- 01 Intro: what I do + how I work (approach first, prices right after) -->
   <section class="shell pt-16 md:pt-24">
     <PageIntro

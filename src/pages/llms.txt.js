@@ -25,7 +25,7 @@ export async function GET({ site }) {
     lines.push(`## Pages (${l})`, '');
     for (const [name, route] of Object.entries(routes)) {
       const label = name === 'home' ? tr('nav.home') : tr(`nav.${name}`);
-      const desc = { home: tr('site.description'), moments: tr('seo.moments'), services: tr('seo.services'), about: tr('seo.about'), contact: tr('seo.contact') }[name];
+      const desc = { home: tr('site.description'), moments: tr('seo.moments'), services: fillFacts(l, tr('seo.services')), about: tr('seo.about'), contact: tr('seo.contact') }[name];
       lines.push(`- [${label}](${url(localizedPath(l, route))}): ${desc}`);
     }
     lines.push('');
