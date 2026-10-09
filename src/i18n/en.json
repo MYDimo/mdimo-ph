@@ -60,11 +60,11 @@
     },
     "story": {
       "heading": "Photographs that tell your day as it was.",
-      "text": "Photography is more than pressing the shutter. It's about noticing what is easy to miss, staying close to the emotion, and keeping a moment the way it really felt. Every wedding is different, and I take the time to make sure your photos feel like you."
+      "text": "The best moments are the quiet ones: a glance, a laugh, a hand held a second longer. I stay close enough to catch them, and every wedding gets the time it needs, so the photos feel like you."
     },
     "meet": {
       "heading": "Who's behind the camera.",
-      "text": "I'm Mihaylo, a wedding and event photographer in Sofia. For five years I've photographed love stories and celebrations, mixing documentary storytelling with carefully composed, moody portraits.",
+      "text": "I'm Mihaylo, a wedding and event photographer in Sofia. For five years I've been photographing love stories and celebrations, telling them as they happen and finishing them with moody, carefully composed portraits.",
       "link": "More about me"
     },
     "carousel": {
@@ -126,7 +126,7 @@
     "intro": {
       "eyebrow": "01 / Weddings · Portraits · Events",
       "heading": "Stories that last.",
-      "text": "Professional wedding, portrait & event photography in Bulgaria & worldwide.",
+      "text": "Wedding, portrait and event photography in Bulgaria and wherever you're celebrating.",
       "cta": "View packages & pricing",
       "approach": {
         "lead": "Documentary at heart, with gentle direction when it helps.",
@@ -137,7 +137,7 @@
     "weddings": {
       "eyebrow": "02 / Wedding collections",
       "heading": "Transparent pricing, tailored to your day.",
-      "text": "Two considered ways to document the people, atmosphere, and small in-between moments that make your celebration yours.",
+      "text": "Two ways to tell the story of your day: the people, the atmosphere and the little moments in between.",
       "includes": "Includes",
       "overtime": "Overtime",
       "recommended": "Recommended",
@@ -180,7 +180,7 @@
         },
         "events": {
           "name": "Events, Concerts & Sports",
-          "text": "High-energy coverage for concerts, sports, corporate events and live performances. Fast turnaround in 48–72 hours with full-resolution web and press-ready files."
+          "text": "Concerts, sports, corporate events and live shows. Fast turnaround, 48–72 hours, with full-resolution files ready for web and press."
         }
       },
       "book": "Ask about this",
@@ -257,7 +257,7 @@
   "inquiry": {
     "eyebrow": "06 / Start a conversation",
     "heading": "Tell me what you're planning.",
-    "text": "Share a few details and I'll come back with availability, an honest recommendation, and the next steps.",
+    "text": "Tell me a bit about your plans and I'll reply with open dates, an honest recommendation and what happens next.",
     "fields": {
       "name": "Your name(s)",
       "email": "Email",
@@ -289,9 +289,9 @@
   "about": {
     "title": "About",
     "heading": "Hello, I'm Mihaylo.",
-    "text": "For the past five years I've been photographing love stories and celebrations. My approach mixes journalistic storytelling with carefully composed, moody portraits. I love the fast pace of a wedding day, and I make sure every moment, big or small, is kept as it was.",
-    "more": "I work quietly and stay close to the day: the preparations, the ceremony, the party. I step in with gentle direction only when it helps, and I always take time beforehand to talk through what matters to you. Beyond weddings I photograph christenings, couple sessions, concerts and sports events. The pace is faster there, but the aim is the same: to keep what it felt like to be there.",
-    "outside": "Away from the camera, I'm happiest outdoors. I love nature and photographing it, and I spend a lot of my time ski touring in winter and mountain biking when the snow is gone. The rest of the time you'll find me with friends, over a beer or on a slackline. That love of being outside is a big part of how I see light, and it's why I'm comfortable working in any weather and any setting.",
+    "text": "For five years I've been photographing love stories and celebrations. I tell them as they unfold, then add a few carefully composed, moody portraits. I love the energy of a wedding day, and I want every moment, big or small, to stay just as it was.",
+    "more": "I work quietly and stay close to the day: the getting ready, the ceremony, the party. I only step in when it helps, and we always talk beforehand about what matters to you. Beyond weddings I shoot christenings, couple sessions, concerts and sports. The pace is faster, but the goal is the same: to keep what it felt like to be there.",
+    "outside": "Put the camera down and I'm usually outside. Ski touring when there's snow, mountain biking when there isn't, and the rest of the time with friends, whether that's a beer, a slackline or just a good laugh. All those hours outdoors taught me how to read light, and they're why rain, mud or a freezing morning don't throw me off.",
     "favourites": "A few favourites",
     "portraitAlt": "Mihaylo Dimo smiling in the snowy mountains, camera on his shoulder"
   },
@@ -328,7 +328,7 @@
   "contact": {
     "title": "Contact",
     "heading": "Get in touch.",
-    "text": "Whether it's a wedding, a christening or a race, share a few details and I'll come back with availability, an honest recommendation, and the next steps.",
+    "text": "Wedding, christening or race: tell me a bit about it and I'll reply with open dates, an honest recommendation and what happens next.",
     "direct": "Or reach me directly",
     "email": "Email",
     "phone": "Phone",
