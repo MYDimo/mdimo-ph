@@ -211,7 +211,10 @@ html.motion [data-reveal='doodle'].is-in path {
   stroke-dashoffset: 0;
 }
 
-/* ── Photos fade in over their own average colour instead of popping in ─ */
+/* ── Photos fade in over a blurred preview of themselves instead of popping in.
+      Alt text stays invisible while loading (transparent), so it never paints
+      over the placeholder ── */
+img { color: transparent; }
 html.motion img.fade-img {
   opacity: 0;
   transition: opacity 1.1s var(--ease-soft);

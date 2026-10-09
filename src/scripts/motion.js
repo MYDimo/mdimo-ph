@@ -86,8 +86,10 @@ if (motion && 'IntersectionObserver' in window) {
 /* Photos: fade in once decoded (the container already shows their average colour). */
 document.querySelectorAll('img.fade-img').forEach((img) => {
   const done = () => img.classList.add('is-loaded');
+  // Decode first so the fade never starts on a half-painted image.
+  const ready = () => (img.decode ? img.decode().then(done, done) : done());
   if (img.complete && img.naturalWidth) done();
-  else img.addEventListener('load', done, { once: true });
+  else img.addEventListener('load', ready, { once: true });
   img.addEventListener('error', done, { once: true });
 });
 
