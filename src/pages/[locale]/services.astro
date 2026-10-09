@@ -49,7 +49,8 @@ const fill = (text) => fillFacts(locale, text);
 
 // Structured data: each service with its public price, plus the FAQ as FAQPage.
 const abs = (p) => new URL(p, Astro.site).href;
-const provider = { '@type': 'ProfessionalService', name: tr('site.name'), url: abs(localizedPath(locale)) };
+// Points at the full business record on the home page (same @id), instead of repeating a partial copy here.
+const provider = { '@id': `${abs(localizedPath(locale))}#business` };
 const offer = (amount, extra = {}) => ({ '@type': 'Offer', priceCurrency: 'EUR', price: amount, availability: 'https://schema.org/InStock', ...extra });
 const service = (name, description, offers) => ({
   '@type': 'Service',
