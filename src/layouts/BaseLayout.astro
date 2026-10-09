@@ -10,11 +10,12 @@ import { bentoTiles } from '../data/home.js';
  * Props:
  *   title, description  page-specific SEO text (description falls back to the site's)
  *   image               ImageMetadata for link previews (falls back to the seaside-bride photo)
+ *   imageAlt            alt text for the preview image (falls back to the page title)
  *   imagePosition       crop anchor for that preview ('attention' by default; 'top' for faces near the top)
  *   noindex             keep the page out of search results (404s)
  *   jsonLd              structured data object, rendered as application/ld+json
  */
-const { locale, title, description, image, imagePosition, noindex = false, jsonLd } = Astro.props;
+const { locale, title, description, image, imageAlt, imagePosition, noindex = false, jsonLd } = Astro.props;
 const tr = useT(locale);
 const siteName = tr('site.name');
 const pageTitle = title ? `${title} · ${siteName}` : siteName;
@@ -57,6 +58,7 @@ const og = await getImage({
     <meta property="og:image" content={abs(og.src)} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={imageAlt ?? title ?? siteName} />
     <meta property="og:locale" content={tr('seo.locale')} />
     {locales.filter((l) => l !== locale).map((l) => <meta property="og:locale:alternate" content={useT(l)('seo.locale')} />)}
     <meta name="twitter:card" content="summary_large_image" />

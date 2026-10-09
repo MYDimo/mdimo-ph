@@ -30,15 +30,34 @@ const firstParagraph = entry.body.trim().split(/\n\s*\n/)[0].replace(/\[([^\]]+)
 const description = firstParagraph.length > 160 ? `${firstParagraph.slice(0, 157).replace(/\s+\S*$/, '')}…` : firstParagraph;
 
 const total = images.length;
-const alt = (i) => tr('moments.photoAlt', { title, n: i + 1, total });
+// Search title and photo alt text carry the kind of event and the venue (what couples search for).
+const seoVars = { kind: tr(`moments.seo.kind.${categories[0]}`), location, title };
+const seoTitle = tr(location ? 'moments.seo.at' : 'moments.seo.plain', seoVars);
+const altSubject = seoTitle.replaceAll(' · ', ', ');
+const alt = (i) => (images[i] === cover && entry.data.coverAlt) || tr('moments.photoAlt', { title: altSubject, n: i + 1, total });
 // Full-size versions for the lightbox (the imported files are already ≤2048px).
 const full = await Promise.all(images.map((src) => getImage({ src, width: src.width, format: 'webp', quality: 82 })));
 const coverIndex = images.indexOf(cover);
+
+// Structured data: the Moment as an image gallery with its date, place and photos.
+const abs = (p) => new URL(p, Astro.site).href;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ImageGallery',
+  name: seoTitle,
+  description,
+  inLanguage: locale,
+  url: abs(Astro.url.pathname),
+  datePublished: date.toISOString().slice(0, 10),
+  ...(location && { contentLocation: { '@type': 'Place', name: location } }),
+  author: { '@type': 'Person', name: tr('site.name') },
+  image: full.map((f, i) => ({ '@type': 'ImageObject', contentUrl: abs(f.src), width: f.attributes.width, height: f.attributes.height, caption: alt(i) })),
+};
 // Each Moment carries a faint wash of its own cover colour (header + lightbox).
 const tint = colorOf(cover) ?? 'transparent';
 ---
 
-<BaseLayout locale={locale} title={title} description={description} image={cover} imagePosition={entry.data.previewCrop}>
+<BaseLayout locale={locale} title={seoTitle} description={description} image={cover} imageAlt={alt(coverIndex)} imagePosition={entry.data.previewCrop} jsonLd={jsonLd}>
   <!-- Reading progress: an accent hairline across the top that fills as you scroll. -->
   <div class="read-progress" aria-hidden="true" data-read-progress></div>
   <article

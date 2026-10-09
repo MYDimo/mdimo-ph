@@ -14,6 +14,8 @@ const moments = defineCollection({
     location: z.string().optional(),
     /** Which photo (1-based) is the cover. */
     cover: z.number().int().positive().default(1),
+    /** Real description of the cover photo: its alt text (other photos use a title-based pattern). */
+    coverAlt: z.string().optional(),
     /** Crop anchor for the link-preview image; 'top' when 'attention' misses the faces. */
     previewCrop: z.enum(['attention', 'top', 'center']).default('attention'),
     /** Shared by the EN and BG versions; also the photo folder and URL slug. */

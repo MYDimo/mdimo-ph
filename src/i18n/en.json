@@ -36,7 +36,7 @@
     "minHours": "min. {n} hours"
   },
   "home": {
-    "title": "Wedding, portrait & event photographer",
+    "title": "Wedding & event photographer in Sofia",
     "hero": "The moments you'll want to live again.",
     "explore": "Explore",
     "statement": [
@@ -228,6 +228,10 @@
       "heading": "Questions people usually ask.",
       "items": [
         {
+          "q": "How much does wedding photography cost?",
+          "a": "Wedding collections start at {essential} for up to {essentialHours} hours and {signature} for up to {signatureHours} hours. Christenings are {christening}, couple sessions {couple}, and events {events}/hour. Travel is free within Sofia."
+        },
+        {
           "q": "How do we book a date?",
           "a": "Send an inquiry with your date and a few details. I'll reply within 2 business days, and once we've agreed on everything, a 30% deposit secures the date."
         },
@@ -304,6 +308,11 @@
       "sports": "Sports"
     },
     "photoAlt": "{title}, photo {n} of {total}",
+    "seo": {
+      "kind": { "weddings": "Wedding", "christenings": "Christening", "photoshoots": "Photoshoot", "concerts": "Concert", "sports": "Sports event" },
+      "at": "{kind} at {location} · {title}",
+      "plain": "{kind} · {title}"
+    },
     "photos": "{n} photos",
     "more": "More moments",
     "back": "All moments",
@@ -331,6 +340,7 @@
     "home": "Back to home"
   },
   "seo": {
+    "home": "Mihaylo Dimo is a wedding, portrait and event photographer in Sofia, Bulgaria. Documentary storytelling, clear prices from {price}, available across the country.",
     "services": "Wedding packages from €850, christenings, couple sessions, and event, concert and sports photography in Sofia and across Bulgaria. Clear prices and what's included.",
     "moments": "Recent weddings, christenings, photoshoots, concerts and races photographed by Mihaylo Dimo.",
     "about": "Mihaylo Dimo is a Sofia-based wedding, portrait and event photographer with a documentary, story-first approach.",

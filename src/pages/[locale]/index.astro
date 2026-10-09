@@ -6,10 +6,11 @@ import StoryCard from '../../components/StoryCard.astro';
 import BentoGrid from '../../components/BentoGrid.astro';
 import MomentCard from '../../components/MomentCard.astro';
 import HeroCarousel from '../../components/HeroCarousel.astro';
-import { useT, localizedPath, routes } from '../../i18n/index.js';
+import { useT, localizedPath, routes, formatPrice } from '../../i18n/index.js';
 import { heroSlides, storyImages, bentoTiles } from '../../data/home.js';
 import { getMoments } from '../../data/moments.js';
 import { contact } from '../../data/contact.js';
+import { weddingPackages } from '../../data/services.js';
 import { bg } from '../../data/colors.js';
 export { localeStaticPaths as getStaticPaths } from '../../i18n/paths.js';
 
@@ -50,23 +51,43 @@ const recent = moments.slice(0, 4);
 const lcp = await getImage({ src: heroSlides[0].src, widths: [320, 480, 640, 800, 1000, 1200] });
 
 // Structured data so search engines understand who and where this is.
+const homeUrl = new URL(localizedPath(locale), Astro.site).href;
 const jsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'ProfessionalService',
-  name: tr('site.name'),
-  description: tr('site.description'),
-  url: new URL(localizedPath(locale), Astro.site).href,
-  image: new URL(lcp.src, Astro.site).href,
-  email: contact.email,
-  telephone: contact.phone,
-  address: { '@type': 'PostalAddress', addressLocality: locale === 'bg' ? 'София' : 'Sofia', addressCountry: 'BG' },
-  areaServed: [{ '@type': 'Country', name: locale === 'bg' ? 'България' : 'Bulgaria' }],
-  priceRange: '€€',
-  sameAs: [contact.instagramUrl],
+  '@graph': [
+    {
+      '@type': 'ProfessionalService',
+      '@id': `${homeUrl}#business`,
+      name: tr('site.name'),
+      description: tr('site.description'),
+      url: homeUrl,
+      image: new URL(lcp.src, Astro.site).href,
+      email: contact.email,
+      telephone: contact.phone,
+      address: { '@type': 'PostalAddress', addressLocality: locale === 'bg' ? 'София' : 'Sofia', addressCountry: 'BG' },
+      // City centre of Sofia: the service area, not a street address.
+      geo: { '@type': 'GeoCoordinates', latitude: 42.6977, longitude: 23.3219 },
+      areaServed: [{ '@type': 'Country', name: locale === 'bg' ? 'България' : 'Bulgaria' }],
+      priceRange: '€€',
+      knowsLanguage: ['en', 'bg'],
+      founder: { '@id': `${homeUrl}#person` },
+      sameAs: [contact.instagramUrl],
+    },
+    {
+      '@type': 'Person',
+      '@id': `${homeUrl}#person`,
+      name: tr('site.name'),
+      jobTitle: locale === 'bg' ? 'Фотограф' : 'Photographer',
+      url: homeUrl,
+      email: contact.email,
+      worksFor: { '@id': `${homeUrl}#business` },
+      sameAs: [contact.instagramUrl],
+    },
+  ],
 };
 ---
 
-<BaseLayout locale={locale} title={tr('home.title')} jsonLd={jsonLd}>
+<BaseLayout locale={locale} title={tr('home.title')} description={tr('seo.home', { price: formatPrice(locale, weddingPackages[0].price) })} jsonLd={jsonLd}>
   <link
     slot="head"
     rel="preload"

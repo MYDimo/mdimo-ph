@@ -5,8 +5,9 @@ import PageIntro from '../../components/PageIntro.astro';
 import InquiryForm from '../../components/InquiryForm.astro';
 import Doodle from '../../components/Doodle.astro';
 import { useT, formatPrice, formatRange, localizedPath, routes } from '../../i18n/index.js';
-import { weddingPackages, moreServices, travelRatePerKm } from '../../data/services.js';
+import { weddingPackages, moreServices } from '../../data/services.js';
 import { getMoments } from '../../data/moments.js';
+import { fillFacts } from '../../data/facts.js';
 import { bg } from '../../data/colors.js';
 export { localeStaticPaths as getStaticPaths } from '../../i18n/paths.js';
 
@@ -43,16 +44,50 @@ const roadPlaces = [
   '--x: 0.58; --gap: 1rem',
 ];
 
-// FAQ answers carry the live numbers (travel rate, overtime price).
-const faqVars = {
-  rate: formatPrice(locale, travelRatePerKm, { decimals: 2 }),
-  overtime: price(weddingPackages[0].overtimePerHour),
+// FAQ answers carry the live numbers (prices, travel rate, overtime).
+const fill = (text) => fillFacts(locale, text);
+
+// Structured data: each service with its public price, plus the FAQ as FAQPage.
+const abs = (p) => new URL(p, Astro.site).href;
+const provider = { '@type': 'ProfessionalService', name: tr('site.name'), url: abs(localizedPath(locale)) };
+const offer = (amount, extra = {}) => ({ '@type': 'Offer', priceCurrency: 'EUR', price: amount, availability: 'https://schema.org/InStock', ...extra });
+const service = (name, description, offers) => ({
+  '@type': 'Service',
+  serviceType: name,
+  name,
+  description,
+  provider,
+  areaServed: { '@type': 'Country', name: locale === 'bg' ? 'България' : 'Bulgaria' },
+  offers,
+});
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    ...weddingPackages.map((p) => {
+      const info = tr(`services.weddings.packages.${p.id}`);
+      return service(info.name, info.summary, offer(p.price));
+    }),
+    ...moreServices.map((s) => {
+      const info = tr(`services.more.items.${s.id}`);
+      const offers = s.pricePerHour
+        ? offer(s.pricePerHour, { priceSpecification: { '@type': 'UnitPriceSpecification', price: s.pricePerHour, priceCurrency: 'EUR', unitCode: 'HUR' } })
+        : offer(s.price);
+      return service(info.name, info.text, offers);
+    }),
+    {
+      '@type': 'FAQPage',
+      mainEntity: tr('services.faq.items').map((item) => ({
+        '@type': 'Question',
+        name: item.q,
+        acceptedAnswer: { '@type': 'Answer', text: fill(item.a) },
+      })),
+    },
+  ],
 };
 const approach = tr('services.intro.approach');
-const fill = (text) => text.replace(/\{(\w+)\}/g, (_, k) => faqVars[k] ?? `{${k}}`);
 ---
 
-<BaseLayout locale={locale} title={tr('services.title')} description={tr('seo.services')} image={momentOf('silvana-and-ivan')?.cover}>
+<BaseLayout locale={locale} title={tr('services.title')} description={tr('seo.services')} image={momentOf('silvana-and-ivan')?.cover} jsonLd={jsonLd}>
   <!-- 01 Intro: what I do + how I work (approach first, prices right after) -->
   <section class="shell pt-16 md:pt-24">
     <PageIntro
