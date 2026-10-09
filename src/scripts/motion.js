@@ -63,6 +63,8 @@ if (motion && 'IntersectionObserver' in window) {
   const io = new IntersectionObserver(
     (entries) => {
       for (const e of entries) {
+        // A filter change is gliding cards around: never reset their reveals mid-way.
+        if (e.target.closest('[data-motion-freeze]')) continue;
         if (e.isIntersecting && e.intersectionRatio >= 0.12) e.target.classList.add('is-in');
         else if (!e.isIntersecting) e.target.classList.remove('is-in'); // fully out: reset to replay next time
       }

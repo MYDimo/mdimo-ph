@@ -82,7 +82,8 @@ const used = categories.filter((c) => moments.some((m) => m.entry.data.categorie
 <script>
   const bar = document.querySelector('[data-filters]');
   const indicator = bar.querySelector('[data-filter-indicator]');
-  const cards = document.querySelectorAll('[data-moments] > [data-categories]');
+  const grid = document.querySelector('[data-moments]');
+  const cards = grid.querySelectorAll(':scope > [data-categories]');
   const chips = bar.querySelectorAll('[data-filter]');
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -104,15 +105,44 @@ const used = categories.filter((c) => moments.some((m) => m.entry.data.categorie
     history.replaceState(null, '', filter === 'all' ? location.pathname : `#${filter}`);
   }
 
+  /* Cards that come back are already "revealed" when the new frame is captured; otherwise the
+     photo's reveal mask would open again right after the glide ends and nudge the edges. */
+  function settleReveals() {
+    cards.forEach((card) => {
+      if (card.hidden) return;
+      const r = card.getBoundingClientRect();
+      if (r.top >= innerHeight || r.bottom <= 0) return;
+      card.querySelectorAll('[data-reveal]:not(.is-in)').forEach((el) => {
+        // Jump straight to the revealed state (no 1.3 s mask opening running under the glide).
+        el.style.transition = 'none';
+        el.classList.add('is-in');
+        void el.offsetWidth;
+        el.style.transition = '';
+      });
+    });
+  }
+
   function choose(chip) {
     // Mark the chip active first: its accent dot changes its width, which the pill matches.
     chips.forEach((c) => c.setAttribute('aria-pressed', String(c === chip)));
     placeIndicator(chip);
-    const update = () => apply(chip.dataset.filter);
-    // Cards glide to their new places: each cover/title already has a view-transition
-    // name, so a same-document transition morphs them; hidden cards fade out.
-    if (document.startViewTransition && !reduce.matches) document.startViewTransition(update).ready.catch(() => {});
-    else update();
+    if (!document.startViewTransition || reduce.matches) return apply(chip.dataset.filter);
+    // Cards glide to their new places: each cover/title already has a view-transition name.
+    // The small meta line gets one too (only while filtering) so it travels with its card
+    // instead of cross-fading in the old and new spots. Hidden cards fade out.
+    grid.setAttribute('data-motion-freeze', '');
+    cards.forEach((card, i) => {
+      const meta = card.querySelector('p');
+      if (meta) meta.style.viewTransitionName = `moment-meta-${i}`;
+    });
+    const t = document.startViewTransition(() => {
+      apply(chip.dataset.filter);
+      settleReveals();
+    });
+    t.finished.catch(() => {}).finally(() => {
+      cards.forEach((card) => card.querySelector('p')?.style.removeProperty('view-transition-name'));
+      grid.removeAttribute('data-motion-freeze');
+    });
   }
 
   chips.forEach((chip) => chip.addEventListener('click', () => choose(chip)));

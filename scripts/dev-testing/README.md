@@ -15,6 +15,7 @@ Needs Node 22 (built-in `WebSocket`). Screenshots go to `scripts/dev-testing/sho
   switch and builds a contact sheet of the header strip.
 - `lightbox-test.mjs`, `lightbox-close-test.mjs`: open/close the gallery lightbox and report each
   layer's visible corner radius.
+- `filter-test.mjs [chrome|firefox]`: clicks the Moments filters and logs when the photo reveal masks last changed (should be right away, not after the glide).
 - `form-test.mjs`: email validation cases, and what the inquiry form posts (fetch is stubbed; nothing is sent).
 - `header-test.mjs`, `header-home-test.mjs`, `fx-header-test.mjs`, `stitch.mjs`: slow-motion header captures.
 
