@@ -1,7 +1,7 @@
 ---
 // Cover card for a Moment. The cover and title carry view-transition names so
 // they morph into the Moment page header when the card is opened.
-import { Image } from 'astro:assets';
+import { Picture } from 'astro:assets';
 import { bg } from '../data/colors.js';
 import { useT, localizedPath, formatDate, routes } from '../i18n/index.js';
 
@@ -16,7 +16,7 @@ const { title, date, categories } = entry.data;
     <!-- The transition name sits on the rounded, clipping box (not the <img>) so the
          snapshot that morphs between pages keeps its rounded corners. -->
     <div class="aspect-[4/5] overflow-hidden rounded-xl bg-base-300" style={bg(cover, `view-transition-name: moment-cover-${slug}`)} data-reveal="image">
-      <Image
+      <Picture formats={['avif']} fallbackFormat="webp"
         src={cover}
         alt=""
         widths={[320, 480, 640, 800, 1000]}

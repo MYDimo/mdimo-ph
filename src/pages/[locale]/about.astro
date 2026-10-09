@@ -1,5 +1,5 @@
 ---
-import { Image } from 'astro:assets';
+import { Picture } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ContactCta from '../../components/ContactCta.astro';
 import { useT } from '../../i18n/index.js';
@@ -22,7 +22,7 @@ const favourites = [heroSlides[2], heroSlides[3], heroSlides[5]];
       <p class="mt-6 max-w-2xl text-muted">{tr('about.more')}</p>
     </div>
     <div class="aspect-[4/5] overflow-hidden rounded-2xl bg-base-300" style={bg(portrait)} data-reveal="image">
-      <Image
+      <Picture formats={['avif']} fallbackFormat="webp"
         src={portrait}
         alt={tr('about.portraitAlt')}
         widths={[480, 640, 800, 1000, 1200]}
@@ -40,7 +40,7 @@ const favourites = [heroSlides[2], heroSlides[3], heroSlides[5]];
       {
         favourites.map((photo, i) => (
           <div class:list={['aspect-[4/5] overflow-hidden rounded-xl bg-base-300', i === 2 && 'hidden md:block']} style={bg(photo.src)} data-reveal="image">
-            <Image
+            <Picture formats={['avif']} fallbackFormat="webp"
               src={photo.src}
               alt={tr(`home.alt.${photo.alt}`)}
               widths={[320, 480, 640, 800]}

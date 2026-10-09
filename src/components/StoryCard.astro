@@ -1,6 +1,6 @@
 ---
 // Rounded card: photo on one side, text on the other. `reverse` puts the photo first on desktop.
-import { Image } from 'astro:assets';
+import { Picture } from 'astro:assets';
 import { bg } from '../data/colors.js';
 
 // `position`: object-position for the photo crop (e.g. to keep a face in frame).
@@ -13,7 +13,7 @@ const { heading, text, link, image, alt, reverse = false, position = 'center' } 
     data-reveal="image"
     style={bg(image)}
   >
-    <Image
+    <Picture formats={['avif']} fallbackFormat="webp"
       src={image}
       alt={alt}
       widths={[320, 480, 640, 800, 1000, 1200]}

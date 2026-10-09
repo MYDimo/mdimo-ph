@@ -9,6 +9,9 @@
 @import "./motion.css";
 
 @layer base {
+  /* <picture> (AVIF/WebP) must not become a box between a frame and its <img>. */
+  picture { display: contents; }
+
   html {
     @apply bg-base-200 text-base-content font-sans antialiased;
     -webkit-text-size-adjust: 100%;

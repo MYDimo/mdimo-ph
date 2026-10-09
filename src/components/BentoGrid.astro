@@ -5,7 +5,7 @@
  *   [        ][      ][ sq ]
  *   [   wide    ][   wide   ]
  */
-import { Image } from 'astro:assets';
+import { Picture } from 'astro:assets';
 import { bg } from '../data/colors.js';
 
 const { tiles } = Astro.props; // [{ src, alt, href }]
@@ -24,7 +24,7 @@ const shapes = [
     tiles.slice(0, shapes.length).map((tile, i) => (
       <li class:list={[shapes[i].cls]} data-lift>
         <a href={tile.href} class="group block h-full overflow-hidden rounded-xl bg-base-300" style={bg(tile.src)} data-reveal="image">
-          <Image
+          <Picture formats={['avif']} fallbackFormat="webp"
             src={tile.src}
             alt={tile.alt}
             widths={[320, 480, 640, 800, 1000, 1200]}

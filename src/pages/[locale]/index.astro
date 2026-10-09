@@ -1,5 +1,5 @@
 ---
-import { Image, getImage } from 'astro:assets';
+import { Picture, getImage } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageIntro from '../../components/PageIntro.astro';
 import StoryCard from '../../components/StoryCard.astro';
@@ -48,7 +48,8 @@ const featureOptions = Object.entries(featureFiles)
 const recent = moments.slice(0, 4);
 
 // Preload the first hero frame (the LCP image) with the same srcset the carousel uses.
-const lcp = await getImage({ src: heroSlides[0].src, widths: [320, 480, 640, 800, 1000, 1200] });
+const lcp = await getImage({ src: heroSlides[0].src, widths: [320, 480, 640, 800, 1000, 1200], format: 'webp' });
+const lcpAvif = await getImage({ src: heroSlides[0].src, widths: [320, 480, 640, 800, 1000, 1200], format: 'avif' });
 
 // Structured data so search engines understand who and where this is.
 const homeUrl = new URL(localizedPath(locale), Astro.site).href;
@@ -97,7 +98,8 @@ const jsonLd = {
     slot="head"
     rel="preload"
     as="image"
-    imagesrcset={lcp.srcSet.attribute}
+    imagesrcset={lcpAvif.srcSet.attribute}
+    type="image/avif"
     imagesizes="(min-width: 768px) 25vw, 82vw"
     fetchpriority="high"
   />
@@ -169,7 +171,7 @@ const jsonLd = {
               data-feature-slot={i}
               data-reveal="image"
             >
-              <Image
+              <Picture formats={['avif']} fallbackFormat="webp"
                 src={f.src}
                 alt={title ? '' : tr('site.name')} /* the caption already names the Moment */
                 widths={[640, 1000, 1400, 1800, 2048]}
@@ -224,7 +226,7 @@ const jsonLd = {
             <a href={c.href} class="group block h-full rounded-2xl bg-base-100 p-2.5 md:p-3">
               <div class="aspect-[4/5] overflow-hidden rounded-xl bg-base-300" style={bg(c.cover)} data-reveal="image">
                 {c.cover && (
-                  <Image
+                  <Picture formats={['avif']} fallbackFormat="webp"
                     src={c.cover}
                     alt=""
                     widths={[320, 480, 640]}

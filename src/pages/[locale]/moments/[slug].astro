@@ -1,5 +1,5 @@
 ---
-import { Image, getImage } from 'astro:assets';
+import { Picture, getImage } from 'astro:assets';
 import { render } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import MomentCard from '../../../components/MomentCard.astro';
@@ -94,7 +94,7 @@ const tint = colorOf(cover) ?? 'transparent';
         class="block aspect-[4/5] overflow-hidden rounded-2xl bg-base-300"
         style={bg(cover, `view-transition-name: moment-cover-${slug}`)}
       >
-        <Image
+        <Picture formats={['avif']} fallbackFormat="webp"
           src={cover}
           alt={alt(coverIndex)}
           widths={[480, 640, 800, 1000, 1200]}
@@ -121,7 +121,7 @@ const tint = colorOf(cover) ?? 'transparent';
                 style={bg(src, '--reveal-radius: 1.25rem')}
                 data-reveal="image"
               >
-                <Image
+                <Picture formats={['avif']} fallbackFormat="webp"
                   src={src}
                   alt={alt(i)}
                   widths={[320, 480, 640, 800, 1000]}

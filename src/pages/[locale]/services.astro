@@ -1,5 +1,5 @@
 ---
-import { Image } from 'astro:assets';
+import { Picture } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageIntro from '../../components/PageIntro.astro';
 import InquiryForm from '../../components/InquiryForm.astro';
@@ -123,7 +123,7 @@ const approach = tr('services.intro.approach');
           >
             {packagePhotos[p.id] && (
               <div class="aspect-[4/3] overflow-hidden rounded-xl bg-base-300" style={bg(packagePhotos[p.id])} data-reveal="image">
-                <Image
+                <Picture formats={['avif']} fallbackFormat="webp"
                   src={packagePhotos[p.id]}
                   alt=""
                   widths={[400, 640, 900, 1200]}
@@ -183,8 +183,8 @@ const approach = tr('services.intro.approach');
           return (
             <article id={s.id} class="flex scroll-mt-24 flex-col rounded-2xl bg-base-100 p-3" data-lift>
               {m && (
-                <a href={`${momentsPath}${m.slug}/`} class="block aspect-[4/3] overflow-hidden rounded-xl bg-base-300" style={bg(m.cover)} data-reveal="image">
-                  <Image
+                <a href={`${momentsPath}${m.slug}/`} class="block aspect-square overflow-hidden rounded-xl bg-base-300" style={bg(m.cover)} data-reveal="image">
+                  <Picture formats={['avif']} fallbackFormat="webp"
                     src={m.cover}
                     alt={m.entry.data.title}
                     widths={[320, 480, 640, 800]}
@@ -199,12 +199,12 @@ const approach = tr('services.intro.approach');
                 </div>
                 <p class="mt-2 font-serif text-muted">{moreMeta(s)}</p>
                 <p class="mt-5 text-[0.9375rem]">{tr(`services.more.items.${s.id}.text`)}</p>
-                <div class="mt-auto flex flex-col items-start gap-3 pt-6 text-sm font-medium">
-                  <a href={bookHref(s.id)} class="w-full rounded-full bg-base-200 px-4 py-2.5 text-center transition-opacity hover:opacity-85">
+                <div class="mt-auto flex flex-wrap gap-2 pt-6 text-sm font-medium">
+                  <a href={bookHref(s.id)} class="flex-auto whitespace-nowrap rounded-full bg-base-200 px-4 py-2.5 text-center transition-opacity hover:opacity-85">
                     {tr('services.more.book')}
                   </a>
                   {m && (
-                    <a href={`${momentsPath}${m.slug}/`} class="cta-link whitespace-nowrap px-1 text-muted hover:text-base-content">
+                    <a href={`${momentsPath}${m.slug}/`} class="cta-link flex-auto whitespace-nowrap rounded-full px-4 py-2.5 text-center text-muted ring-1 ring-inset ring-base-content/15 transition-colors hover:text-base-content">
                       <span class="cta-text">{tr('services.more.seeMoment')}</span> <span class="arrow" aria-hidden="true">→</span>
                     </a>
                   )}

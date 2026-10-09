@@ -5,7 +5,7 @@
  * scroller (see src/scripts/hero-carousel.js). Slides are rendered twice; the
  * second set is decorative (aria-hidden, inert) and exists only for a seamless loop.
  */
-import { Image } from 'astro:assets';
+import { Picture } from 'astro:assets';
 import { useT } from '../i18n/index.js';
 import { bg } from '../data/colors.js';
 
@@ -42,7 +42,7 @@ const widths = [320, 480, 640, 800, 1000, 1200];
             inert={copy === 1}
             style={bg(slide.src)}
           >
-            <Image
+            <Picture formats={['avif']} fallbackFormat="webp"
               src={slide.src}
               alt={copy === 0 ? tr(`home.alt.${slide.alt}`) : ''}
               widths={widths}
