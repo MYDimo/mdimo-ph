@@ -215,6 +215,23 @@ html.motion [data-reveal='doodle'].is-in path {
       Alt text stays invisible while loading (transparent), so it never paints
       over the placeholder ── */
 img { color: transparent; }
+/* The preview is blurred by the browser (a real Gaussian), on a layer that bleeds past
+   the frame; the frame's rounded overflow crops it. Sits behind the photo. */
+@layer components {
+[style*='--ph:'] {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+[style*='--ph:']::before {
+  content: '';
+  position: absolute;
+  inset: -12%;
+  z-index: -1;
+  background: var(--ph) center / cover;
+  filter: blur(22px) saturate(1.1);
+}
+}
 html.motion img.fade-img {
   opacity: 0;
   transition: opacity 1.1s var(--ease-soft);

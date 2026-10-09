@@ -10,9 +10,9 @@ const blurBySrc = new Map(Object.entries(modules).map(([p, img]) => [img.src, bl
 /** The image's average colour as a hex string (or undefined). */
 export const colorOf = (image) => (image ? bySrc.get(image.src) : undefined);
 
-/** `background-color: …` plus a tiny blurred preview of the photo, plus any extra inline style. */
+/** `background-color: …` plus a tiny preview of the photo (`--ph`, blurred in CSS), plus any extra inline style. */
 export function bg(image, extra = '') {
   const c = image && bySrc.get(image.src);
   const b = image && blurBySrc.get(image.src);
-  return [c && `background-color: ${c}`, b && `background-image: url(${b}); background-size: cover; background-position: center`, extra].filter(Boolean).join('; ') || undefined;
+  return [c && `background-color: ${c}`, b && `--ph: url(${b})`, extra].filter(Boolean).join('; ') || undefined;
 }

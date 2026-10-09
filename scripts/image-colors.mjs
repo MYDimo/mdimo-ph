@@ -19,9 +19,9 @@ async function walk(dir) {
       // Shrinking to a single pixel averages the whole image.
       const { data } = await sharp(full).resize(1, 1, { fit: 'fill' }).removeAlpha().raw().toBuffer({ resolveWithObject: true });
       const key = path.relative(assets, full).split(path.sep).join('/');
-      // A ~24px JPEG, stretched and blurred by the browser, previews the photo while it loads.
-      const tiny = await sharp(full).resize(24, 24, { fit: 'inside' }).jpeg({ quality: 50 }).toBuffer();
-      blur[key] = `data:image/jpeg;base64,${tiny.toString('base64')}`;
+      // A ~32px WebP; CSS (motion.css, --ph) blurs it into a smooth preview while the photo loads.
+      const tiny = await sharp(full).resize(32, 32, { fit: 'inside' }).blur(1).webp({ quality: 45 }).toBuffer();
+      blur[key] = `data:image/webp;base64,${tiny.toString('base64')}`;
       out[key] = `#${[...data].map((v) => v.toString(16).padStart(2, '0')).join('')}`;
     }
   }
