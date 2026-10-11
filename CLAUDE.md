@@ -231,6 +231,7 @@ public/           # static assets only
 - [x] Text CTAs use `.cta-link` + `.cta-text`: accent underline draws in under the words only (arrows excluded)
 
 - [x] Overtime is €100/hour on both wedding collections
+- [x] Price update (Oct 2026), after a benchmark of ~10 Bulgarian photographers: Signature €1,550 (was 1,450), Christening €200 (was 180), Couple €200 (was 160, deliberately a modest step), Events €130/hour (was 100, min 2 h), travel €0.35/km (was 0.25). Essential €850 and overtime €100/hour unchanged. All in `src/data/services.js`; everything else reads from it
 
 - [x] Inquiry form posts to its own page URL (`fetch(location.pathname)`), never to `/` (the root redirect swallows POSTs: the thank-you showed but nothing was sent). Email needs a dot + 2+ letter ending (pattern + translated message `inquiry.emailInvalid`); the value is trimmed
 - [x] Theme switch: colour transitions are disabled while the circular reveal runs (`html.vt-theme`), otherwise the frosted header shows pale and unblurred for ~0.3 s. In **Firefox** (the owner's browser) view-transition snapshots can't draw `backdrop-filter`, so there the header is near-solid during the switch and a 0.5 s settle (`html.vt-theme` / `html.vt-settle`, `@supports (-moz-appearance: none)` in `motion.css`), then fades to its normal blur
